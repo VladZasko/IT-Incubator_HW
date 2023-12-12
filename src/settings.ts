@@ -1,4 +1,7 @@
 import express, {Request, Response} from "express";
+import {HTTP_STATUSES} from "./utils";
+import {RequestWithBody, RequestWithParams} from "./types";
+import {URIParamsCourseIdModel} from "./models/URIParamsVideoIdModule";
 
 export const app = express()
 
@@ -40,8 +43,7 @@ let videos :VideoDBType[] = [
     }
 ]
 
-type RequestWithParams<P> = Request<P>
-type RequestWithBody<B> = Request<{}, {}, B>
+
 export type CreateVideoType = {
     title: string
     author: string
@@ -54,24 +56,27 @@ type ErrorMessageType = {
 type ErrorType = {
     errorsMessages: ErrorMessageType[]
 }
-app.get('/videos', (req: Request, res: Response) => {
-    res.status(200).send(videos)
+app.get('/videos', (req: Request,
+                    res: Response) => {
+    res.status(HTTP_STATUSES.OK_200).send(videos)
 })
 
-app.get('/videos/:id', (req: RequestWithParams<{id: string}>, res: Response) => {
+app.get('/videos/:id', (req: RequestWithParams<URIParamsCourseIdModel>,
+                        res: Response) => {
     const id = +req.params.id
 
     const video = videos.find(v => v.id === id)
 
     if(!video) {
-        res.sendStatus(404);
+        res.sendStatus(HTTP_STATUSES.NOT_FOUND_404);
         return;
     }
 
     res.send(video)
 })
 
-app.post('/videos', (req:RequestWithBody<CreateVideoType> , res: Response) => {
+app.post('/videos', (req:RequestWithBody<CreateVideoType>,
+                                   res: Response) => {
     let errors: ErrorType = {
         errorsMessages: []
     }
@@ -94,7 +99,7 @@ app.post('/videos', (req:RequestWithBody<CreateVideoType> , res: Response) => {
         availableResolutions = []
     }
     if (errors.errorsMessages.length){
-        res.status(400).send(errors)
+        res.status(HTTP_STATUSES.BAD_REQUEST_400).send(errors)
         return;
     }
 
@@ -116,10 +121,12 @@ app.post('/videos', (req:RequestWithBody<CreateVideoType> , res: Response) => {
     }
 
     videos.push(newVideo)
-    res.status(201).send(newVideo)
+    res
+        .status(HTTP_STATUSES.CREATED_201)
+        .send(newVideo)
 })
 
-app.put ('/videos/:id', (req: Request, res: Response) => {
+app.put ('/videos/:id', (req: RequestWithParams<{id: string}>, res: Response) => {
     let errors: ErrorType = {
         errorsMessages: []
     }
@@ -151,13 +158,13 @@ app.put ('/videos/:id', (req: Request, res: Response) => {
         errors.errorsMessages.push({message:'Invalid publicationDate', field:'publicationDate'})
     }
     if (errors.errorsMessages.length){
-        res.status(400).send(errors)
+        res.status(HTTP_STATUSES.BAD_REQUEST_400).send(errors)
         return;
     }
 
     let foundVideo = videos.find(i => i.id === +req.params.id);
     if(!foundVideo) {
-        res.sendStatus(404);
+        res.sendStatus(HTTP_STATUSES.NOT_FOUND_404);
         return;
     }
 
@@ -180,18 +187,18 @@ app.put ('/videos/:id', (req: Request, res: Response) => {
 
 
 
-    res.sendStatus(204)
+    res.sendStatus(HTTP_STATUSES.NO_CONTENT_204)
 
 })
 
 app.delete('/videos/:id', (req, res) => {
 
     videos = videos.filter(c => c.id !== +req.params.id)
-    res.sendStatus(204)
+    res.sendStatus(HTTP_STATUSES.NO_CONTENT_204)
 })
 
 app.delete('/testing/all_data', (req, res) => {
     videos = [];
-    res.sendStatus(204)
+    res.sendStatus(HTTP_STATUSES.NO_CONTENT_204)
 })
 

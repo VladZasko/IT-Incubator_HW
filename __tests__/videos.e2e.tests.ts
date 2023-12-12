@@ -1,5 +1,8 @@
 import request from 'supertest'
 import {app, CreateVideoType} from "../src/settings";
+import {HTTP_STATUSES} from "../src/utils";
+
+
 
 // const getRequest = () => {
 //     return request((app))
@@ -12,13 +15,13 @@ describe('/videos', () => {
     it ('should return 200 and empty array', async () => {
         await request(app)
             .get('/videos')
-            .expect(200, [])
+            .expect(HTTP_STATUSES.OK_200, [])
     })
 
     it ('should return 404 fot not existing videos', async () => {
         await request(app)
             .get('/videos/1')
-            .expect(404)
+            .expect(HTTP_STATUSES.NOT_FOUND_404)
     })
 
     it(`should'nt create video with empty title`, async () => {
@@ -29,11 +32,11 @@ describe('/videos', () => {
                 author: 'NewAuthorTest',
                 availableResolutions: ["P144"]
         })
-            .expect(400)
+            .expect(HTTP_STATUSES.BAD_REQUEST_400)
 
         await request(app)
             .get('/videos')
-            .expect(200, [])
+            .expect(HTTP_STATUSES.OK_200, [])
     })
 
     it(`should'nt create video with title more than 40 characters`, async () => {
@@ -44,11 +47,11 @@ describe('/videos', () => {
                 author: 'NewAuthorTest',
                 availableResolutions: ["P144"]
             })
-            .expect(400)
+            .expect(HTTP_STATUSES.BAD_REQUEST_400)
 
         await request(app)
             .get('/videos')
-            .expect(200, [])
+            .expect(HTTP_STATUSES.OK_200, [])
     })
 
     it(`should'nt create video with empty author`, async () => {
@@ -59,11 +62,11 @@ describe('/videos', () => {
                 author: '',
                 availableResolutions: ["P144"]
             })
-            .expect(400)
+            .expect(HTTP_STATUSES.BAD_REQUEST_400)
 
         await request(app)
             .get('/videos')
-            .expect(200, [])
+            .expect(HTTP_STATUSES.OK_200, [])
     })
 
     it(`should'nt create video with author more than 20 characters`, async () => {
@@ -74,11 +77,11 @@ describe('/videos', () => {
                 author: 'NewAuthorTestNewAuthorTest',
                 availableResolutions: ["P144"]
             })
-            .expect(400)
+            .expect(HTTP_STATUSES.BAD_REQUEST_400)
 
         await request(app)
             .get('/videos')
-            .expect(200, [])
+            .expect(HTTP_STATUSES.OK_200, [])
     })
 
     it(`should'nt create video with incorrect availableResolutions`, async () => {
@@ -89,11 +92,11 @@ describe('/videos', () => {
                 author: 'NewAuthorTest',
                 availableResolutions: ['P1']
             })
-            .expect(400)
+            .expect(HTTP_STATUSES.BAD_REQUEST_400)
 
         await request(app)
             .get('/videos')
-            .expect(200, [])
+            .expect(HTTP_STATUSES.OK_200, [])
     })
 
     it(`should'nt create video with empty availableResolutions`, async () => {
@@ -104,11 +107,11 @@ describe('/videos', () => {
                 author: 'NewAuthorTest',
                 availableResolutions: []
             })
-            .expect(400)
+            .expect(HTTP_STATUSES.BAD_REQUEST_400)
 
         await request(app)
             .get('/videos')
-            .expect(200, [])
+            .expect(HTTP_STATUSES.OK_200, [])
     })
 
     let createdNewVideos01:any = null
@@ -123,7 +126,7 @@ describe('/videos', () => {
         const createResponse = await request(app)
             .post('/videos/')
             .send(data)
-            .expect(201)
+            .expect(HTTP_STATUSES.CREATED_201)
 
         createdNewVideos01 = createResponse.body;
 
@@ -137,7 +140,7 @@ describe('/videos', () => {
 
         await request(app)
             .get('/videos/')
-            .expect(200, [createdNewVideos01])
+            .expect(HTTP_STATUSES.OK_200, [createdNewVideos01])
     })
 
     let createdNewVideos02: any = null
@@ -151,7 +154,7 @@ describe('/videos', () => {
         const createResponse = await request(app)
             .post('/videos/')
             .send(data)
-            .expect(201)
+            .expect(HTTP_STATUSES.CREATED_201)
 
         createdNewVideos02 = createResponse.body;
 
@@ -165,7 +168,7 @@ describe('/videos', () => {
 
         await request(app)
             .get('/videos/')
-            .expect(200, [createdNewVideos01, createdNewVideos02])
+            .expect(HTTP_STATUSES.OK_200, [createdNewVideos01, createdNewVideos02])
     })
 
     it(`should'nt update video with empty title`, async () => {
@@ -181,11 +184,11 @@ describe('/videos', () => {
         await request(app)
             .put('/videos/' + createdNewVideos01.id)
             .send(data)
-            .expect(400)
+            .expect(HTTP_STATUSES.BAD_REQUEST_400)
 
         await request(app)
             .get('/videos/' + createdNewVideos01.id)
-            .expect(200, createdNewVideos01)
+            .expect(HTTP_STATUSES.OK_200, createdNewVideos01)
     })
 
     it(`should'nt update video with title more than 40 characters`, async () => {
@@ -201,11 +204,11 @@ describe('/videos', () => {
         await request(app)
             .put('/videos/' + createdNewVideos01.id)
             .send(data)
-            .expect(400)
+            .expect(HTTP_STATUSES.BAD_REQUEST_400)
 
         await request(app)
             .get('/videos/' + createdNewVideos01.id)
-            .expect(200, createdNewVideos01)
+            .expect(HTTP_STATUSES.OK_200, createdNewVideos01)
     })
 
     it(`should'nt update video with empty author`, async () => {
@@ -221,11 +224,11 @@ describe('/videos', () => {
         await request(app)
             .put('/videos/' + createdNewVideos01.id)
             .send(data)
-            .expect(400)
+            .expect(HTTP_STATUSES.BAD_REQUEST_400)
 
         await request(app)
             .get('/videos/' + createdNewVideos01.id)
-            .expect(200, createdNewVideos01)
+            .expect(HTTP_STATUSES.OK_200, createdNewVideos01)
     })
 
     it(`should'nt update video with author more than 20 characters`, async () => {
@@ -241,11 +244,11 @@ describe('/videos', () => {
         await request(app)
             .put('/videos/' + createdNewVideos01.id)
             .send(data)
-            .expect(400)
+            .expect(HTTP_STATUSES.BAD_REQUEST_400)
 
         await request(app)
             .get('/videos/' + createdNewVideos01.id)
-            .expect(200, createdNewVideos01)
+            .expect(HTTP_STATUSES.OK_200, createdNewVideos01)
     })
 
     it(`should'nt update video with incorrect availableResolutions`, async () => {
@@ -261,11 +264,11 @@ describe('/videos', () => {
         await request(app)
             .put('/videos/' + createdNewVideos01.id)
             .send(data)
-            .expect(400)
+            .expect(HTTP_STATUSES.BAD_REQUEST_400)
 
         await request(app)
             .get('/videos/' + createdNewVideos01.id)
-            .expect(200, createdNewVideos01)
+            .expect(HTTP_STATUSES.OK_200, createdNewVideos01)
     })
 
     it(`should'nt update video with empty availableResolutions`, async () => {
@@ -281,11 +284,11 @@ describe('/videos', () => {
         await request(app)
             .put('/videos/' + createdNewVideos01.id)
             .send(data)
-            .expect(400)
+            .expect(HTTP_STATUSES.BAD_REQUEST_400)
 
         await request(app)
             .get('/videos/' + createdNewVideos01.id)
-            .expect(200, createdNewVideos01)
+            .expect(HTTP_STATUSES.OK_200, createdNewVideos01)
     })
 
     it(`should'nt update video with incorrect canBeDownloaded`, async () => {
@@ -301,11 +304,11 @@ describe('/videos', () => {
         await request(app)
             .put('/videos/' + createdNewVideos01.id)
             .send(data)
-            .expect(400)
+            .expect(HTTP_STATUSES.BAD_REQUEST_400)
 
         await request(app)
             .get('/videos/' + createdNewVideos01.id)
-            .expect(200, createdNewVideos01)
+            .expect(HTTP_STATUSES.OK_200, createdNewVideos01)
     })
 
     it(`should'nt update video with minAgeRestriction more than 18 characters`, async () => {
@@ -321,11 +324,11 @@ describe('/videos', () => {
         await request(app)
             .put('/videos/' + createdNewVideos01.id)
             .send(data)
-            .expect(400)
+            .expect(HTTP_STATUSES.BAD_REQUEST_400)
 
         await request(app)
             .get('/videos/' + createdNewVideos01.id)
-            .expect(200, createdNewVideos01)
+            .expect(HTTP_STATUSES.OK_200, createdNewVideos01)
     })
 
     it(`should'nt update video with minAgeRestriction less than 1`, async () => {
@@ -341,11 +344,11 @@ describe('/videos', () => {
         await request(app)
             .put('/videos/' + createdNewVideos01.id)
             .send(data)
-            .expect(400)
+            .expect(HTTP_STATUSES.BAD_REQUEST_400)
 
         await request(app)
             .get('/videos/' + createdNewVideos01.id)
-            .expect(200, createdNewVideos01)
+            .expect(HTTP_STATUSES.OK_200, createdNewVideos01)
     })
 
     it(`should'nt update video with incorrect minAgeRestriction`, async () => {
@@ -361,11 +364,11 @@ describe('/videos', () => {
         await request(app)
             .put('/videos/' + createdNewVideos01.id)
             .send(data)
-            .expect(400)
+            .expect(HTTP_STATUSES.BAD_REQUEST_400)
 
         await request(app)
             .get('/videos/' + createdNewVideos01.id)
-            .expect(200, createdNewVideos01)
+            .expect(HTTP_STATUSES.OK_200, createdNewVideos01)
     })
 
     it(`should'nt update video with incorrect publicationDate`, async () => {
@@ -381,11 +384,11 @@ describe('/videos', () => {
         await request(app)
             .put('/videos/' + createdNewVideos01.id)
             .send(data)
-            .expect(400)
+            .expect(HTTP_STATUSES.BAD_REQUEST_400)
 
         await request(app)
             .get('/videos/' + createdNewVideos01.id)
-            .expect(200, createdNewVideos01)
+            .expect(HTTP_STATUSES.OK_200, createdNewVideos01)
     })
 
     it(`should update video with correct input module`, async () => {
@@ -401,11 +404,11 @@ describe('/videos', () => {
         await request(app)
             .put('/videos/' + createdNewVideos01.id)
             .send(data)
-            .expect(204)
+            .expect(HTTP_STATUSES.NO_CONTENT_204)
 
         await request(app)
             .get('/videos/' + createdNewVideos01.id)
-            .expect(200, {
+            .expect(HTTP_STATUSES.OK_200, {
                 ...createdNewVideos01,
                 title: data.title,
                 canBeDownloaded: data.canBeDownloaded,
@@ -417,31 +420,31 @@ describe('/videos', () => {
 
         await request(app)
             .get('/videos/' + createdNewVideos02.id)
-            .expect(200, createdNewVideos02)
+            .expect(HTTP_STATUSES.OK_200, createdNewVideos02)
     })
 
     it(`should delete both video`, async () => {
 
         await request(app)
             .delete('/videos/' + createdNewVideos01.id)
-            .expect(204)
+            .expect(HTTP_STATUSES.NO_CONTENT_204)
 
         await request(app)
             .get('/videos/' + createdNewVideos01.id)
-            .expect(404)
+            .expect(HTTP_STATUSES.NOT_FOUND_404)
 
         await request(app)
             .delete('/videos/' + createdNewVideos02.id)
-            .expect(204)
+            .expect(HTTP_STATUSES.NO_CONTENT_204)
 
 
         await request(app)
             .get('/videos/' + createdNewVideos02.id)
-            .expect(404)
+            .expect(HTTP_STATUSES.NOT_FOUND_404)
 
         await request(app)
             .get('/videos/')
-            .expect(200, [])
+            .expect(HTTP_STATUSES.OK_200, [])
     })
 
 
