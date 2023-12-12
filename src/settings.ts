@@ -83,6 +83,9 @@ app.post('/videos', (req:RequestWithBody<CreateVideoType> , res: Response) => {
     if (!author || !author.trim() || author.trim().length > 20) {
         errors.errorsMessages.push({message:'Invalid author', field:'author'})
     }
+    if (!availableResolutions || availableResolutions.length === 0) {
+        errors.errorsMessages.push({message:'Invalid availableResolutions', field:'availableResolutions'})
+    }
     if (availableResolutions && Array.isArray(availableResolutions)){
         availableResolutions.forEach((r) => {
             !AvailableResolutions.includes(r) && errors.errorsMessages.push({message:'Invalid availableResolutions!', field:'availableResolutions'})
@@ -116,50 +119,70 @@ app.post('/videos', (req:RequestWithBody<CreateVideoType> , res: Response) => {
     res.status(201).send(newVideo)
 })
 
-// app.put ('/videos/:id', (req: Request, res: Response) => {
-//     let errors: ErrorType = {
-//         errorsMessages: []
-//     }
-//     let {title, author, availableResolutions} = req.body
-//
-//     if (!title || !title.trim() || title.trim().length > 40) {
-//         errors.errorsMessages.push({message:'Invalid title', field:'title'})
-//     }
-//     if (!author || !author.trim() || author.trim().length > 20) {
-//         errors.errorsMessages.push({message:'Invalid author', field:'author'})
-//     }
-//     if (availableResolutions && Array.isArray(availableResolutions)){
-//         availableResolutions.forEach((r) => {
-//             !AvailableResolutions.includes(r) && errors.errorsMessages.push({message:'Invalid availableResolutions!', field:'availableResolutions'})
-//         })
-//     } else {
-//         availableResolutions = []
-//     }
-//     if (errors.errorsMessages.length){
-//         res.status(400).send(errors)
-//     }
-//
-//     const createdAt = new Date()
-//     const publicationDate = new Date()
-//
-//     publicationDate.setDate(createdAt.getDate()+1)
-//
-//     const newVideo: VideoDBType = {
-//         id: +(new Date()),
-//         canBeDownloaded: false,
-//         minAgeRestriction: null,
-//         createdAt: createdAt.toISOString(),
-//         publicationDate: publicationDate.toISOString(),
-//         title,
-//         author,
-//         availableResolutions
-//
-//     }
-//
-//     videos.push(newVideo)
-//     res.status(201).send(newVideo)
-//
-// })
+app.put ('/videos/:id', (req: Request, res: Response) => {
+    let errors: ErrorType = {
+        errorsMessages: []
+    }
+    let {title, author, availableResolutions, canBeDownloaded, minAgeRestriction, publicationDate} = req.body
+
+    if (!title || !title.trim() || title.trim().length > 40) {
+        errors.errorsMessages.push({message:'Invalid title', field:'title'})
+    }
+    if (!author || !author.trim() || author.trim().length > 20) {
+        errors.errorsMessages.push({message:'Invalid author', field:'author'})
+    }
+    if (!availableResolutions || availableResolutions.length === 0) {
+        errors.errorsMessages.push({message:'Invalid availableResolutions', field:'availableResolutions'})
+    }
+    if (availableResolutions && Array.isArray(availableResolutions)){
+        availableResolutions.forEach((r) => {
+            !AvailableResolutions.includes(r) && errors.errorsMessages.push({message:'Invalid availableResolutions!', field:'availableResolutions'})
+        })
+    } else {
+        availableResolutions = []
+    }
+    if (!canBeDownloaded) {
+        errors.errorsMessages.push({message:'Invalid canBeDownloaded', field:'canBeDownloaded'})
+    }
+    if (!minAgeRestriction || !minAgeRestriction === null || minAgeRestriction < 1 || minAgeRestriction > 18) {
+        errors.errorsMessages.push({message:'Invalid minAgeRestriction', field:'minAgeRestriction'})
+    }
+    if (!publicationDate) {
+        errors.errorsMessages.push({message:'Invalid publicationDate', field:'publicationDate'})
+    }
+    if (errors.errorsMessages.length){
+        res.status(400).send(errors)
+        return;
+    }
+
+    const foundVideo = videos.find(i => i.id === +req.params.id);
+    if(!foundVideo) {
+        res.sendStatus(404);
+        return;
+    }
+
+    foundVideo.title = req.body.title;
+    foundVideo.author = req.body.author;
+    foundVideo.availableResolutions = req.body.availableResolutions;
+    foundVideo.canBeDownloaded = req.body.canBeDownloaded;
+    foundVideo.minAgeRestriction = req.body.minAgeRestriction;
+    foundVideo.publicationDate = req.body.publicationDate;
+
+    // const updateVideo: VideoDBType = {
+    //     ...foundVideo,
+    //     title: req.body.title,
+    //     author: req.body.author,
+    //     availableResolutions: req.body.availableResolutions,
+    //     canBeDownloaded: req.body.canBeDownloaded,
+    //     minAgeRestriction: req.body.minAgeRestriction,
+    //     publicationDate: req.body.publicationDate
+    // }
+
+
+
+    res.sendStatus(204)
+
+})
 
 app.delete ('/testing/all_data', (req, res) => {
     videos = [];
