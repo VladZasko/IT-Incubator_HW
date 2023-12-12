@@ -111,7 +111,6 @@ describe('/videos', () => {
             .expect(200, [])
     })
 
-
     let createdNewVideos01:any = null
     it(`should create video with correct input data`, async () => {
 
@@ -389,8 +388,6 @@ describe('/videos', () => {
             .expect(200, createdNewVideos01)
     })
 
-
-
     it(`should update video with correct input module`, async () => {
         const data = {
             title: 'UpdateTitle',
@@ -423,7 +420,29 @@ describe('/videos', () => {
             .expect(200, createdNewVideos02)
     })
 
+    it(`should delete both video`, async () => {
 
+        await request(app)
+            .delete('/videos/' + createdNewVideos01.id)
+            .expect(204)
+
+        await request(app)
+            .get('/videos/' + createdNewVideos01.id)
+            .expect(404)
+
+        await request(app)
+            .delete('/videos/' + createdNewVideos02.id)
+            .expect(204)
+
+
+        await request(app)
+            .get('/videos/' + createdNewVideos02.id)
+            .expect(404)
+
+        await request(app)
+            .get('/videos/')
+            .expect(200, [])
+    })
 
 
 })

@@ -14,7 +14,7 @@ const AvailableResolutions = [
     "P1440",
     "P2160"]
 
-type VideoDBType = {
+export type VideoDBType = {
     id: number
     title: string
     author: string
@@ -155,7 +155,7 @@ app.put ('/videos/:id', (req: Request, res: Response) => {
         return;
     }
 
-    const foundVideo = videos.find(i => i.id === +req.params.id);
+    let foundVideo = videos.find(i => i.id === +req.params.id);
     if(!foundVideo) {
         res.sendStatus(404);
         return;
@@ -168,7 +168,7 @@ app.put ('/videos/:id', (req: Request, res: Response) => {
     foundVideo.minAgeRestriction = req.body.minAgeRestriction;
     foundVideo.publicationDate = req.body.publicationDate;
 
-    // const updateVideo: VideoDBType = {
+    // foundVideo = {
     //     ...foundVideo,
     //     title: req.body.title,
     //     author: req.body.author,
@@ -184,7 +184,13 @@ app.put ('/videos/:id', (req: Request, res: Response) => {
 
 })
 
-app.delete ('/testing/all_data', (req, res) => {
+app.delete('/videos/:id', (req, res) => {
+
+    videos = videos.filter(c => c.id !== +req.params.id)
+    res.sendStatus(204)
+})
+
+app.delete('/testing/all_data', (req, res) => {
     videos = [];
     res.sendStatus(204)
 })
