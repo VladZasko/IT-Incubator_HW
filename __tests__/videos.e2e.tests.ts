@@ -304,6 +304,26 @@ describe('/videos', () => {
             title: 'UpdateTitle',
             author: 'UpdateAuthor',
             availableResolutions: ["P144"],
+            canBeDownloaded: "string",
+            minAgeRestriction: 3,
+            publicationDate: '2023-12-11T08:40:46.569Z'
+        }
+
+        await request(app)
+            .put('/videos/' + createdNewVideos01.id)
+            .send(data)
+            .expect(HTTP_STATUSES.BAD_REQUEST_400)
+
+        await request(app)
+            .get('/videos/' + createdNewVideos01.id)
+            .expect(HTTP_STATUSES.OK_200, createdNewVideos01)
+    })
+
+    it(`shouldn't update video with incorrect canBeDownloaded`, async () => {
+        const data = {
+            title: 'UpdateTitle',
+            author: 'UpdateAuthor',
+            availableResolutions: ["P144"],
             canBeDownloaded: null,
             minAgeRestriction: 3,
             publicationDate: '2023-12-11T08:40:46.569Z'
