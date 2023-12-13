@@ -6,7 +6,7 @@ import {app} from "../app";
 export const getTestsRouter = (db: DBType) => {
     const router = express.Router()
 
-    router.delete('/all_data', (req, res) => {
+    router.delete('/all-data', (req, res) => {
         db.videos = [];
         res.sendStatus(HTTP_STATUSES.NO_CONTENT_204)
     })

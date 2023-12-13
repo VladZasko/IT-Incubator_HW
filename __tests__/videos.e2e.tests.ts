@@ -11,7 +11,7 @@ const getRequest = () => {
 }
 describe('/videos', () => {
     beforeAll(async() => {
-        await getRequest().delete('/testing/all_data')
+        await getRequest().delete('/testing/all-data')
     })
 
     it ('should return 200 and empty array', async () => {
