@@ -1,4 +1,3 @@
-import {Request} from "express";
 
 export const AvailableResolutions = [
     "P144",
@@ -10,7 +9,7 @@ export const AvailableResolutions = [
     "P1440",
     "P2160"]
 
-export type VideoDBType = {
+export type VideoType = {
     id: number
     title: string
     author: string
@@ -21,20 +20,26 @@ export type VideoDBType = {
     availableResolutions: typeof AvailableResolutions
 }
 
-export let videos :VideoDBType[] = [
-    {
-        id: 0,
-        title: "string",
-        author: "string",
-        canBeDownloaded: true,
-        minAgeRestriction: null,
-        createdAt: "2023-12-11T08:40:46.569Z",
-        publicationDate: "2023-12-11T08:40:46.569Z",
-        availableResolutions: [
-            "P144"
-        ]
-    }
-]
+export type DBType = {
+    videos: VideoType[]
+}
+
+export const db: DBType = {
+    videos: [
+        {
+            id: 0,
+            title: "string",
+            author: "string",
+            canBeDownloaded: true,
+            minAgeRestriction: null,
+            createdAt: "2023-12-11T08:40:46.569Z",
+            publicationDate: "2023-12-11T08:40:46.569Z",
+            availableResolutions: [
+                "P144"
+            ]
+        }
+    ]
+}
 export type CreateVideoType = {
     title: string
     author: string

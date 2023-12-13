@@ -1,30 +1,32 @@
 import request from 'supertest'
-import {app, CreateVideoType} from "../src/settings";
+import {app} from "../src/app";
 import {HTTP_STATUSES} from "../src/utils";
+import {CreateVideoType} from "../src/db/db";
+import {UpdateVideoModel} from "../src/models/UpdateVideoModule";
 
 
 
-// const getRequest = () => {
-//     return request((app))
-// }
+const getRequest = () => {
+    return request(app)
+}
 describe('/videos', () => {
     beforeAll(async() => {
-        await request(app).delete('/testing/all_data')
+        await getRequest().delete('/testing/all_data')
     })
 
     it ('should return 200 and empty array', async () => {
-        await request(app)
+        await getRequest()
             .get('/videos')
             .expect(HTTP_STATUSES.OK_200, [])
     })
 
     it ('should return 404 fot not existing videos', async () => {
-        await request(app)
+        await getRequest()
             .get('/videos/1')
             .expect(HTTP_STATUSES.NOT_FOUND_404)
     })
 
-    it(`should'nt create video with empty title`, async () => {
+    it(`shouldn't create video with empty title`, async () => {
         await request(app)
             .post('/videos')
             .send({
@@ -39,7 +41,7 @@ describe('/videos', () => {
             .expect(HTTP_STATUSES.OK_200, [])
     })
 
-    it(`should'nt create video with title more than 40 characters`, async () => {
+    it(`shouldn't create video with title more than 40 characters`, async () => {
         await request(app)
             .post('/videos')
             .send({
@@ -54,7 +56,7 @@ describe('/videos', () => {
             .expect(HTTP_STATUSES.OK_200, [])
     })
 
-    it(`should'nt create video with empty author`, async () => {
+    it(`shouldn't create video with empty author`, async () => {
         await request(app)
             .post('/videos')
             .send({
@@ -69,7 +71,7 @@ describe('/videos', () => {
             .expect(HTTP_STATUSES.OK_200, [])
     })
 
-    it(`should'nt create video with author more than 20 characters`, async () => {
+    it(`shouldn't create video with author more than 20 characters`, async () => {
         await request(app)
             .post('/videos')
             .send({
@@ -84,7 +86,7 @@ describe('/videos', () => {
             .expect(HTTP_STATUSES.OK_200, [])
     })
 
-    it(`should'nt create video with incorrect availableResolutions`, async () => {
+    it(`shouldn't create video with incorrect availableResolutions`, async () => {
         await request(app)
             .post('/videos')
             .send({
@@ -99,7 +101,7 @@ describe('/videos', () => {
             .expect(HTTP_STATUSES.OK_200, [])
     })
 
-    it(`should'nt create video with empty availableResolutions`, async () => {
+    it(`shouldn't create video with empty availableResolutions`, async () => {
         await request(app)
             .post('/videos')
             .send({
@@ -171,8 +173,8 @@ describe('/videos', () => {
             .expect(HTTP_STATUSES.OK_200, [createdNewVideos01, createdNewVideos02])
     })
 
-    it(`should'nt update video with empty title`, async () => {
-        const data = {
+    it(`shouldn't update video with empty title`, async () => {
+        const data: UpdateVideoModel = {
             title: '',
             author: 'UpdateAuthor',
             availableResolutions: ["P1080"],
@@ -191,8 +193,8 @@ describe('/videos', () => {
             .expect(HTTP_STATUSES.OK_200, createdNewVideos01)
     })
 
-    it(`should'nt update video with title more than 40 characters`, async () => {
-        const data = {
+    it(`shouldn't update video with title more than 40 characters`, async () => {
+        const data: UpdateVideoModel = {
             title: 'UpdateTitleUpdateTitleUpdateTitleUpdateTitle',
             author: 'UpdateAuthor',
             availableResolutions: ["P1080"],
@@ -211,8 +213,8 @@ describe('/videos', () => {
             .expect(HTTP_STATUSES.OK_200, createdNewVideos01)
     })
 
-    it(`should'nt update video with empty author`, async () => {
-        const data = {
+    it(`shouldn't update video with empty author`, async () => {
+        const data: UpdateVideoModel = {
             title: 'UpdateTitle',
             author: '',
             availableResolutions: ["P1080"],
@@ -231,8 +233,8 @@ describe('/videos', () => {
             .expect(HTTP_STATUSES.OK_200, createdNewVideos01)
     })
 
-    it(`should'nt update video with author more than 20 characters`, async () => {
-        const data = {
+    it(`shouldn't update video with author more than 20 characters`, async () => {
+        const data: UpdateVideoModel = {
             title: 'UpdateTitle',
             author: 'UpdateAuthorUpdateAuthor',
             availableResolutions: ["P1080"],
@@ -251,8 +253,8 @@ describe('/videos', () => {
             .expect(HTTP_STATUSES.OK_200, createdNewVideos01)
     })
 
-    it(`should'nt update video with incorrect availableResolutions`, async () => {
-        const data = {
+    it(`shouldn't update video with incorrect availableResolutions`, async () => {
+        const data: UpdateVideoModel = {
             title: 'UpdateTitle',
             author: 'UpdateAuthor',
             availableResolutions: ["P1"],
@@ -271,8 +273,8 @@ describe('/videos', () => {
             .expect(HTTP_STATUSES.OK_200, createdNewVideos01)
     })
 
-    it(`should'nt update video with empty availableResolutions`, async () => {
-        const data = {
+    it(`shouldn't update video with empty availableResolutions`, async () => {
+        const data: UpdateVideoModel = {
             title: 'UpdateTitle',
             author: 'UpdateAuthor',
             availableResolutions: [],
@@ -291,7 +293,7 @@ describe('/videos', () => {
             .expect(HTTP_STATUSES.OK_200, createdNewVideos01)
     })
 
-    it(`should'nt update video with incorrect canBeDownloaded`, async () => {
+    it(`shouldn't update video with incorrect canBeDownloaded`, async () => {
         const data = {
             title: 'UpdateTitle',
             author: 'UpdateAuthor',
@@ -311,8 +313,8 @@ describe('/videos', () => {
             .expect(HTTP_STATUSES.OK_200, createdNewVideos01)
     })
 
-    it(`should'nt update video with minAgeRestriction more than 18 characters`, async () => {
-        const data = {
+    it(`shouldn't update video with minAgeRestriction more than 18 characters`, async () => {
+        const data: UpdateVideoModel = {
             title: 'UpdateTitle',
             author: 'UpdateAuthor',
             availableResolutions: ["P144"],
@@ -331,8 +333,8 @@ describe('/videos', () => {
             .expect(HTTP_STATUSES.OK_200, createdNewVideos01)
     })
 
-    it(`should'nt update video with minAgeRestriction less than 1`, async () => {
-        const data = {
+    it(`shouldn't update video with minAgeRestriction less than 1`, async () => {
+        const data: UpdateVideoModel = {
             title: 'UpdateTitle',
             author: 'UpdateAuthor',
             availableResolutions: ["P144"],
@@ -351,7 +353,7 @@ describe('/videos', () => {
             .expect(HTTP_STATUSES.OK_200, createdNewVideos01)
     })
 
-    it(`should'nt update video with incorrect minAgeRestriction`, async () => {
+    it(`shouldn't update video with incorrect minAgeRestriction`, async () => {
         const data = {
             title: 'UpdateTitle',
             author: 'UpdateAuthor',
@@ -371,8 +373,8 @@ describe('/videos', () => {
             .expect(HTTP_STATUSES.OK_200, createdNewVideos01)
     })
 
-    it(`should'nt update video with incorrect publicationDate`, async () => {
-        const data = {
+    it(`shouldn't update video with incorrect publicationDate`, async () => {
+        const data: UpdateVideoModel = {
             title: 'UpdateTitle',
             author: 'UpdateAuthor',
             availableResolutions: ["P144"],
@@ -392,7 +394,7 @@ describe('/videos', () => {
     })
 
     it(`should update video with correct input module`, async () => {
-        const data = {
+        const data: UpdateVideoModel = {
             title: 'UpdateTitle',
             author: 'UpdateAuthor',
             availableResolutions: ["P1080"],

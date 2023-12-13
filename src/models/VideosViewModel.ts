@@ -10,3 +10,4 @@ export type VideosViewModel = {
     publicationDate: string
     availableResolutions: typeof AvailableResolutions
 }
+
