@@ -143,8 +143,13 @@ export const getVideosRoutes = (db: DBType) => {
     })
     router.delete('/:id', (req: RequestWithParams<URIParamsCourseIdModel>,
                                res) => {
-
+        let foundVideo = db.videos.find(i => i.id === +req.params.id);
+        if(!foundVideo) {
+            res.sendStatus(HTTP_STATUSES.NOT_FOUND_404);
+            return;
+        }
         db.videos = db.videos.filter(c => c.id !== +req.params.id)
+
         res.sendStatus(HTTP_STATUSES.NO_CONTENT_204)
     })
     return router;

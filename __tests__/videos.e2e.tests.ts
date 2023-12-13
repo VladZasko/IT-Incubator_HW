@@ -425,7 +425,14 @@ describe('/videos', () => {
             .expect(HTTP_STATUSES.OK_200, createdNewVideos02)
     })
 
-    it(`should delete both video`, async () => {
+    it(`shouldn't delete  video`, async () => {
+
+        await request(app)
+            .delete('/videos/1515')
+            .expect(HTTP_STATUSES.NOT_FOUND_404)
+    })
+
+        it(`should delete both video`, async () => {
 
         await request(app)
             .delete('/videos/' + createdNewVideos01.id)
