@@ -88,8 +88,7 @@ export const getVideosRoutes = (db: DBType) => {
             .status(HTTP_STATUSES.CREATED_201)
             .send(newVideo)
     })
-    router.put ('/:id', (req: RequestWithParamsAndBody<URIParamsCourseIdModel, UpdateVideoModel>,
-                             res: Response) => {
+    router.put ('/:id', (req, res) => {
         let errors: ErrorType = {
             errorsMessages: []
         }
