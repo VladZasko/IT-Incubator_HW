@@ -117,7 +117,7 @@ export const getVideosRoutes = (db: DBType) => {
         } else {
             availableResolutions = []
         }
-        if (!canBeDownloaded) {
+        if (!canBeDownloaded || typeof (canBeDownloaded) !== "boolean") {
             errors.errorsMessages.push({message:'Invalid canBeDownloaded', field:'canBeDownloaded'})
         }
         if (!minAgeRestriction || !minAgeRestriction === null || minAgeRestriction < 1 || minAgeRestriction > 18) {
