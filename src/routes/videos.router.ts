@@ -88,7 +88,8 @@ export const getVideosRoutes = (db: DBType) => {
             .status(HTTP_STATUSES.CREATED_201)
             .send(newVideo)
     })
-    router.put ('/:id', (req, res) => {
+    router.put ('/:id', (req: RequestWithParamsAndBody<URIParamsCourseIdModel, UpdateVideoModel>,
+                             res: Response) => {
         let errors: ErrorType = {
             errorsMessages: []
         }
@@ -106,8 +107,19 @@ export const getVideosRoutes = (db: DBType) => {
         if (!author || !author.trim() || author.trim().length > 20) {
             errors.errorsMessages.push({message:'Invalid author', field:'author'})
         }
+        if (!canBeDownloaded || typeof (canBeDownloaded) !== "boolean") {
+            errors.errorsMessages.push({message:'Invalid canBeDownloaded', field:'canBeDownloaded'})
+        }
         if (!availableResolutions || availableResolutions.length === 0) {
             errors.errorsMessages.push({message:'Invalid availableResolutions', field:'availableResolutions'})
+        }
+
+
+        if (!minAgeRestriction || !minAgeRestriction === null || minAgeRestriction < 1 || minAgeRestriction > 18) {
+            errors.errorsMessages.push({message:'Invalid minAgeRestriction', field:'minAgeRestriction'})
+        }
+        if (!publicationDate) {
+            errors.errorsMessages.push({message:'Invalid publicationDate', field:'publicationDate'})
         }
         if (availableResolutions && Array.isArray(availableResolutions)){
             availableResolutions.forEach((r) => {
@@ -115,15 +127,6 @@ export const getVideosRoutes = (db: DBType) => {
             })
         } else {
             availableResolutions = []
-        }
-        if (!canBeDownloaded || typeof (canBeDownloaded) !== "boolean") {
-            errors.errorsMessages.push({message:'Invalid canBeDownloaded', field:'canBeDownloaded'})
-        }
-        if (!minAgeRestriction || !minAgeRestriction === null || minAgeRestriction < 1 || minAgeRestriction > 18) {
-            errors.errorsMessages.push({message:'Invalid minAgeRestriction', field:'minAgeRestriction'})
-        }
-        if (!publicationDate) {
-            errors.errorsMessages.push({message:'Invalid publicationDate', field:'publicationDate'})
         }
         if (errors.errorsMessages.length){
             res.status(HTTP_STATUSES.BAD_REQUEST_400).send(errors)
