@@ -173,6 +173,12 @@ describe('/videos', () => {
             .expect(HTTP_STATUSES.OK_200, [createdNewVideos01, createdNewVideos02])
     })
 
+    it ('should return 404 fot not existing videos for update', async () => {
+        await getRequest()
+            .put('/videos/11515')
+            .expect(HTTP_STATUSES.NOT_FOUND_404)
+    })
+
     it(`shouldn't update video with empty title`, async () => {
         const data: UpdateVideoModel = {
             title: '',
@@ -428,7 +434,7 @@ describe('/videos', () => {
     it(`shouldn't delete  video`, async () => {
 
         await request(app)
-            .delete('/videos/1515')
+            .delete('/videos/7779161')
             .expect(HTTP_STATUSES.NOT_FOUND_404)
     })
 

@@ -95,6 +95,12 @@ export const getVideosRoutes = (db: DBType) => {
         }
         let {title, author, availableResolutions, canBeDownloaded, minAgeRestriction, publicationDate} = req.body
 
+        let foundVideo = db.videos.find(i => i.id === +req.params.id);
+        if(!foundVideo) {
+            res.sendStatus(HTTP_STATUSES.NOT_FOUND_404);
+            return;
+        }
+
         if (!title || !title.trim() || title.trim().length > 40) {
             errors.errorsMessages.push({message:'Invalid title', field:'title'})
         }
@@ -125,11 +131,7 @@ export const getVideosRoutes = (db: DBType) => {
             return;
         }
 
-        let foundVideo = db.videos.find(i => i.id === +req.params.id);
-        if(!foundVideo) {
-            res.sendStatus(HTTP_STATUSES.NOT_FOUND_404);
-            return;
-        }
+
 
         foundVideo.title = req.body.title;
         foundVideo.author = req.body.author;
