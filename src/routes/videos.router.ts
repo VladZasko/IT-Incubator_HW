@@ -104,7 +104,7 @@ export const getVideosRoutes = (db: DBType) => {
         if (!title || !title.trim() || title.trim().length > 40) {
             errors.errorsMessages.push({message:'Invalid title', field:'title'})
         }
-        if (!author || !author.trim() || author.trim().length > 20) {
+        if (!author || !author.trim() || author.length > 20) {
             errors.errorsMessages.push({message:'Invalid author', field:'author'})
         }
         if (!canBeDownloaded || typeof (canBeDownloaded) !== "boolean") {
@@ -114,11 +114,13 @@ export const getVideosRoutes = (db: DBType) => {
             errors.errorsMessages.push({message:'Invalid availableResolutions', field:'availableResolutions'})
         }
 
-
         if (!minAgeRestriction || !minAgeRestriction === null || minAgeRestriction < 1 || minAgeRestriction > 18) {
             errors.errorsMessages.push({message:'Invalid minAgeRestriction', field:'minAgeRestriction'})
         }
-        if (!publicationDate) {
+
+        const newDateISOString = new Date().toISOString()
+
+        if (!publicationDate || publicationDate.length < newDateISOString.length) {
             errors.errorsMessages.push({message:'Invalid publicationDate', field:'publicationDate'})
         }
         if (availableResolutions && Array.isArray(availableResolutions)){
