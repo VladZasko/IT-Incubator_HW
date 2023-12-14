@@ -120,7 +120,7 @@ export const getVideosRoutes = (db: DBType) => {
 
         const newDateISOString = new Date().toISOString()
 
-        if (!publicationDate || publicationDate.length < newDateISOString.length || typeof (publicationDate) === "number" ) {
+        if (!publicationDate || publicationDate.length < newDateISOString.length || typeof (publicationDate) !== "string" ) {
             errors.errorsMessages.push({message:'Invalid publicationDate', field:'publicationDate'})
         }
         if (availableResolutions && Array.isArray(availableResolutions)){
