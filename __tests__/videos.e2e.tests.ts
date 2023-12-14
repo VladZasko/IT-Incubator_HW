@@ -420,7 +420,7 @@ describe('/videos', () => {
     })
 
     it(`should update video with correct input module`, async () => {
-        const data: UpdateVideoModel = {
+        const data = {
             title: 'UpdateTitle',
             author: 'UpdateAuthor',
             availableResolutions: ["P1080"],
