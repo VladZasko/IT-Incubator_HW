@@ -1,8 +1,8 @@
 import request from 'supertest'
 import {app} from "../src/app";
 import {HTTP_STATUSES} from "../src/utils";
+import {CreateVideoType} from "../src/db/db";
 import {UpdateVideoModel} from "../src/features/videos/models/UpdateVideoModule";
-import {CreateVideoModel} from "../src/features/videos/models/CreateVideoModel";
 
 
 
@@ -119,7 +119,7 @@ describe('/videos', () => {
     let createdNewVideos01:any = null
     it(`should create video with correct input data`, async () => {
 
-        const data: CreateVideoModel = {
+        const data: CreateVideoType = {
             title: 'NewVideoTest',
             author: 'NewAuthorTest',
             availableResolutions: ["P144"]
@@ -147,7 +147,7 @@ describe('/videos', () => {
 
     let createdNewVideos02: any = null
     it(`created one more videos`, async () => {
-        const data: CreateVideoModel = {
+        const data: CreateVideoType = {
             title: 'NewVideoTest2',
             author: 'NewAuthorTest2',
             availableResolutions: ["P2160"]

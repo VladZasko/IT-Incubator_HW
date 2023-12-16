@@ -1,4 +1,4 @@
-import {AvailableResolutions} from "../db/db";
+import {AvailableResolutions} from "../../../db/db";
 
 export type VideosViewModel = {
     id: number

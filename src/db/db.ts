@@ -1,27 +1,11 @@
-
-export const AvailableResolutions = [
-    "P144",
-    "P240",
-    "P360",
-    "P480",
-    "P720",
-    "P1080",
-    "P1440",
-    "P2160"]
-
-export type VideoType = {
-    id: number
-    title: string
-    author: string
-    canBeDownloaded: boolean
-    minAgeRestriction: number | null
-    createdAt: string
-    publicationDate: string
-    availableResolutions: typeof AvailableResolutions
-}
+import {VideoType} from "./videos.types";
+import {BlogType} from "./blogs.types";
+import {PostType} from "./posts.types";
 
 export type DBType = {
     videos: VideoType[]
+    blogs: BlogType[]
+    posts: PostType[]
 }
 
 export const db: DBType = {
@@ -38,13 +22,27 @@ export const db: DBType = {
                 "P144"
             ]
         }
+    ],
+    blogs: [
+        {
+            id: '12345',
+            name: 'Uladzislau',
+            description: 'string',
+            websiteUrl: 'https://8PKvNFTdAa9KpkqwxaUuxe8lWeFSE7_ZCKlj9pbpNrJzLNbqa7SQo9.PmeYHjCdu9pHIFVaIjHT3wNefhVEPEGeyroPI'
+        }
+    ],
+    posts: [
+        {
+            id: "22222",
+            title: "Post Title",
+            shortDescription: "short Descreption Posts",
+            content: "Posts Content",
+            blogId: 'Posts Blog Id',
+            blogName: 'Post Blog Name'
+        }
     ]
 }
-export type CreateVideoType = {
-    title: string
-    author: string
-    availableResolutions: typeof AvailableResolutions
-}
+
 export type ErrorMessageType = {
     message: string
     field: string

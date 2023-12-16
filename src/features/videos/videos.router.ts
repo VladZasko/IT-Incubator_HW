@@ -1,12 +1,13 @@
-import {RequestWithBody, RequestWithParams, RequestWithParamsAndBody, RequestWithQuery} from "../types";
-import {QueryVideosModel} from "../models/QueryVideosModule";
+import {RequestWithBody, RequestWithParams, RequestWithParamsAndBody, RequestWithQuery} from "../../types";
+import {QueryVideosModel} from "./models/QueryVideosModule";
 import express, {Response} from "express";
-import {HTTP_STATUSES} from "../utils";
-import {URIParamsCourseIdModel} from "../models/URIParamsVideoIdModule";
-import {VideosViewModel} from "../models/VideosViewModel";
-import {CreateVideoModel} from "../models/CreateVideoModel";
-import {UpdateVideoModel} from "../models/UpdateVideoModule";
-import {AvailableResolutions, DBType, ErrorType, VideoType} from "../db/db";
+import {HTTP_STATUSES} from "../../utils";
+import {VideosViewModel} from "./models/VideosViewModel";
+import {CreateVideoModel} from "./models/CreateVideoModel";
+import {UpdateVideoModel} from "./models/UpdateVideoModule";
+import {DBType, ErrorType} from "../../db/db";
+import {URIParamsCourseIdModel} from "../posts/models/URIParamsPostIdModule";
+import {AvailableResolutions, VideoType} from "../../db/videos.types";
 
 export const getVideosRoutes = (db: DBType) => {
     const router = express.Router()

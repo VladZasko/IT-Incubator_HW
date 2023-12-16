@@ -1,4 +1,4 @@
-import {AvailableResolutions} from "../db/db";
+import {AvailableResolutions} from "../../../db/videos.types";
 
 export type CreateVideoModel = {
     /**
