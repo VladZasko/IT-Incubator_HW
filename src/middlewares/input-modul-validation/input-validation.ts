@@ -7,7 +7,7 @@ export const inputValidation = (req: Request, res: Response, next: NextFunction)
             case 'field':
                 return {
                     message: error.msg,
-                    filed: error.path
+                    field: error.path
                 }
 
             default:
