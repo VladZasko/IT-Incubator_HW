@@ -1,6 +1,6 @@
-export type URIParamsCourseIdModel = {
+export type URIParamsPostIdModel = {
     /**
-     * id of existing course
+     * id of existing Post
      */
     id: string
 }

@@ -1,10 +1,9 @@
-import {AvailableResolutions} from "../../../db/db";
-
 export type CreatePostModel = {
     /**
-     * Video Title, Author, AvailableResolutions
+     * Post title, shortDescription, content, blogId
      */
-    title: string
-    author: string
-    availableResolutions: typeof AvailableResolutions
+    title: string,
+    shortDescription: string,
+    content: string,
+    blogId: string
 }

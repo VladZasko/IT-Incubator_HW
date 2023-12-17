@@ -6,8 +6,8 @@ import {VideosViewModel} from "./models/VideosViewModel";
 import {CreateVideoModel} from "./models/CreateVideoModel";
 import {UpdateVideoModel} from "./models/UpdateVideoModule";
 import {DBType, ErrorType} from "../../db/db";
-import {URIParamsCourseIdModel} from "../posts/models/URIParamsPostIdModule";
-import {AvailableResolutions, VideoType} from "../../db/videos.types";
+import {AvailableResolutions, VideoType} from "../../db/types/videos.types";
+import {URIParamsVideoIdModel} from "./models/URIParamsVideoIdModule";
 
 export const getVideosRoutes = (db: DBType) => {
     const router = express.Router()
@@ -17,7 +17,7 @@ export const getVideosRoutes = (db: DBType) => {
             .status(HTTP_STATUSES.OK_200)
             .send(db.videos)
     })
-    router.get('/:id', (req: RequestWithParams<URIParamsCourseIdModel>,
+    router.get('/:id', (req: RequestWithParams<URIParamsVideoIdModel>,
                             res: Response<VideosViewModel>) => {
         const id = +req.params.id
 
@@ -89,7 +89,7 @@ export const getVideosRoutes = (db: DBType) => {
             .status(HTTP_STATUSES.CREATED_201)
             .send(newVideo)
     })
-    router.put ('/:id', (req: RequestWithParamsAndBody<URIParamsCourseIdModel, UpdateVideoModel>,
+    router.put ('/:id', (req: RequestWithParamsAndBody<URIParamsVideoIdModel, UpdateVideoModel>,
                              res: Response) => {
         let errors: ErrorType = {
             errorsMessages: []
@@ -148,7 +148,7 @@ export const getVideosRoutes = (db: DBType) => {
         res.sendStatus(HTTP_STATUSES.NO_CONTENT_204)
 
     })
-    router.delete('/:id', (req: RequestWithParams<URIParamsCourseIdModel>,
+    router.delete('/:id', (req: RequestWithParams<URIParamsVideoIdModel>,
                                res) => {
         let foundVideo = db.videos.find(i => i.id === +req.params.id);
         if(!foundVideo) {

@@ -1,18 +1,13 @@
-import {AvailableResolutions} from "../../../db/db";
 
-export type UpdateVideoModel = {
+export type UpdatePostModel = {
     /**
-     *  Video title
-     *  Video author
-     *  Video availableResolutions
-     *  Video canBeDownloaded
-     *  Video minAgeRestriction
-     *  Video publicationDate
+     *  Post title
+     *  Post shortDescription
+     *  Post content
+     *  Post blogId
      */
-    title: string
-    author: string
-    availableResolutions: typeof AvailableResolutions
-    canBeDownloaded: boolean
-    minAgeRestriction: number
-    publicationDate: string
+    title: string,
+    shortDescription: string,
+    content: string,
+    blogId: string
 }

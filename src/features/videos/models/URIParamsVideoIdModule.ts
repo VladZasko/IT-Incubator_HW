@@ -1,4 +1,4 @@
-export type URIParamsBlogsIdModel = {
+export type URIParamsVideoIdModel = {
     /**
      * id of existing course
      */

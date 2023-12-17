@@ -1,484 +1,410 @@
 import request from 'supertest'
 import {app} from "../src/app";
 import {HTTP_STATUSES} from "../src/utils";
-import {CreateVideoType} from "../src/db/db";
-import {UpdateVideoModel} from "../src/features/videos/models/UpdateVideoModule";
-
+import {CreateBlogModel} from "../src/features/blogs/models/CreateBlogModel";
 
 
 const getRequest = () => {
     return request(app)
 }
-describe('/videos', () => {
+describe('/posts', () => {
     beforeAll(async() => {
         await getRequest().delete('/testing/all-data')
     })
 
     it ('should return 200 and empty array', async () => {
         await getRequest()
-            .get('/videos')
+            .get('/posts')
             .expect(HTTP_STATUSES.OK_200, [])
     })
 
-    it ('should return 404 fot not existing videos', async () => {
+    it ('should return 404 fot not existing posts', async () => {
         await getRequest()
-            .get('/videos/1')
+            .get('/posts/1')
             .expect(HTTP_STATUSES.NOT_FOUND_404)
     })
 
-    it(`shouldn't create video with empty title`, async () => {
+    it(`shouldn't create post with UNAUTHORIZED`, async () => {
         await request(app)
-            .post('/videos')
+            .post('/posts')
+            .set('authorization', 'Basic YWRtaW')
+            .send({
+                title: 'TestPost',
+                shortDescription: 'TestPost',
+                content: 'TestPost',
+                blogId: 'TestPost'
+            })
+            .expect(HTTP_STATUSES.UNAUTHORIZED_401)
+    })
+
+    it(`shouldn't create post with empty title`, async () => {
+        await request(app)
+            .post('/posts')
+            .set('authorization', 'Basic YWRtaW46cXdlcnR5')
             .send({
                 title: '',
-                author: 'NewAuthorTest',
-                availableResolutions: ["P144"]
-        })
-            .expect(HTTP_STATUSES.BAD_REQUEST_400)
-
-        await request(app)
-            .get('/videos')
-            .expect(HTTP_STATUSES.OK_200, [])
-    })
-
-    it(`shouldn't create video with title more than 40 characters`, async () => {
-        await request(app)
-            .post('/videos')
-            .send({
-                title: 'NewVideosNewVideosNewVideosNewVideosNewVideos',
-                author: 'NewAuthorTest',
-                availableResolutions: ["P144"]
+                shortDescription: 'TestPost',
+                content: 'TestPost',
+                blogId: 'TestPost'
             })
             .expect(HTTP_STATUSES.BAD_REQUEST_400)
 
         await request(app)
-            .get('/videos')
+            .get('/blogs')
             .expect(HTTP_STATUSES.OK_200, [])
     })
 
-    it(`shouldn't create video with empty author`, async () => {
+    it(`shouldn't create blog with name more than 15 characters`, async () => {
         await request(app)
-            .post('/videos')
+            .post('/blogs')
+            .set('authorization', 'Basic YWRtaW46cXdlcnR5')
             .send({
-                title: 'NewVideoTest',
-                author: '',
-                availableResolutions: ["P144"]
+                name: 'NewName15-NewName15',
+                description: 'string',
+                websiteUrl: 'string'
             })
             .expect(HTTP_STATUSES.BAD_REQUEST_400)
 
         await request(app)
-            .get('/videos')
+            .get('/blogs')
             .expect(HTTP_STATUSES.OK_200, [])
     })
 
-    it(`shouldn't create video with author more than 20 characters`, async () => {
+    it(`shouldn't create blog with empty description`, async () => {
         await request(app)
-            .post('/videos')
+            .post('/blogs')
+            .set('authorization', 'Basic YWRtaW46cXdlcnR5')
             .send({
-                title: 'NewVideoTest',
-                author: 'NewAuthorTestNewAuthorTest',
-                availableResolutions: ["P144"]
+                name: 'NewName',
+                description: '',
+                websiteUrl: 'string'
             })
             .expect(HTTP_STATUSES.BAD_REQUEST_400)
 
         await request(app)
-            .get('/videos')
+            .get('/blogs')
             .expect(HTTP_STATUSES.OK_200, [])
     })
 
-    it(`shouldn't create video with incorrect availableResolutions`, async () => {
+    it(`shouldn't create blogs with description more than 500 characters`, async () => {
         await request(app)
-            .post('/videos')
+            .post('/blogs')
+            .set('authorization', 'Basic YWRtaW46cXdlcnR5')
             .send({
-                title: 'NewVideoTest',
-                author: 'NewAuthorTest',
-                availableResolutions: ['P1']
+                name: 'NewName',
+                description: 'Cartel talk does not allow modern research replicated from foreign sources to overcome the current difficult economic situation and appear as contenders for the role of key factors. By the way, basic settings for user behavior can be considered a social-democratic anathema. Here is a memorable example of a modern trend: high quality positional research predetermines our relevance and deep mental reasoning. But the development of modern methodology reveals the urgent need for a personnel training system that meets urgent needs.',
+                websiteUrl: 'string'
             })
             .expect(HTTP_STATUSES.BAD_REQUEST_400)
 
         await request(app)
-            .get('/videos')
+            .get('/blogs')
             .expect(HTTP_STATUSES.OK_200, [])
     })
 
-    it(`shouldn't create video with empty availableResolutions`, async () => {
+    it(`shouldn't create blogs with empty websiteUrl`, async () => {
         await request(app)
-            .post('/videos')
+            .post('/blogs')
+            .set('authorization', 'Basic YWRtaW46cXdlcnR5')
             .send({
-                title: 'NewVideoTest',
-                author: 'NewAuthorTest',
-                availableResolutions: []
+                name: 'NewName',
+                description: 'NewDescription',
+                websiteUrl: ''
             })
             .expect(HTTP_STATUSES.BAD_REQUEST_400)
 
         await request(app)
-            .get('/videos')
+            .get('/blogs')
+            .expect(HTTP_STATUSES.OK_200, [])
+    })
+    it(`shouldn't create blogs with websiteUrl more than 100 characters`, async () => {
+        await request(app)
+            .post('/blogs')
+            .set('authorization', 'Basic YWRtaW46cXdlcnR5')
+            .send({
+                name: 'NewName',
+                description: 'NewDescription',
+                websiteUrl: 'https://ibpg10OVF2B4QRlTzRi65UjXsbrgFh3OHmUX1nDrbyqEoKFyK2hFxl._BUVCPEEnX_ldiwp9uDYI0XMDiwUWalUNGNh_._BUVCPEEnX_ldiwp9uDYI0XMDiwUWalUNGNh_'
+            })
+            .expect(HTTP_STATUSES.BAD_REQUEST_400)
+
+        await request(app)
+            .get('/blogs')
             .expect(HTTP_STATUSES.OK_200, [])
     })
 
-    let createdNewVideos01:any = null
-    it(`should create video with correct input data`, async () => {
+    it(`shouldn't create blogs with websiteUrl that does not match the pattern`, async () => {
+        await request(app)
+            .post('/blogs')
+            .set('authorization', 'Basic YWRtaW46cXdlcnR5')
+            .send({
+                name: 'NewName',
+                description: 'NewDescription',
+                websiteUrl: 'NewTestWebsiteUrl'
+            })
+            .expect(HTTP_STATUSES.BAD_REQUEST_400)
 
-        const data: CreateVideoType = {
-            title: 'NewVideoTest',
-            author: 'NewAuthorTest',
-            availableResolutions: ["P144"]
+        await request(app)
+            .get('/blogs')
+            .expect(HTTP_STATUSES.OK_200, [])
+    })
+
+    let createdNewBlog01:any = null
+    it(`should create blog with correct input data`, async () => {
+
+        const data: CreateBlogModel = {
+            name: 'NewTestName',
+            description: 'NewTestDescription',
+            websiteUrl: 'https://ibpg10OVF2B4QRlTzRi65UjXsbrgFh3OHmUX1nDrbyqEoKFyK2hFxl._BUVCPEEnX_ldiwp9uDYI0XMDiwUWalUNGNh_'
         }
 
         const createResponse = await request(app)
-            .post('/videos/')
+            .post('/blogs')
+            .set('authorization', 'Basic YWRtaW46cXdlcnR5')
             .send(data)
             .expect(HTTP_STATUSES.CREATED_201)
 
-        createdNewVideos01 = createResponse.body;
+        createdNewBlog01 = createResponse.body;
 
-        expect(createdNewVideos01).toEqual({
-            ...createdNewVideos01,
-            id: expect.any(Number),
-            title: data.title,
-            author: data.author,
-            availableResolutions: data.availableResolutions
+        expect(createdNewBlog01).toEqual({
+            ...createdNewBlog01,
+            id: expect.any(String),
+            name: data.name,
+            description: data.description,
+            websiteUrl: data.websiteUrl
         })
 
         await request(app)
-            .get('/videos/')
-            .expect(HTTP_STATUSES.OK_200, [createdNewVideos01])
+            .get('/blogs')
+            .expect(HTTP_STATUSES.OK_200, [createdNewBlog01])
     })
 
-    let createdNewVideos02: any = null
-    it(`created one more videos`, async () => {
-        const data: CreateVideoType = {
-            title: 'NewVideoTest2',
-            author: 'NewAuthorTest2',
-            availableResolutions: ["P2160"]
+    let createdNewBlog02:any = null
+    it(`created one more blogs`, async () => {
+
+        const data: CreateBlogModel = {
+            name: 'NewTestNameMore',
+            description: 'NewTestDescriptionMore',
+            websiteUrl: 'https://ibpg10OVF2B4QRlTzRi65UjXsbrgFh3OHmUX1nDrbyqEoKFyK2hFxl._BUVCPEEnX_ldiwp9uDYI0XMDiwUWalUNGNh_'
         }
 
         const createResponse = await request(app)
-            .post('/videos/')
+            .post('/blogs')
+            .set('authorization', 'Basic YWRtaW46cXdlcnR5')
             .send(data)
             .expect(HTTP_STATUSES.CREATED_201)
 
-        createdNewVideos02 = createResponse.body;
+        createdNewBlog02 = createResponse.body;
 
-        expect(createdNewVideos02).toEqual({
-            ...createdNewVideos02,
-            id: expect.any(Number),
-            title: data.title,
-            author: data.author,
-            availableResolutions: data.availableResolutions
+        expect(createdNewBlog02).toEqual({
+            ...createdNewBlog02,
+            id: expect.any(String),
+            name: data.name,
+            description: data.description,
+            websiteUrl: data.websiteUrl
         })
 
         await request(app)
-            .get('/videos/')
-            .expect(HTTP_STATUSES.OK_200, [createdNewVideos01, createdNewVideos02])
+            .get('/blogs')
+            .expect(HTTP_STATUSES.OK_200, [createdNewBlog01, createdNewBlog02])
     })
 
-    it ('should return 404 fot not existing videos for update', async () => {
+    it ('should return 404 fot not existing blogs for update', async () => {
+        const data = {
+            name: 'UpdateTest',
+            description: 'UpdateTest',
+            websiteUrl: 'https://ibpg10OVF2B4QRlTzRi65UjXsbrgFh3OHmUX1nDrbyqEoKFyK2hFxl._BUVCPEEnX_ldiwp9uDYI0XMDiwUWalUNGNh_'
+        }
+
+
         await getRequest()
-            .put('/videos/11515')
+            .put('/blogs/11515')
+            .set('authorization', 'Basic YWRtaW46cXdlcnR5')
+            .send(data)
             .expect(HTTP_STATUSES.NOT_FOUND_404)
     })
 
-    it(`shouldn't update video with empty title`, async () => {
-        const data: UpdateVideoModel = {
-            title: '',
-            author: 'UpdateAuthor',
-            availableResolutions: ["P1080"],
-            canBeDownloaded: true,
-            minAgeRestriction: 3,
-            publicationDate: '2023-12-11T08:40:46.569Z'
-        }
-
+    it(`shouldn't update blog with UNAUTHORIZED`, async () => {
         await request(app)
-            .put('/videos/' + createdNewVideos01.id)
-            .send(data)
+            .put(`/blogs/${createdNewBlog01.id}`)
+            .set('authorization', 'Basic YWRtaW')
+            .send({
+                name: 'string',
+                description: 'string',
+                websiteUrl: 'string'
+            })
+            .expect(HTTP_STATUSES.UNAUTHORIZED_401)
+    })
+
+    it(`shouldn't update blog with empty name`, async () => {
+        await request(app)
+            .put(`/blogs/${createdNewBlog01.id}`)
+            .set('authorization', 'Basic YWRtaW46cXdlcnR5')
+            .send({
+                name: '',
+                description: 'string',
+                websiteUrl: 'https://ibpg10OVF2B4QRlTzRi65UjXsbrgFh3OHmUX1nDrbyqEoKFyK2hFxl._BUVCPEEnX_ldiwp9uDYI0XMDiwUWalUNGNh_'
+            })
             .expect(HTTP_STATUSES.BAD_REQUEST_400)
 
         await request(app)
-            .get('/videos/' + createdNewVideos01.id)
-            .expect(HTTP_STATUSES.OK_200, createdNewVideos01)
+            .get(`/blogs/${createdNewBlog01.id}`)
+            .expect(HTTP_STATUSES.OK_200, createdNewBlog01)
     })
 
-    it(`shouldn't update video with title more than 40 characters`, async () => {
-        const data: UpdateVideoModel = {
-            title: 'UpdateTitleUpdateTitleUpdateTitleUpdateTitle',
-            author: 'UpdateAuthor',
-            availableResolutions: ["P1080"],
-            canBeDownloaded: true,
-            minAgeRestriction: 3,
-            publicationDate: '2023-12-11T08:40:46.569Z'
-        }
-
+    it(`shouldn't update blog with name more than 15 characters`, async () => {
         await request(app)
-            .put('/videos/' + createdNewVideos01.id)
-            .send(data)
+            .put(`/blogs/${createdNewBlog01.id}`)
+            .set('authorization', 'Basic YWRtaW46cXdlcnR5')
+            .send({
+                name: 'UpdateNameUpdateName',
+                description: 'string',
+                websiteUrl: 'https://ibpg10OVF2B4QRlTzRi65UjXsbrgFh3OHmUX1nDrbyqEoKFyK2hFxl._BUVCPEEnX_ldiwp9uDYI0XMDiwUWalUNGNh_'
+            })
             .expect(HTTP_STATUSES.BAD_REQUEST_400)
 
         await request(app)
-            .get('/videos/' + createdNewVideos01.id)
-            .expect(HTTP_STATUSES.OK_200, createdNewVideos01)
+            .get(`/blogs/${createdNewBlog01.id}`)
+            .expect(HTTP_STATUSES.OK_200, createdNewBlog01)
     })
 
-    it(`shouldn't update video with empty author`, async () => {
-        const data: UpdateVideoModel = {
-            title: 'UpdateTitle',
-            author: '',
-            availableResolutions: ["P1080"],
-            canBeDownloaded: true,
-            minAgeRestriction: 3,
-            publicationDate: '2023-12-11T08:40:46.569Z'
-        }
-
+    it(`shouldn't update blog with empty description`, async () => {
         await request(app)
-            .put('/videos/' + createdNewVideos01.id)
-            .send(data)
+            .put(`/blogs/${createdNewBlog01.id}`)
+            .set('authorization', 'Basic YWRtaW46cXdlcnR5')
+            .send({
+                name: 'UpdateName',
+                description: '',
+                websiteUrl: 'https://ibpg10OVF2B4QRlTzRi65UjXsbrgFh3OHmUX1nDrbyqEoKFyK2hFxl._BUVCPEEnX_ldiwp9uDYI0XMDiwUWalUNGNh_'
+            })
             .expect(HTTP_STATUSES.BAD_REQUEST_400)
 
         await request(app)
-            .get('/videos/' + createdNewVideos01.id)
-            .expect(HTTP_STATUSES.OK_200, createdNewVideos01)
+            .get(`/blogs/${createdNewBlog01.id}`)
+            .expect(HTTP_STATUSES.OK_200, createdNewBlog01)
     })
 
-    it(`shouldn't update video with author more than 20 characters`, async () => {
-        const data: UpdateVideoModel = {
-            title: 'UpdateTitle',
-            author: 'UpdateAuthorUpdateAuthor',
-            availableResolutions: ["P1080"],
-            canBeDownloaded: true,
-            minAgeRestriction: 3,
-            publicationDate: '2023-12-11T08:40:46.569Z'
-        }
-
+    it(`shouldn't update blogs with description more than 500 characters`, async () => {
         await request(app)
-            .put('/videos/' + createdNewVideos01.id)
-            .send(data)
+            .put(`/blogs/${createdNewBlog01.id}`)
+            .set('authorization', 'Basic YWRtaW46cXdlcnR5')
+            .send({
+                name: 'UpdateName',
+                description: 'Cartel talk does not allow modern research replicated from foreign sources to overcome the current difficult economic situation and appear as contenders for the role of key factors. By the way, basic settings for user behavior can be considered a social-democratic anathema. Here is a memorable example of a modern trend: high quality positional research predetermines our relevance and deep mental reasoning. But the development of modern methodology reveals the urgent need for a personnel training system that meets urgent needs.',
+                websiteUrl: 'https://ibpg10OVF2B4QRlTzRi65UjXsbrgFh3OHmUX1nDrbyqEoKFyK2hFxl._BUVCPEEnX_ldiwp9uDYI0XMDiwUWalUNGNh_'
+            })
             .expect(HTTP_STATUSES.BAD_REQUEST_400)
 
         await request(app)
-            .get('/videos/' + createdNewVideos01.id)
-            .expect(HTTP_STATUSES.OK_200, createdNewVideos01)
+            .get(`/blogs/${createdNewBlog01.id}`)
+            .expect(HTTP_STATUSES.OK_200, createdNewBlog01)
     })
 
-    it(`shouldn't update video with incorrect availableResolutions`, async () => {
-        const data: UpdateVideoModel = {
-            title: 'UpdateTitle',
-            author: 'UpdateAuthor',
-            availableResolutions: ["P1"],
-            canBeDownloaded: true,
-            minAgeRestriction: 3,
-            publicationDate: '2023-12-11T08:40:46.569Z'
-        }
-
+    it(`shouldn't update blogs with empty websiteUrl`, async () => {
         await request(app)
-            .put('/videos/' + createdNewVideos01.id)
-            .send(data)
+            .put(`/blogs/${createdNewBlog01.id}`)
+            .set('authorization', 'Basic YWRtaW46cXdlcnR5')
+            .send({
+                name: 'UpdateName',
+                description: 'UpdateDescription',
+                websiteUrl: ''
+            })
             .expect(HTTP_STATUSES.BAD_REQUEST_400)
 
         await request(app)
-            .get('/videos/' + createdNewVideos01.id)
-            .expect(HTTP_STATUSES.OK_200, createdNewVideos01)
+            .get(`/blogs/${createdNewBlog01.id}`)
+            .expect(HTTP_STATUSES.OK_200, createdNewBlog01)
     })
-
-    it(`shouldn't update video with empty availableResolutions`, async () => {
-        const data: UpdateVideoModel = {
-            title: 'UpdateTitle',
-            author: 'UpdateAuthor',
-            availableResolutions: [],
-            canBeDownloaded: true,
-            minAgeRestriction: 3,
-            publicationDate: '2023-12-11T08:40:46.569Z'
-        }
-
+    it(`shouldn't update blogs with websiteUrl more than 100 characters`, async () => {
         await request(app)
-            .put('/videos/' + createdNewVideos01.id)
-            .send(data)
+            .put(`/blogs/${createdNewBlog01.id}`)
+            .set('authorization', 'Basic YWRtaW46cXdlcnR5')
+            .send({
+                name: 'UpdateName',
+                description: 'UpdateDescription',
+                websiteUrl: 'https://ibpg10OVF2B4QRlTzRi65UjXsbrgFh3OHmUX1nDrbyqEoKFyK2hFxl._BUVCPEEnX_ldiwp9uDYI0XMDiwUWalUNGNh_._BUVCPEEnX_ldiwp9uDYI0XMDiwUWalUNGNh_'
+            })
             .expect(HTTP_STATUSES.BAD_REQUEST_400)
 
         await request(app)
-            .get('/videos/' + createdNewVideos01.id)
-            .expect(HTTP_STATUSES.OK_200, createdNewVideos01)
+            .get(`/blogs/${createdNewBlog01.id}`)
+            .expect(HTTP_STATUSES.OK_200, createdNewBlog01)
     })
 
-    it(`shouldn't update video with incorrect canBeDownloaded`, async () => {
+    it(`shouldn't update blogs with websiteUrl that does not match the pattern`, async () => {
+        await request(app)
+            .put(`/blogs/${createdNewBlog01.id}`)
+            .set('authorization', 'Basic YWRtaW46cXdlcnR5')
+            .send({
+                name: 'UpdateName',
+                description: 'UpdateDescription',
+                websiteUrl: 'UpdateURLTest_UpdateURLTest_UpdateURLTest'
+            })
+            .expect(HTTP_STATUSES.BAD_REQUEST_400)
+
+        await request(app)
+            .get(`/blogs/${createdNewBlog01.id}`)
+            .expect(HTTP_STATUSES.OK_200, createdNewBlog01)
+    })
+
+    it(`should update blog with correct input module`, async () => {
         const data = {
-            title: 'UpdateTitle',
-            author: 'UpdateAuthor',
-            availableResolutions: ["P144"],
-            canBeDownloaded: "string",
-            minAgeRestriction: 3,
-            publicationDate: '2023-12-11T08:40:46.569Z'
+            name: 'UpdateTest',
+            description: 'UpdateTest',
+            websiteUrl: 'https://ibpg10OVF2B4QRlTzRi65UjXsbrgFh3OHmUX1nDrbyqEoKFyK2hFxl._BUVCPEEnX_ldiwp9uDYI0XMDiwUWalUNGNh_'
         }
 
         await request(app)
-            .put('/videos/' + createdNewVideos01.id)
-            .send(data)
-            .expect(HTTP_STATUSES.BAD_REQUEST_400)
-
-        await request(app)
-            .get('/videos/' + createdNewVideos01.id)
-            .expect(HTTP_STATUSES.OK_200, createdNewVideos01)
-    })
-
-    it(`shouldn't update video with incorrect canBeDownloaded`, async () => {
-        const data = {
-            title: 'UpdateTitle',
-            author: 'UpdateAuthor',
-            availableResolutions: ["P144"],
-            canBeDownloaded: null,
-            minAgeRestriction: 3,
-            publicationDate: '2023-12-11T08:40:46.569Z'
-        }
-
-        await request(app)
-            .put('/videos/' + createdNewVideos01.id)
-            .send(data)
-            .expect(HTTP_STATUSES.BAD_REQUEST_400)
-
-        await request(app)
-            .get('/videos/' + createdNewVideos01.id)
-            .expect(HTTP_STATUSES.OK_200, createdNewVideos01)
-    })
-
-    it(`shouldn't update video with minAgeRestriction more than 18 characters`, async () => {
-        const data: UpdateVideoModel = {
-            title: 'UpdateTitle',
-            author: 'UpdateAuthor',
-            availableResolutions: ["P144"],
-            canBeDownloaded: true,
-            minAgeRestriction: 19,
-            publicationDate: '2023-12-11T08:40:46.569Z'
-        }
-
-        await request(app)
-            .put('/videos/' + createdNewVideos01.id)
-            .send(data)
-            .expect(HTTP_STATUSES.BAD_REQUEST_400)
-
-        await request(app)
-            .get('/videos/' + createdNewVideos01.id)
-            .expect(HTTP_STATUSES.OK_200, createdNewVideos01)
-    })
-
-    it(`shouldn't update video with minAgeRestriction less than 1`, async () => {
-        const data: UpdateVideoModel = {
-            title: 'UpdateTitle',
-            author: 'UpdateAuthor',
-            availableResolutions: ["P144"],
-            canBeDownloaded: true,
-            minAgeRestriction: 0,
-            publicationDate: '2023-12-11T08:40:46.569Z'
-        }
-
-        await request(app)
-            .put('/videos/' + createdNewVideos01.id)
-            .send(data)
-            .expect(HTTP_STATUSES.BAD_REQUEST_400)
-
-        await request(app)
-            .get('/videos/' + createdNewVideos01.id)
-            .expect(HTTP_STATUSES.OK_200, createdNewVideos01)
-    })
-
-    it(`shouldn't update video with incorrect minAgeRestriction`, async () => {
-        const data = {
-            title: 'UpdateTitle',
-            author: 'UpdateAuthor',
-            availableResolutions: ["P144"],
-            canBeDownloaded: true,
-            minAgeRestriction: null,
-            publicationDate: '2023-12-11T08:40:46.569Z'
-        }
-
-        await request(app)
-            .put('/videos/' + createdNewVideos01.id)
-            .send(data)
-            .expect(HTTP_STATUSES.BAD_REQUEST_400)
-
-        await request(app)
-            .get('/videos/' + createdNewVideos01.id)
-            .expect(HTTP_STATUSES.OK_200, createdNewVideos01)
-    })
-
-    it(`shouldn't update video with incorrect publicationDate`, async () => {
-        const data: UpdateVideoModel = {
-            title: 'UpdateTitle',
-            author: 'UpdateAuthor',
-            availableResolutions: ["P144"],
-            canBeDownloaded: true,
-            minAgeRestriction: 15,
-            publicationDate: ''
-        }
-
-        await request(app)
-            .put('/videos/' + createdNewVideos01.id)
-            .send(data)
-            .expect(HTTP_STATUSES.BAD_REQUEST_400)
-
-        await request(app)
-            .get('/videos/' + createdNewVideos01.id)
-            .expect(HTTP_STATUSES.OK_200, createdNewVideos01)
-    })
-
-    it(`should update video with correct input module`, async () => {
-        const data = {
-            title: 'UpdateTitle',
-            author: 'UpdateAuthor',
-            availableResolutions: ["P1080"],
-            canBeDownloaded: true,
-            minAgeRestriction: 3,
-            publicationDate: '2023-12-11T08:40:46.569Z'
-        }
-
-        await request(app)
-            .put('/videos/' + createdNewVideos01.id)
+            .put(`/blogs/${createdNewBlog01.id}`)
+            .set('authorization', 'Basic YWRtaW46cXdlcnR5')
             .send(data)
             .expect(HTTP_STATUSES.NO_CONTENT_204)
 
         await request(app)
-            .get('/videos/' + createdNewVideos01.id)
+            .get(`/blogs/${createdNewBlog01.id}`)
             .expect(HTTP_STATUSES.OK_200, {
-                ...createdNewVideos01,
-                title: data.title,
-                canBeDownloaded: data.canBeDownloaded,
-                minAgeRestriction: data.minAgeRestriction,
-                publicationDate: data.publicationDate,
-                author: data.author,
-                availableResolutions: data.availableResolutions
+                ...createdNewBlog01,
+                name: data.name,
+                description: data.description,
+                websiteUrl: data.websiteUrl
             })
 
         await request(app)
-            .get('/videos/' + createdNewVideos02.id)
-            .expect(HTTP_STATUSES.OK_200, createdNewVideos02)
+            .get(`/blogs/${createdNewBlog02.id}`)
+            .expect(HTTP_STATUSES.OK_200, createdNewBlog02)
     })
 
-    it(`shouldn't delete  video`, async () => {
+    it(`shouldn't delete  blog`, async () => {
 
         await request(app)
-            .delete('/videos/7779161')
+            .delete('/blogs/7779161')
+            .set('authorization', 'Basic YWRtaW46cXdlcnR5')
             .expect(HTTP_STATUSES.NOT_FOUND_404)
     })
 
-        it(`should delete both video`, async () => {
+    it(`should delete both blog`, async () => {
 
         await request(app)
-            .delete('/videos/' + createdNewVideos01.id)
+            .delete(`/blogs/${createdNewBlog01.id}`)
+            .set('authorization', 'Basic YWRtaW46cXdlcnR5')
             .expect(HTTP_STATUSES.NO_CONTENT_204)
 
         await request(app)
-            .get('/videos/' + createdNewVideos01.id)
+            .get(`/blogs/${createdNewBlog01.id}`)
             .expect(HTTP_STATUSES.NOT_FOUND_404)
 
         await request(app)
-            .delete('/videos/' + createdNewVideos02.id)
+            .delete(`/blogs/${createdNewBlog02.id}`)
+            .set('authorization', 'Basic YWRtaW46cXdlcnR5')
             .expect(HTTP_STATUSES.NO_CONTENT_204)
 
 
         await request(app)
-            .get('/videos/' + createdNewVideos02.id)
+            .get(`/blogs/${createdNewBlog02.id}`)
             .expect(HTTP_STATUSES.NOT_FOUND_404)
 
         await request(app)
-            .get('/videos/')
+            .get('/blogs/')
             .expect(HTTP_STATUSES.OK_200, [])
     })
 

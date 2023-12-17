@@ -4,6 +4,7 @@ import {RouterPaths} from "./routerPaths";
 import {getVideosRoutes} from "./features/videos/videos.router";
 import {getTestsRouter} from "./routes/tests";
 import {getBlogsRoutes} from "./features/blogs/blogs.router";
+import {getPostsRoutes} from "./features/posts/posts.router";
 
 export const app = express()
 export const jsonBodyMiddleWare = express.json()
@@ -12,6 +13,7 @@ app.use(jsonBodyMiddleWare)
 
 app.use(RouterPaths.videos, getVideosRoutes(db))
 app.use(RouterPaths.blogs, getBlogsRoutes(db))
+app.use(RouterPaths.posts, getPostsRoutes(db))
 //app.use(RouterPaths.videos, getVideosRoutes(db))
 app.use(RouterPaths.testing, getTestsRouter(db))
 

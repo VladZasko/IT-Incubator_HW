@@ -1,161 +1,68 @@
 import {RequestWithBody, RequestWithParams, RequestWithParamsAndBody, RequestWithQuery} from "../../types";
-import {QueryVideosModel} from "./models/QueryPostsModule";
+
 import express, {Response} from "express";
 import {HTTP_STATUSES} from "../../utils";
-import {URIParamsCourseIdModel} from "./models/URIParamsPostIdModule";
+
+import {DBType} from "../../db/db";
+
+import {authMiddleware} from "../../middlewares/auth/auth-middleware";
+import {QueryPostsModel} from "./models/QueryPostsModule";
+import {PostRepository} from "./repositories/post-repository";
+import {URIParamsPostIdModel} from "./models/URIParamsPostIdModule";
 import {PostsViewModel} from "./models/PostsViewModel";
+import {postValidation} from "./validator/post-validator";
 import {CreatePostModel} from "./models/CreatePostModel";
-import {UpdateVideoModel} from "./models/UpdatePostModule";
-import {AvailableResolutions, DBType, ErrorType, VideoType} from "../../db/db";
+import {UpdatePostModel} from "./models/UpdatePostModule";
 
-export const getVideosRoutes = (db: DBType) => {
+export const getPostsRoutes = (db: DBType) => {
     const router = express.Router()
-    router.get('/', (req: RequestWithQuery<QueryVideosModel>,
-                        res: Response) => {
+    router.get('/', (req: RequestWithQuery<QueryPostsModel>,
+                     res: Response) => {
+        const posts = PostRepository.getAllPosts()
+
+        res.send(posts)
+    })
+    router.get('/:id', (req: RequestWithParams<URIParamsPostIdModel>,
+                        res: Response<PostsViewModel>) => {
+        const id = req.params.id
+
+        const Post = PostRepository.getPostById(id)
+
+        if (!Post){
+            res.sendStatus(404)
+        }
+
+        res.send(Post)
+    })
+    router.post('/', authMiddleware, postValidation(), (req:RequestWithBody<CreatePostModel>,
+                                                        res: Response) => {
+
+        const newPost = PostRepository.createPost(req.body.title, req.body.shortDescription, req.body.content, req.body.blogId)
+
         res
-            .status(HTTP_STATUSES.OK_200)
-            .send(db.videos)
+            .status(201)
+            .send(newPost)
+
     })
-    router.get('/:id', (req: RequestWithParams<URIParamsCourseIdModel>,
-                            res: Response<PostsViewModel>) => {
-        const id = +req.params.id
 
-        const video = db.videos.find(v => v.id === id)
+    router.put ('/:id', authMiddleware, postValidation(), (req: RequestWithParamsAndBody<URIParamsPostIdModel, UpdatePostModel>,
+                                                           res: Response) => {
+        const updatePost = PostRepository.updatePost(req.params.id, req.body.title, req.body.shortDescription, req.body.content, req.body.blogId)
 
-        if(!video) {
-            res.sendStatus(HTTP_STATUSES.NOT_FOUND_404);
-            return;
+        if (!updatePost){
+            res.sendStatus(404)
         }
-
-        res.send({
-            id: video.id,
-            title: video.title,
-            author: video.author,
-            canBeDownloaded: video.canBeDownloaded,
-            minAgeRestriction: video.minAgeRestriction,
-            createdAt: video.createdAt,
-            publicationDate: video.publicationDate,
-            availableResolutions: video.availableResolutions
-        })
-    })
-    router.post('/', (req:RequestWithBody<CreatePostModel>,
-                         res: Response) => {
-        let errors: ErrorType = {
-            errorsMessages: []
-        }
-        let {title, author, availableResolutions} = req.body
-
-        if (!title || !title.trim() || title.trim().length > 40) {
-            errors.errorsMessages.push({message:'Invalid title', field:'title'})
-        }
-        if (!author || !author.trim() || author.trim().length > 20) {
-            errors.errorsMessages.push({message:'Invalid author', field:'author'})
-        }
-        if (!availableResolutions || availableResolutions.length === 0) {
-            errors.errorsMessages.push({message:'Invalid availableResolutions', field:'availableResolutions'})
-        }
-        if (availableResolutions && Array.isArray(availableResolutions)){
-            availableResolutions.forEach((r) => {
-                !AvailableResolutions.includes(r) && errors.errorsMessages.push({message:'Invalid availableResolutions!', field:'availableResolutions'})
-            })
-        } else {
-            availableResolutions = []
-        }
-        if (errors.errorsMessages.length){
-            res.status(HTTP_STATUSES.BAD_REQUEST_400).send(errors)
-            return;
-        }
-
-        const createdAt = new Date()
-        const publicationDate = new Date()
-
-        publicationDate.setDate(createdAt.getDate()+1)
-
-        const newVideo: VideoType  = {
-            id: +(new Date()),
-            canBeDownloaded: false,
-            minAgeRestriction: null,
-            createdAt: createdAt.toISOString(),
-            publicationDate: publicationDate.toISOString(),
-            title,
-            author,
-            availableResolutions
-
-        }
-
-        db.videos.push(newVideo)
-        res
-            .status(HTTP_STATUSES.CREATED_201)
-            .send(newVideo)
-    })
-    router.put ('/:id', (req: RequestWithParamsAndBody<URIParamsCourseIdModel, UpdateVideoModel>,
-                             res: Response) => {
-        let errors: ErrorType = {
-            errorsMessages: []
-        }
-        let {title, author, availableResolutions, canBeDownloaded, minAgeRestriction, publicationDate} = req.body
-
-        let foundVideo = db.videos.find(i => i.id === +req.params.id);
-        if(!foundVideo) {
-            res.sendStatus(HTTP_STATUSES.NOT_FOUND_404);
-            return;
-        }
-
-        if (!title || !title.trim() || title.trim().length > 40) {
-            errors.errorsMessages.push({message:'Invalid title', field:'title'})
-        }
-        if (!author || !author.trim() || author.length > 20) {
-            errors.errorsMessages.push({message:'Invalid author', field:'author'})
-        }
-        if (!canBeDownloaded || typeof (canBeDownloaded) !== "boolean") {
-            errors.errorsMessages.push({message:'Invalid canBeDownloaded', field:'canBeDownloaded'})
-        }
-        if (!availableResolutions || availableResolutions.length === 0) {
-            errors.errorsMessages.push({message:'Invalid availableResolutions', field:'availableResolutions'})
-        }
-
-        if (!minAgeRestriction || !minAgeRestriction === null || minAgeRestriction < 1 || minAgeRestriction > 18) {
-            errors.errorsMessages.push({message:'Invalid minAgeRestriction', field:'minAgeRestriction'})
-        }
-
-        const newDateISOString = new Date().toISOString()
-
-        if (!publicationDate || publicationDate.length < newDateISOString.length || typeof (publicationDate) !== "string" ) {
-            errors.errorsMessages.push({message:'Invalid publicationDate', field:'publicationDate'})
-        }
-        if (availableResolutions && Array.isArray(availableResolutions)){
-            availableResolutions.forEach((r) => {
-                !AvailableResolutions.includes(r) && errors.errorsMessages.push({message:'Invalid availableResolutions!', field:'availableResolutions'})
-            })
-        } else {
-            availableResolutions = []
-        }
-        if (errors.errorsMessages.length){
-            res.status(HTTP_STATUSES.BAD_REQUEST_400).send(errors)
-            return;
-        }
-
-
-
-        foundVideo.title = req.body.title;
-        foundVideo.author = req.body.author;
-        foundVideo.availableResolutions = req.body.availableResolutions;
-        foundVideo.canBeDownloaded = req.body.canBeDownloaded;
-        foundVideo.minAgeRestriction = req.body.minAgeRestriction;
-        foundVideo.publicationDate = req.body.publicationDate;
 
         res.sendStatus(HTTP_STATUSES.NO_CONTENT_204)
 
     })
-    router.delete('/:id', (req: RequestWithParams<URIParamsCourseIdModel>,
-                               res) => {
-        let foundVideo = db.videos.find(i => i.id === +req.params.id);
-        if(!foundVideo) {
-            res.sendStatus(HTTP_STATUSES.NOT_FOUND_404);
-            return;
-        }
-        db.videos = db.videos.filter(c => c.id !== +req.params.id)
+    router.delete('/:id',authMiddleware,  (req: RequestWithParams<URIParamsPostIdModel>,
+                                           res) => {
 
+        const deletePost = PostRepository.deletePostById(req.params.id)
+        if(!deletePost) {
+            res.send(404)
+        }
         res.sendStatus(HTTP_STATUSES.NO_CONTENT_204)
     })
     return router;
