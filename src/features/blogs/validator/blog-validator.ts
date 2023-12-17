@@ -7,4 +7,4 @@ export const websiteUrlValidation = body('websiteUrl').isString().trim()
     .isLength({min:1, max:100}).withMessage('Incorrect websiteUrl!')
     .matches('^https://([a-zA-Z0-9_-]+\\.)+[a-zA-Z0-9_-]+(\\/[a-zA-Z0-9_-]+)*\\/?$').withMessage('Incorrect websiteUrl!')
 
-export const blogValidation = () => [ nameValidation, descriptionValidation, websiteUrlValidation, inputValidation]
+export const blogValidation = () => [  websiteUrlValidation, nameValidation, descriptionValidation, inputValidation]

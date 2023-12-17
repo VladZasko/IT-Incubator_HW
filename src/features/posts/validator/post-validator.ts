@@ -23,4 +23,4 @@ export const blogIdValidation = body('blogId').isString().trim().custom((value) 
 
     return true
 }).withMessage('Incorrect content')
-export const postValidation = () => [ titleValidation, shortDescriptionValidation, contentValidation, blogIdValidation,inputValidation]
+export const postValidation = () => [ shortDescriptionValidation, titleValidation, contentValidation, blogIdValidation,inputValidation]

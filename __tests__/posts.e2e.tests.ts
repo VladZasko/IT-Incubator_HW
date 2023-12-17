@@ -54,14 +54,15 @@ describe('/posts', () => {
             .expect(HTTP_STATUSES.OK_200, [])
     })
 
-    it(`shouldn't create blog with name more than 15 characters`, async () => {
+    it(`shouldn't create post with name more than 15 characters`, async () => {
         await request(app)
-            .post('/blogs')
+            .post('/posts')
             .set('authorization', 'Basic YWRtaW46cXdlcnR5')
             .send({
-                name: 'NewName15-NewName15',
-                description: 'string',
-                websiteUrl: 'string'
+                title: '',
+                shortDescription: 'TestPost',
+                content: 'TestPost',
+                blogId: 'TestPost'
             })
             .expect(HTTP_STATUSES.BAD_REQUEST_400)
 
