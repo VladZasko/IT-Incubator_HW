@@ -1,8 +1,8 @@
 import request from 'supertest'
-import {app} from "../src/app";
-import {HTTP_STATUSES} from "../src/utils";
-import {UpdateVideoModel} from "../src/features/videos/models/UpdateVideoModule";
-import {CreateVideoModel} from "../src/features/videos/models/CreateVideoModel";
+import {app} from "../../src/app";
+import {HTTP_STATUSES} from "../../src/utils";
+import {UpdateVideoModel} from "../../src/features/videos/models/UpdateVideoModule";
+import {CreateVideoModel} from "../../src/features/videos/models/CreateVideoModel";
 
 
 
