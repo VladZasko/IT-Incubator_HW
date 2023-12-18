@@ -1,6 +1,6 @@
 export type URIParamsVideoIdModel = {
     /**
-     * id of existing course
+     * id of existing Video
      */
     id: string
 }

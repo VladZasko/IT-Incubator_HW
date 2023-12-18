@@ -1,10 +1,7 @@
 import {RequestWithBody, RequestWithParams, RequestWithParamsAndBody, RequestWithQuery} from "../../types";
-
 import express, {Response} from "express";
 import {HTTP_STATUSES} from "../../utils";
-
 import {DBType} from "../../db/db";
-
 import {authMiddleware} from "../../middlewares/auth/auth-middleware";
 import {QueryPostsModel} from "./models/QueryPostsModule";
 import {PostRepository} from "./repositories/post-repository";
@@ -29,7 +26,7 @@ export const getPostsRoutes = (db: DBType) => {
         const Post = PostRepository.getPostById(id)
 
         if (!Post){
-            res.sendStatus(404)
+            res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
         }
 
         res.send(Post)
@@ -40,7 +37,7 @@ export const getPostsRoutes = (db: DBType) => {
         const newPost = PostRepository.createPost(req.body.title, req.body.shortDescription, req.body.content, req.body.blogId)
 
         res
-            .status(201)
+            .status(HTTP_STATUSES.CREATED_201)
             .send(newPost)
 
     })
@@ -50,7 +47,7 @@ export const getPostsRoutes = (db: DBType) => {
         const updatePost = PostRepository.updatePost(req.params.id, req.body.title, req.body.shortDescription, req.body.content, req.body.blogId)
 
         if (!updatePost){
-            res.sendStatus(404)
+            res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
         }
 
         res.sendStatus(HTTP_STATUSES.NO_CONTENT_204)
@@ -61,7 +58,7 @@ export const getPostsRoutes = (db: DBType) => {
 
         const deletePost = PostRepository.deletePostById(req.params.id)
         if(!deletePost) {
-            res.send(404)
+            res.send(HTTP_STATUSES.NOT_FOUND_404)
         }
         res.sendStatus(HTTP_STATUSES.NO_CONTENT_204)
     })

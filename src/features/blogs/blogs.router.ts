@@ -26,7 +26,7 @@ export const getBlogsRoutes = (db: DBType) => {
         const Blog = BlogRepository.getBlogById(id)
 
         if (!Blog){
-            res.sendStatus(404)
+            res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
         }
 
         res.send(Blog)
@@ -37,7 +37,7 @@ export const getBlogsRoutes = (db: DBType) => {
         const newBlog = BlogRepository.createBlog(req.body.name, req.body.description, req.body.websiteUrl)
 
         res
-            .status(201)
+            .status(HTTP_STATUSES.CREATED_201)
             .send(newBlog)
 
     })
@@ -47,7 +47,7 @@ export const getBlogsRoutes = (db: DBType) => {
         const updateBlog = BlogRepository.updateBlog(req.params.id, req.body.name, req.body.description, req.body.websiteUrl)
 
         if (!updateBlog){
-            res.sendStatus(404)
+            res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
         }
 
         res.sendStatus(HTTP_STATUSES.NO_CONTENT_204)
@@ -58,7 +58,7 @@ export const getBlogsRoutes = (db: DBType) => {
 
         const deleteBlog = BlogRepository.deleteBlogById(req.params.id)
         if(!deleteBlog) {
-            res.send(404)
+            res.send(HTTP_STATUSES.NOT_FOUND_404)
         }
         res.sendStatus(HTTP_STATUSES.NO_CONTENT_204)
     })

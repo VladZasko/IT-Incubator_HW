@@ -2,6 +2,7 @@ import request from 'supertest'
 import {app} from "../src/app";
 import {HTTP_STATUSES} from "../src/utils";
 import {CreateBlogModel} from "../src/features/blogs/models/CreateBlogModel";
+import {RouterPaths} from "../src/routerPaths";
 
 
 const getRequest = () => {
@@ -14,19 +15,19 @@ describe('/blogs', () => {
 
     it ('should return 200 and empty array', async () => {
         await getRequest()
-            .get('/blogs')
+            .get(RouterPaths.blogs)
             .expect(HTTP_STATUSES.OK_200, [])
     })
 
     it ('should return 404 fot not existing blogs', async () => {
         await getRequest()
-            .get('/blogs/1')
+            .get(`${RouterPaths.blogs}/1`)
             .expect(HTTP_STATUSES.NOT_FOUND_404)
     })
 
     it(`shouldn't create blog with UNAUTHORIZED`, async () => {
         await request(app)
-            .post('/blogs')
+            .post(RouterPaths.blogs)
             .set('authorization', 'Basic YWRtaW')
             .send({
                 name: 'string',
@@ -38,7 +39,7 @@ describe('/blogs', () => {
 
     it(`shouldn't create blog with empty name`, async () => {
         await request(app)
-            .post('/blogs')
+            .post(RouterPaths.blogs)
             .set('authorization', 'Basic YWRtaW46cXdlcnR5')
             .send({
                 name: '',
@@ -48,13 +49,13 @@ describe('/blogs', () => {
             .expect(HTTP_STATUSES.BAD_REQUEST_400)
 
         await request(app)
-            .get('/blogs')
+            .get(RouterPaths.blogs)
             .expect(HTTP_STATUSES.OK_200, [])
     })
 
     it(`shouldn't create blog with name more than 15 characters`, async () => {
         await request(app)
-            .post('/blogs')
+            .post(RouterPaths.blogs)
             .set('authorization', 'Basic YWRtaW46cXdlcnR5')
             .send({
                 name: 'NewName15-NewName15',
@@ -64,13 +65,13 @@ describe('/blogs', () => {
             .expect(HTTP_STATUSES.BAD_REQUEST_400)
 
         await request(app)
-            .get('/blogs')
+            .get(RouterPaths.blogs)
             .expect(HTTP_STATUSES.OK_200, [])
     })
 
     it(`shouldn't create blog with empty description`, async () => {
         await request(app)
-            .post('/blogs')
+            .post(RouterPaths.blogs)
             .set('authorization', 'Basic YWRtaW46cXdlcnR5')
             .send({
                 name: 'NewName',
@@ -80,13 +81,13 @@ describe('/blogs', () => {
             .expect(HTTP_STATUSES.BAD_REQUEST_400)
 
         await request(app)
-            .get('/blogs')
+            .get(RouterPaths.blogs)
             .expect(HTTP_STATUSES.OK_200, [])
     })
 
     it(`shouldn't create blogs with description more than 500 characters`, async () => {
         await request(app)
-            .post('/blogs')
+            .post(RouterPaths.blogs)
             .set('authorization', 'Basic YWRtaW46cXdlcnR5')
             .send({
                 name: 'NewName',
@@ -96,13 +97,13 @@ describe('/blogs', () => {
             .expect(HTTP_STATUSES.BAD_REQUEST_400)
 
         await request(app)
-            .get('/blogs')
+            .get(RouterPaths.blogs)
             .expect(HTTP_STATUSES.OK_200, [])
     })
 
     it(`shouldn't create blogs with empty websiteUrl`, async () => {
         await request(app)
-            .post('/blogs')
+            .post(RouterPaths.blogs)
             .set('authorization', 'Basic YWRtaW46cXdlcnR5')
             .send({
                 name: 'NewName',
@@ -112,12 +113,12 @@ describe('/blogs', () => {
             .expect(HTTP_STATUSES.BAD_REQUEST_400)
 
         await request(app)
-            .get('/blogs')
+            .get(RouterPaths.blogs)
             .expect(HTTP_STATUSES.OK_200, [])
     })
     it(`shouldn't create blogs with websiteUrl more than 100 characters`, async () => {
         await request(app)
-            .post('/blogs')
+            .post(RouterPaths.blogs)
             .set('authorization', 'Basic YWRtaW46cXdlcnR5')
             .send({
                 name: 'NewName',
@@ -127,13 +128,13 @@ describe('/blogs', () => {
             .expect(HTTP_STATUSES.BAD_REQUEST_400)
 
         await request(app)
-            .get('/blogs')
+            .get(RouterPaths.blogs)
             .expect(HTTP_STATUSES.OK_200, [])
     })
 
     it(`shouldn't create blogs with websiteUrl that does not match the pattern`, async () => {
         await request(app)
-            .post('/blogs')
+            .post(RouterPaths.blogs)
             .set('authorization', 'Basic YWRtaW46cXdlcnR5')
             .send({
                 name: 'NewName',
@@ -143,7 +144,7 @@ describe('/blogs', () => {
             .expect(HTTP_STATUSES.BAD_REQUEST_400)
 
         await request(app)
-            .get('/blogs')
+            .get(RouterPaths.blogs)
             .expect(HTTP_STATUSES.OK_200, [])
     })
 
@@ -157,7 +158,7 @@ describe('/blogs', () => {
         }
 
         const createResponse = await request(app)
-            .post('/blogs')
+            .post(RouterPaths.blogs)
             .set('authorization', 'Basic YWRtaW46cXdlcnR5')
             .send(data)
             .expect(HTTP_STATUSES.CREATED_201)
@@ -173,7 +174,7 @@ describe('/blogs', () => {
         })
 
         await request(app)
-            .get('/blogs')
+            .get(RouterPaths.blogs)
             .expect(HTTP_STATUSES.OK_200, [createdNewBlog01])
     })
 
@@ -187,7 +188,7 @@ describe('/blogs', () => {
         }
 
         const createResponse = await request(app)
-            .post('/blogs')
+            .post(RouterPaths.blogs)
             .set('authorization', 'Basic YWRtaW46cXdlcnR5')
             .send(data)
             .expect(HTTP_STATUSES.CREATED_201)
@@ -203,7 +204,7 @@ describe('/blogs', () => {
         })
 
         await request(app)
-            .get('/blogs')
+            .get(RouterPaths.blogs)
             .expect(HTTP_STATUSES.OK_200, [createdNewBlog01, createdNewBlog02])
     })
 
@@ -216,7 +217,7 @@ describe('/blogs', () => {
 
 
         await getRequest()
-            .put('/blogs/11515')
+            .put(`${RouterPaths.blogs}/11515`)
             .set('authorization', 'Basic YWRtaW46cXdlcnR5')
             .send(data)
             .expect(HTTP_STATUSES.NOT_FOUND_404)
@@ -224,7 +225,7 @@ describe('/blogs', () => {
 
     it(`shouldn't update blog with UNAUTHORIZED`, async () => {
         await request(app)
-            .put(`/blogs/${createdNewBlog01.id}`)
+            .put(`${RouterPaths.blogs}/${createdNewBlog01.id}`)
             .set('authorization', 'Basic YWRtaW')
             .send({
                 name: 'string',
@@ -236,7 +237,7 @@ describe('/blogs', () => {
 
     it(`shouldn't update blog with empty name`, async () => {
         await request(app)
-            .put(`/blogs/${createdNewBlog01.id}`)
+            .put(`${RouterPaths.blogs}/${createdNewBlog01.id}`)
             .set('authorization', 'Basic YWRtaW46cXdlcnR5')
             .send({
                 name: '',
@@ -246,13 +247,13 @@ describe('/blogs', () => {
             .expect(HTTP_STATUSES.BAD_REQUEST_400)
 
         await request(app)
-            .get(`/blogs/${createdNewBlog01.id}`)
+            .get(`${RouterPaths.blogs}/${createdNewBlog01.id}`)
             .expect(HTTP_STATUSES.OK_200, createdNewBlog01)
     })
 
     it(`shouldn't update blog with name more than 15 characters`, async () => {
         await request(app)
-            .put(`/blogs/${createdNewBlog01.id}`)
+            .put(`${RouterPaths.blogs}/${createdNewBlog01.id}`)
             .set('authorization', 'Basic YWRtaW46cXdlcnR5')
             .send({
                 name: 'UpdateNameUpdateName',
@@ -262,13 +263,13 @@ describe('/blogs', () => {
             .expect(HTTP_STATUSES.BAD_REQUEST_400)
 
         await request(app)
-            .get(`/blogs/${createdNewBlog01.id}`)
+            .get(`${RouterPaths.blogs}/${createdNewBlog01.id}`)
             .expect(HTTP_STATUSES.OK_200, createdNewBlog01)
     })
 
     it(`shouldn't update blog with empty description`, async () => {
         await request(app)
-            .put(`/blogs/${createdNewBlog01.id}`)
+            .put(`${RouterPaths.blogs}/${createdNewBlog01.id}`)
             .set('authorization', 'Basic YWRtaW46cXdlcnR5')
             .send({
                 name: 'UpdateName',
@@ -278,13 +279,13 @@ describe('/blogs', () => {
             .expect(HTTP_STATUSES.BAD_REQUEST_400)
 
         await request(app)
-            .get(`/blogs/${createdNewBlog01.id}`)
+            .get(`${RouterPaths.blogs}/${createdNewBlog01.id}`)
             .expect(HTTP_STATUSES.OK_200, createdNewBlog01)
     })
 
     it(`shouldn't update blogs with description more than 500 characters`, async () => {
         await request(app)
-            .put(`/blogs/${createdNewBlog01.id}`)
+            .put(`${RouterPaths.blogs}/${createdNewBlog01.id}`)
             .set('authorization', 'Basic YWRtaW46cXdlcnR5')
             .send({
                 name: 'UpdateName',
@@ -294,13 +295,13 @@ describe('/blogs', () => {
             .expect(HTTP_STATUSES.BAD_REQUEST_400)
 
         await request(app)
-            .get(`/blogs/${createdNewBlog01.id}`)
+            .get(`${RouterPaths.blogs}/${createdNewBlog01.id}`)
             .expect(HTTP_STATUSES.OK_200, createdNewBlog01)
     })
 
     it(`shouldn't update blogs with empty websiteUrl`, async () => {
         await request(app)
-            .put(`/blogs/${createdNewBlog01.id}`)
+            .put(`${RouterPaths.blogs}/${createdNewBlog01.id}`)
             .set('authorization', 'Basic YWRtaW46cXdlcnR5')
             .send({
                 name: 'UpdateName',
@@ -310,12 +311,12 @@ describe('/blogs', () => {
             .expect(HTTP_STATUSES.BAD_REQUEST_400)
 
         await request(app)
-            .get(`/blogs/${createdNewBlog01.id}`)
+            .get(`${RouterPaths.blogs}/${createdNewBlog01.id}`)
             .expect(HTTP_STATUSES.OK_200, createdNewBlog01)
     })
     it(`shouldn't update blogs with websiteUrl more than 100 characters`, async () => {
         await request(app)
-            .put(`/blogs/${createdNewBlog01.id}`)
+            .put(`${RouterPaths.blogs}/${createdNewBlog01.id}`)
             .set('authorization', 'Basic YWRtaW46cXdlcnR5')
             .send({
                 name: 'UpdateName',
@@ -325,13 +326,13 @@ describe('/blogs', () => {
             .expect(HTTP_STATUSES.BAD_REQUEST_400)
 
         await request(app)
-            .get(`/blogs/${createdNewBlog01.id}`)
+            .get(`${RouterPaths.blogs}/${createdNewBlog01.id}`)
             .expect(HTTP_STATUSES.OK_200, createdNewBlog01)
     })
 
     it(`shouldn't update blogs with websiteUrl that does not match the pattern`, async () => {
         await request(app)
-            .put(`/blogs/${createdNewBlog01.id}`)
+            .put(`${RouterPaths.blogs}/${createdNewBlog01.id}`)
             .set('authorization', 'Basic YWRtaW46cXdlcnR5')
             .send({
                 name: 'UpdateName',
@@ -341,7 +342,7 @@ describe('/blogs', () => {
             .expect(HTTP_STATUSES.BAD_REQUEST_400)
 
         await request(app)
-            .get(`/blogs/${createdNewBlog01.id}`)
+            .get(`${RouterPaths.blogs}/${createdNewBlog01.id}`)
             .expect(HTTP_STATUSES.OK_200, createdNewBlog01)
     })
 
@@ -353,13 +354,13 @@ describe('/blogs', () => {
         }
 
         await request(app)
-            .put(`/blogs/${createdNewBlog01.id}`)
+            .put(`${RouterPaths.blogs}/${createdNewBlog01.id}`)
             .set('authorization', 'Basic YWRtaW46cXdlcnR5')
             .send(data)
             .expect(HTTP_STATUSES.NO_CONTENT_204)
 
         await request(app)
-            .get(`/blogs/${createdNewBlog01.id}`)
+            .get(`${RouterPaths.blogs}/${createdNewBlog01.id}`)
             .expect(HTTP_STATUSES.OK_200, {
                 ...createdNewBlog01,
                 name: data.name,
@@ -368,14 +369,14 @@ describe('/blogs', () => {
             })
 
         await request(app)
-            .get(`/blogs/${createdNewBlog02.id}`)
+            .get(`${RouterPaths.blogs}/${createdNewBlog02.id}`)
             .expect(HTTP_STATUSES.OK_200, createdNewBlog02)
     })
 
     it(`shouldn't delete  blog`, async () => {
 
         await request(app)
-            .delete('/blogs/7779161')
+            .delete(`${RouterPaths.blogs}/7779161`)
             .set('authorization', 'Basic YWRtaW46cXdlcnR5')
             .expect(HTTP_STATUSES.NOT_FOUND_404)
     })
@@ -383,26 +384,26 @@ describe('/blogs', () => {
     it(`should delete both blog`, async () => {
 
         await request(app)
-            .delete(`/blogs/${createdNewBlog01.id}`)
+            .delete(`${RouterPaths.blogs}/${createdNewBlog01.id}`)
             .set('authorization', 'Basic YWRtaW46cXdlcnR5')
             .expect(HTTP_STATUSES.NO_CONTENT_204)
 
         await request(app)
-            .get(`/blogs/${createdNewBlog01.id}`)
+            .get(`${RouterPaths.blogs}/${createdNewBlog01.id}`)
             .expect(HTTP_STATUSES.NOT_FOUND_404)
 
         await request(app)
-            .delete(`/blogs/${createdNewBlog02.id}`)
+            .delete(`${RouterPaths.blogs}/${createdNewBlog02.id}`)
             .set('authorization', 'Basic YWRtaW46cXdlcnR5')
             .expect(HTTP_STATUSES.NO_CONTENT_204)
 
 
         await request(app)
-            .get(`/blogs/${createdNewBlog02.id}`)
+            .get(`${RouterPaths.blogs}/${createdNewBlog02.id}`)
             .expect(HTTP_STATUSES.NOT_FOUND_404)
 
         await request(app)
-            .get('/blogs/')
+            .get(RouterPaths.blogs)
             .expect(HTTP_STATUSES.OK_200, [])
     })
 
