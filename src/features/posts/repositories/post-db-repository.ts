@@ -29,7 +29,6 @@ export class PostMemoryDbRepository {
         const newPost = {
             ...createData,
             blogName,
-            id: (new Date()).toISOString(),
             createdAt: new Date().toISOString()
         }
         const post = await postsCollection.insertOne(newPost)
