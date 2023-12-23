@@ -1,6 +1,7 @@
 import {body} from "express-validator";
 import {inputValidation} from "../../../middlewares/input-modul-validation/input-validation";
-import {BlogRepository} from "../../blogs/repositories/blog-repository";
+import {BlogMemoryDbRepository} from "../../blogs/repositories/blog-db-repository";
+import * as wasi from "wasi";
 
 export const titleValidation = body('title').isString().trim().isLength({
     min:1,
@@ -14,13 +15,12 @@ export const contentValidation = body('content').isString().trim().isLength({
     min:1,
     max:1000
 }).withMessage('Incorrect content')
-export const blogIdValidation = body('blogId').isString().trim().custom((value) => {
-    const blog = BlogRepository.getBlogById(value)
-
-    if (!blog) {
-        throw Error('Incorrect blogId')
-    }
-
-    return true
+export const blogIdValidation = body('blogId').isString().trim()
+    .custom(async (value) => {
+    const blog = await BlogMemoryDbRepository.getBlogById(value)
+        if (!blog) {
+            throw Error('Incorrect blogId')
+        }
+        return true
 }).withMessage('Incorrect content')
 export const postValidation = () => [ shortDescriptionValidation, titleValidation, contentValidation, blogIdValidation,inputValidation]

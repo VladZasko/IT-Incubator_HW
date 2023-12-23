@@ -30,22 +30,22 @@ export const blogsTestManager = {
         return {response: response, createdEntity: createdEntity};
     },
 
-    async updateBlog(updateDB:BlogType,data: UpdateBlogModel, expectedStatusCode:HttpStatusType = HTTP_STATUSES.NO_CONTENT_204) {
+    async updateBlog(createdNewBlog01:BlogType,data: UpdateBlogModel, expectedStatusCode:HttpStatusType = HTTP_STATUSES.NO_CONTENT_204) {
 
         const response =  await request(app)
-            .put(`${RouterPaths.blogs}/${updateDB.id}`)
+            .put(`${RouterPaths.blogs}/${createdNewBlog01.id}`)
             .set('authorization', 'Basic YWRtaW46cXdlcnR5')
             .send(data)
             .expect(expectedStatusCode)
 
         if (expectedStatusCode === HTTP_STATUSES.NO_CONTENT_204) {
             await request(app)
-                .get(`${RouterPaths.blogs}/${updateDB.id}`)
+                .get(`${RouterPaths.blogs}/${createdNewBlog01.id}`)
                 .expect(HTTP_STATUSES.OK_200, {
-                    ...updateDB,
+                    ...createdNewBlog01,
                     name: data.name,
                     description: data.description,
-                    websiteUrl: data.websiteUrl,
+                    websiteUrl: data.websiteUrl
                 })
         }
         return {response: response};

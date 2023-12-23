@@ -24,3 +24,13 @@ export type CreateVideoType = {
     author: string
     availableResolutions: typeof AvailableResolutions
 }
+
+export type VideoDBType = {
+    title: string
+    author: string
+    canBeDownloaded: boolean
+    minAgeRestriction: number | null
+    createdAt: string
+    publicationDate: string
+    availableResolutions: typeof AvailableResolutions
+}

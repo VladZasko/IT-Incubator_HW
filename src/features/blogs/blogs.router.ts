@@ -6,24 +6,30 @@ import {URIParamsBlogIdModel} from "./models/URIParamsBlogIdModule";
 import {BlogsViewModel} from "./models/BlogsViewModel";
 import {CreateBlogModel} from "./models/CreateBlogModel";
 import {UpdateBlogModel} from "./models/UpdateBlogModule";
-import {DBType} from "../../db/db";
+import {DBType} from "../../db/memory-db";
 import {blogValidation} from "./validator/blog-validator";
-import {BlogRepository} from "./repositories/blog-repository";
+import {BlogMemoryDbRepository} from "./repositories/blog-db-repository";
 import {authMiddleware} from "../../middlewares/auth/auth-middleware";
+import {ObjectId} from "mongodb";
 
 export const getBlogsRoutes = (db: DBType) => {
     const router = express.Router()
-    router.get('/', (req: RequestWithQuery<QueryBlogsModel>,
+    router.get('/', async (req: RequestWithQuery<QueryBlogsModel>,
                         res: Response) => {
-        const blogs = BlogRepository.getAllBlogs()
+        const blogs = await BlogMemoryDbRepository.getAllBlogs()
 
         res.send(blogs)
     })
-    router.get('/:id', (req: RequestWithParams<URIParamsBlogIdModel>,
+    router.get('/:id', async (req: RequestWithParams<URIParamsBlogIdModel>,
                             res: Response<BlogsViewModel>) => {
         const id = req.params.id
 
-        const blog = BlogRepository.getBlogById(id)
+        // if(!ObjectId.isValid(id)){
+        //     res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
+        //     return;
+        // }
+
+        const blog = await BlogMemoryDbRepository.getBlogById(id)
 
         if (!blog){
             res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
@@ -32,10 +38,19 @@ export const getBlogsRoutes = (db: DBType) => {
 
         res.send(blog)
     })
-    router.post('/', authMiddleware, blogValidation(), (req:RequestWithBody<CreateBlogModel>,
-                         res: Response) => {
+    router.post('/', authMiddleware, blogValidation(),
+        async (req:RequestWithBody<CreateBlogModel>,
+               res: Response) => {
 
-        const newBlog = BlogRepository.createBlog(req.body.name, req.body.description, req.body.websiteUrl)
+        const name = req.body.name;
+        const description = req.body.description;
+        const websiteUrl = req.body.websiteUrl;
+
+
+
+        const newBlog =
+        await BlogMemoryDbRepository
+            .createBlog({name,description ,websiteUrl})
 
         res
             .status(HTTP_STATUSES.CREATED_201)
@@ -43,9 +58,28 @@ export const getBlogsRoutes = (db: DBType) => {
 
     })
 
-    router.put ('/:id', authMiddleware, blogValidation(), (req: RequestWithParamsAndBody<URIParamsBlogIdModel, UpdateBlogModel>,
-                             res: Response) => {
-        const updateBlog = BlogRepository.updateBlog(req.params.id, req.body.name, req.body.description, req.body.websiteUrl)
+    router.put ('/:id', authMiddleware, blogValidation(),
+        async (req: RequestWithParamsAndBody<URIParamsBlogIdModel, UpdateBlogModel>,
+               res: Response) => {
+        const id = req.params.id
+
+        // if(!ObjectId.isValid(id)){
+        //     res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
+        //     return;
+        // }
+
+        const name= req.body.name
+        const description= req.body.description
+        const websiteUrl= req.body.websiteUrl
+
+        const blog = await BlogMemoryDbRepository.getBlogById(id)
+
+        if(!blog){
+            res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
+            return
+        }
+
+        const updateBlog = await BlogMemoryDbRepository.updateBlog(id, {name, description, websiteUrl })
 
         if (!updateBlog){
             res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
@@ -55,10 +89,18 @@ export const getBlogsRoutes = (db: DBType) => {
         res.sendStatus(HTTP_STATUSES.NO_CONTENT_204)
 
     })
-    router.delete('/:id',authMiddleware,  (req: RequestWithParams<URIParamsBlogIdModel>,
-                               res) => {
+    router.delete('/:id',authMiddleware,
+        async (req: RequestWithParams<URIParamsBlogIdModel>,
+               res) => {
 
-        const deleteBlog = BlogRepository.deleteBlogById(req.params.id)
+        const id = req.params.id
+
+        // if(!ObjectId.isValid(id)){
+        //     res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
+        //     return;
+        // }
+
+        const deleteBlog = await BlogMemoryDbRepository.deleteBlogById(id)
         if(!deleteBlog) {
             res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
             return

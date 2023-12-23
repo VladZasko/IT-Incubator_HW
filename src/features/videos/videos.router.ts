@@ -5,7 +5,7 @@ import {HTTP_STATUSES} from "../../utils";
 import {VideosViewModel} from "./models/VideosViewModel";
 import {CreateVideoModel} from "./models/CreateVideoModel";
 import {UpdateVideoModel} from "./models/UpdateVideoModule";
-import {DBType, ErrorType} from "../../db/db";
+import {DBType, ErrorType} from "../../db/memory-db";
 import {AvailableResolutions, VideoType} from "../../db/types/videos.types";
 import {URIParamsVideoIdModel} from "./models/URIParamsVideoIdModule";
 

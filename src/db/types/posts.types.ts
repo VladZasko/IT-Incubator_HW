@@ -7,3 +7,12 @@ export type PostType = {
         blogName: string
         createdAt: string
     }
+
+export type PostDBType = {
+        title: string
+        shortDescription: string
+        content: string
+        blogId: string
+        blogName: string
+        createdAt: string
+}

@@ -174,9 +174,8 @@ describe('/blogs', () => {
             ...dataTestBlogUpdate01,
             name: incorrectData.emptyName
             }
-        const id = createdNewBlog01.id
 
-        await blogsTestManager.updateBlog(id, data, HTTP_STATUSES.BAD_REQUEST_400)
+        await blogsTestManager.updateBlog(createdNewBlog01, data, HTTP_STATUSES.BAD_REQUEST_400)
 
         await request(app)
             .get(`${RouterPaths.blogs}/${createdNewBlog01.id}`)
@@ -188,9 +187,8 @@ describe('/blogs', () => {
             ...dataTestBlogUpdate01,
             name: incorrectData.tooLongName
         }
-        const id = createdNewBlog01.id
 
-        await blogsTestManager.updateBlog(id, data, HTTP_STATUSES.BAD_REQUEST_400)
+        await blogsTestManager.updateBlog(createdNewBlog01, data, HTTP_STATUSES.BAD_REQUEST_400)
 
         await request(app)
             .get(`${RouterPaths.blogs}/${createdNewBlog01.id}`)
@@ -202,9 +200,8 @@ describe('/blogs', () => {
             ...dataTestBlogUpdate01,
             description: incorrectData.emptyDescription
         }
-        const id = createdNewBlog01.id
 
-        await blogsTestManager.updateBlog(id, data, HTTP_STATUSES.BAD_REQUEST_400)
+        await blogsTestManager.updateBlog(createdNewBlog01, data, HTTP_STATUSES.BAD_REQUEST_400)
 
         await request(app)
             .get(`${RouterPaths.blogs}/${createdNewBlog01.id}`)
@@ -216,9 +213,8 @@ describe('/blogs', () => {
             ...dataTestBlogUpdate01,
             description: incorrectData.tooLongDescription
         }
-        const id = createdNewBlog01.id
 
-        await blogsTestManager.updateBlog(id, data, HTTP_STATUSES.BAD_REQUEST_400)
+        await blogsTestManager.updateBlog(createdNewBlog01, data, HTTP_STATUSES.BAD_REQUEST_400)
 
         await request(app)
             .get(`${RouterPaths.blogs}/${createdNewBlog01.id}`)
@@ -230,9 +226,8 @@ describe('/blogs', () => {
             ...dataTestBlogUpdate01,
             websiteUrl: incorrectData.emptyWebsiteUrl
         }
-        const id = createdNewBlog01.id
 
-        await blogsTestManager.updateBlog(id, data, HTTP_STATUSES.BAD_REQUEST_400)
+        await blogsTestManager.updateBlog(createdNewBlog01, data, HTTP_STATUSES.BAD_REQUEST_400)
 
         await request(app)
             .get(`${RouterPaths.blogs}/${createdNewBlog01.id}`)
@@ -244,9 +239,8 @@ describe('/blogs', () => {
             ...dataTestBlogUpdate01,
             websiteUrl: incorrectData.tooLongWebsiteUrl
         }
-        const id = createdNewBlog01.id
 
-        await blogsTestManager.updateBlog(id, data, HTTP_STATUSES.BAD_REQUEST_400)
+        await blogsTestManager.updateBlog(createdNewBlog01, data, HTTP_STATUSES.BAD_REQUEST_400)
 
         await request(app)
             .get(`${RouterPaths.blogs}/${createdNewBlog01.id}`)
@@ -258,9 +252,8 @@ describe('/blogs', () => {
             ...dataTestBlogUpdate01,
             websiteUrl: incorrectData.incorrectWebsiteUrl
         }
-        const id = createdNewBlog01.id
 
-        await blogsTestManager.updateBlog(id, data, HTTP_STATUSES.BAD_REQUEST_400)
+        await blogsTestManager.updateBlog(createdNewBlog01, data, HTTP_STATUSES.BAD_REQUEST_400)
 
         await request(app)
             .get(`${RouterPaths.blogs}/${createdNewBlog01.id}`)
@@ -268,9 +261,7 @@ describe('/blogs', () => {
     })
 
     it(`should update blog with correct input module`, async () => {
-        const updateDB = createdNewBlog01
-
-        await blogsTestManager.updateBlog(updateDB, dataTestBlogUpdate01)
+        await blogsTestManager.updateBlog(createdNewBlog01, dataTestBlogUpdate01)
 
         await request(app)
             .get(`${RouterPaths.blogs}/${createdNewBlog02.id}`)

@@ -1,7 +1,9 @@
 import {app} from "./app";
+import {runDb} from "./db/db";
 
-const port = 3000
+export const port = 3000
 
-app.listen(port, () => {
-    console.log(`App start on port ${port}`)
+
+app.listen(port, async() => {
+    await runDb()
 })
