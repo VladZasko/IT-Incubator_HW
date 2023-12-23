@@ -5,6 +5,7 @@ import {RouterPaths} from "../../../src/routerPaths";
 import {app} from "../../../src/app";
 import {UpdateBlogModel} from "../../../src/features/blogs/models/UpdateBlogModule";
 import {URIParamsBlogIdModel} from "../../../src/features/blogs/models/URIParamsBlogIdModule";
+import {BlogType} from "../../../src/db/types/blogs.types";
 
 export const blogsTestManager = {
     async createBlog(data: CreateBlogModel, expectedStatusCode:HttpStatusType = HTTP_STATUSES.CREATED_201) {
@@ -29,22 +30,22 @@ export const blogsTestManager = {
         return {response: response, createdEntity: createdEntity};
     },
 
-    async updateBlog(id: URIParamsBlogIdModel,data: UpdateBlogModel, expectedStatusCode:HttpStatusType = HTTP_STATUSES.NO_CONTENT_204) {
+    async updateBlog(updateDB:BlogType,data: UpdateBlogModel, expectedStatusCode:HttpStatusType = HTTP_STATUSES.NO_CONTENT_204) {
 
         const response =  await request(app)
-            .put(`${RouterPaths.blogs}/${id}`)
+            .put(`${RouterPaths.blogs}/${updateDB.id}`)
             .set('authorization', 'Basic YWRtaW46cXdlcnR5')
             .send(data)
             .expect(expectedStatusCode)
 
         if (expectedStatusCode === HTTP_STATUSES.NO_CONTENT_204) {
             await request(app)
-                .get(`${RouterPaths.blogs}/${id}`)
+                .get(`${RouterPaths.blogs}/${updateDB.id}`)
                 .expect(HTTP_STATUSES.OK_200, {
-                    id: id,
+                    ...updateDB,
                     name: data.name,
                     description: data.description,
-                    websiteUrl: data.websiteUrl
+                    websiteUrl: data.websiteUrl,
                 })
         }
         return {response: response};

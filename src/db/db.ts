@@ -28,7 +28,10 @@ export const db: DBType = {
             id: '12345',
             name: 'Uladzislau',
             description: 'string',
-            websiteUrl: 'https://8PKvNFTdAa9KpkqwxaUuxe8lWeFSE7_ZCKlj9pbpNrJzLNbqa7SQo9.PmeYHjCdu9pHIFVaIjHT3wNefhVEPEGeyroPI'
+            websiteUrl: 'https://8PKvNFTdAa9KpkqwxaUuxe8lWeFSE7_ZCKlj9pbpNrJzLNbqa7SQo9.PmeYHjCdu9pHIFVaIjHT3wNefhVEPEGeyroPI',
+            createdAt: "2023-12-23T13:36:16.602Z",
+            isMembership: false
+
         }
     ],
     posts: [
@@ -38,7 +41,8 @@ export const db: DBType = {
             shortDescription: "short Descreption Posts",
             content: "Posts Content",
             blogId: 'Posts Blog Id',
-            blogName: 'Post Blog Name'
+            blogName: 'Post Blog Name',
+            createdAt: "2023-12-23T13:36:16.608Z"
         }
     ]
 }

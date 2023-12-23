@@ -12,19 +12,15 @@ export class PostRepository {
     static createPost(title: string, shortDescription: string, content: string, blogId: string) {
 
         let foundBlog = db.blogs.find(p => p.id === blogId)
-        let PostBlogName = ''
-        if (!foundBlog){
-            return
-        } else {
-            PostBlogName = foundBlog.name
-        }
+
         const newPost = {
             id: (new Date()).toISOString(),
             title: title,
             shortDescription: shortDescription,
             content: content,
             blogId: blogId,
-            blogName: PostBlogName
+            blogName: foundBlog!.name,
+            createdAt: new Date().toISOString()
         }
         db.posts.push(newPost)
         return newPost

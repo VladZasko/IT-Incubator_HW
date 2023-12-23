@@ -23,13 +23,14 @@ export const getBlogsRoutes = (db: DBType) => {
                             res: Response<BlogsViewModel>) => {
         const id = req.params.id
 
-        const Blog = BlogRepository.getBlogById(id)
+        const blog = BlogRepository.getBlogById(id)
 
-        if (!Blog){
+        if (!blog){
             res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
+            return
         }
 
-        res.send(Blog)
+        res.send(blog)
     })
     router.post('/', authMiddleware, blogValidation(), (req:RequestWithBody<CreateBlogModel>,
                          res: Response) => {
@@ -48,6 +49,7 @@ export const getBlogsRoutes = (db: DBType) => {
 
         if (!updateBlog){
             res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
+            return
         }
 
         res.sendStatus(HTTP_STATUSES.NO_CONTENT_204)
@@ -58,7 +60,8 @@ export const getBlogsRoutes = (db: DBType) => {
 
         const deleteBlog = BlogRepository.deleteBlogById(req.params.id)
         if(!deleteBlog) {
-            res.send(HTTP_STATUSES.NOT_FOUND_404)
+            res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
+            return
         }
         res.sendStatus(HTTP_STATUSES.NO_CONTENT_204)
     })

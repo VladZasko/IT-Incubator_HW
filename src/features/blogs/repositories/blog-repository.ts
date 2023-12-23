@@ -14,7 +14,9 @@ export class BlogRepository {
             id: (new Date()).toISOString(),
             name: name,
             description: description,
-            websiteUrl: websiteUrl
+            websiteUrl: websiteUrl,
+            createdAt: new Date().toISOString(),
+            isMembership: false
         }
         db.blogs.push(newBlog)
         return newBlog

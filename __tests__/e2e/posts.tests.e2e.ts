@@ -27,9 +27,7 @@ describe('/posts', () => {
     let createdNewBlog02: any= null
     it(`should create blog for test post with correct input data`, async () => {
 
-        const data: CreateBlogModel = dataTestBlogCreate01
-
-        const result = await blogsTestManager.createBlog(data)
+        const result = await blogsTestManager.createBlog(dataTestBlogCreate01)
 
         createdNewBlog01 = result.createdEntity;
 
@@ -37,9 +35,7 @@ describe('/posts', () => {
             .get(RouterPaths.blogs)
             .expect(HTTP_STATUSES.OK_200, [createdNewBlog01])
 
-        const data2: CreateBlogModel = dataTestBlogCreate02
-
-        const result2 = await blogsTestManager.createBlog(data2)
+        const result2 = await blogsTestManager.createBlog(dataTestBlogCreate02)
 
         createdNewBlog02 = result2.createdEntity;
 
@@ -158,7 +154,6 @@ describe('/posts', () => {
     })
 
     it(`shouldn't create post with empty blogId`, async () => {
-
         await postsTestManager.createPost(dataTestPostCreate01, HTTP_STATUSES.BAD_REQUEST_400)
 
         await request(app)
@@ -197,7 +192,6 @@ describe('/posts', () => {
 
     let createdNewPost02:any = null
     it(`created one more posts`, async () => {
-
         const data = {
             ...dataTestPostCreate02,
             blogId: createdNewBlog02.id
@@ -210,9 +204,13 @@ describe('/posts', () => {
         await request(app)
             .get(RouterPaths.posts)
             .expect(HTTP_STATUSES.OK_200, [createdNewPost01, createdNewPost02])
+
+        expect.setState({post2: result.createdEntity})
     })
 
     it ('should return 404 fot not existing posts for update', async () => {
+        const {post2} = expect.getState()
+
         const data = {
             ...dataTestPostCreate01,
             blogId: createdNewBlog01.id

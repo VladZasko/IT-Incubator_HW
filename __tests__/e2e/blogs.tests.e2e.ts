@@ -268,9 +268,9 @@ describe('/blogs', () => {
     })
 
     it(`should update blog with correct input module`, async () => {
-        const id = createdNewBlog01.id
+        const updateDB = createdNewBlog01
 
-        await blogsTestManager.updateBlog(id, dataTestBlogUpdate01)
+        await blogsTestManager.updateBlog(updateDB, dataTestBlogUpdate01)
 
         await request(app)
             .get(`${RouterPaths.blogs}/${createdNewBlog02.id}`)
@@ -318,7 +318,6 @@ describe('/blogs', () => {
             .get(RouterPaths.blogs)
             .expect(HTTP_STATUSES.OK_200, [])
     })
-
 
 })
 

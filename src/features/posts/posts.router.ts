@@ -23,17 +23,18 @@ export const getPostsRoutes = (db: DBType) => {
                         res: Response<PostsViewModel>) => {
         const id = req.params.id
 
-        const Post = PostRepository.getPostById(id)
+        const post = PostRepository.getPostById(id)
 
-        if (!Post){
+        if (!post){
             res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
         }
 
-        res.send(Post)
+        res.send(post)
     })
     router.post('/', authMiddleware, postValidation(), (req:RequestWithBody<CreatePostModel>,
                                                         res: Response) => {
 
+        let dataRepos = (req.body.title, req.body.shortDescription, req.body.content, req.body.blogId)
         const newPost = PostRepository.createPost(req.body.title, req.body.shortDescription, req.body.content, req.body.blogId)
 
         res
@@ -48,6 +49,7 @@ export const getPostsRoutes = (db: DBType) => {
 
         if (!updatePost){
             res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
+            return
         }
 
         res.sendStatus(HTTP_STATUSES.NO_CONTENT_204)
@@ -58,7 +60,8 @@ export const getPostsRoutes = (db: DBType) => {
 
         const deletePost = PostRepository.deletePostById(req.params.id)
         if(!deletePost) {
-            res.send(HTTP_STATUSES.NOT_FOUND_404)
+            res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
+            return
         }
         res.sendStatus(HTTP_STATUSES.NO_CONTENT_204)
     })
