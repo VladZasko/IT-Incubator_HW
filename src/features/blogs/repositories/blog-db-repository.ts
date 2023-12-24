@@ -24,7 +24,7 @@ export class BlogMemoryDbRepository {
         return blogMapper(blog)
     }
 
-    static async createBlog(createData : CreateBlogModel):Promise<BlogsViewModel> {
+    static async createBlog(createData : CreateBlogModel):Promise<string> {
         const newBlog = {
             ...createData,
             createdAt: new Date().toISOString(),
@@ -33,10 +33,8 @@ export class BlogMemoryDbRepository {
 
         const blog = await blogsCollection.insertOne(newBlog)
 
-        return {
-            ...newBlog,
-            id: blog.insertedId.toString()
-        }
+        return blog.insertedId.toString()
+
     }
     static async updateBlog(id: string , updateData:UpdateBlogModel): Promise<boolean> {
         const foundBlog = await blogsCollection.updateOne({_id:new ObjectId(id)}, {

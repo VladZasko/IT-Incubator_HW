@@ -42,15 +42,13 @@ export const getBlogsRoutes = (db: DBType) => {
         async (req:RequestWithBody<CreateBlogModel>,
                res: Response) => {
 
-        const name = req.body.name;
-        const description = req.body.description;
-        const websiteUrl = req.body.websiteUrl;
+        const createData = {
+            name: req.body.name,
+            description: req.body.description,
+            websiteUrl: req.body.websiteUrl
+        }
 
-
-
-        const newBlog =
-        await BlogMemoryDbRepository
-            .createBlog({name,description ,websiteUrl})
+        const newBlog = await BlogMemoryDbRepository.createBlog(createData)
 
         res
             .status(HTTP_STATUSES.CREATED_201)
@@ -67,10 +65,11 @@ export const getBlogsRoutes = (db: DBType) => {
         //     res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
         //     return;
         // }
-
-        const name= req.body.name
-        const description= req.body.description
-        const websiteUrl= req.body.websiteUrl
+        const updateData = {
+            name: req.body.name,
+            description: req.body.description,
+            websiteUrl: req.body.websiteUrl
+        }
 
         const blog = await BlogMemoryDbRepository.getBlogById(id)
 
@@ -79,7 +78,7 @@ export const getBlogsRoutes = (db: DBType) => {
             return
         }
 
-        const updateBlog = await BlogMemoryDbRepository.updateBlog(id, {name, description, websiteUrl })
+        const updateBlog = await BlogMemoryDbRepository.updateBlog(id, updateData)
 
         if (!updateBlog){
             res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)

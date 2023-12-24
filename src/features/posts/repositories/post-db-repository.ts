@@ -25,7 +25,7 @@ export class PostMemoryDbRepository {
         return postMapper(post)
     }
 
-    static async createPost(createData:CreatePostModel, blogName:string):Promise<PostsViewModel>  {
+    static async createPost(createData:CreatePostModel, blogName:string):Promise<string>  {
         const newPost = {
             ...createData,
             blogName,
@@ -33,10 +33,7 @@ export class PostMemoryDbRepository {
         }
         const post = await postsCollection.insertOne(newPost)
 
-        return {
-            ...newPost,
-            id:post.insertedId.toString()
-        }
+        return post.insertedId.toString()
     }
     static async updatePost(id: string, upData: UpdatePostModel): Promise<boolean> {
         const foundPost = await postsCollection.updateOne({_id:new ObjectId(id)}, {
