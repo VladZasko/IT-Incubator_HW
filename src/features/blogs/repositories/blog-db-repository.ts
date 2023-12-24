@@ -31,7 +31,7 @@ export class BlogMemoryDbRepository {
             isMembership: false
         }
 
-        const blog = await blogsCollection.insertOne(newBlog)
+        const blog = await blogsCollection.insertOne({...newBlog})
 
         return {
             ...newBlog,
