@@ -35,7 +35,7 @@ export class BlogMemoryDbRepository {
 
         return {
             ...newBlog,
-            _id: blog.insertedId.toString()
+            id: blog.insertedId.toString()
         }
     }
     static async updateBlog(id: string , updateData:UpdateBlogModel): Promise<boolean> {
