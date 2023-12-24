@@ -11,6 +11,7 @@ import {postValidation} from "./validator/post-validator";
 import {CreatePostModel} from "./models/CreatePostModel";
 import {UpdatePostModel} from "./models/UpdatePostModule";
 import {BlogMemoryDbRepository} from "../blogs/repositories/blog-db-repository";
+import {ObjectId} from "mongodb";
 
 export const getPostsRoutes = (db: DBType) => {
     const router = express.Router()
@@ -23,6 +24,11 @@ export const getPostsRoutes = (db: DBType) => {
     router.get('/:id', async (req: RequestWithParams<URIParamsPostIdModel>,
                         res: Response<PostsViewModel>) => {
         const id = req.params.id
+
+        if(!ObjectId.isValid(id)){
+            res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
+            return;
+        }
 
         const post = await PostMemoryDbRepository.getPostById(id)
 
@@ -54,6 +60,13 @@ export const getPostsRoutes = (db: DBType) => {
 
     router.put ('/:id', authMiddleware, postValidation(), async (req: RequestWithParamsAndBody<URIParamsPostIdModel, UpdatePostModel>,
                                                            res: Response) => {
+        const id = req.params.id
+
+        if(!ObjectId.isValid(id)){
+            res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
+            return;
+        }
+
         const upData = {
             title: req.body.title,
             shortDescription: req.body.shortDescription,
@@ -61,7 +74,7 @@ export const getPostsRoutes = (db: DBType) => {
             blogId: req.body.blogId,
         }
 
-        const updatePost = await PostMemoryDbRepository.updatePost(req.params.id, upData)
+        const updatePost = await PostMemoryDbRepository.updatePost(id, upData)
 
         if (!updatePost){
             res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
@@ -73,8 +86,14 @@ export const getPostsRoutes = (db: DBType) => {
     })
     router.delete('/:id',authMiddleware,  async (req: RequestWithParams<URIParamsPostIdModel>,
                                            res) => {
+        const id = req.params.id
 
-        const deletePost = await PostMemoryDbRepository.deletePostById(req.params.id)
+        if(!ObjectId.isValid(id)){
+            res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
+            return;
+        }
+
+        const deletePost = await PostMemoryDbRepository.deletePostById(id)
         if(!deletePost) {
             res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
             return

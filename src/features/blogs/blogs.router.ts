@@ -24,10 +24,10 @@ export const getBlogsRoutes = (db: DBType) => {
                             res: Response<BlogsViewModel>) => {
         const id = req.params.id
 
-        // if(!ObjectId.isValid(id)){
-        //     res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
-        //     return;
-        // }
+        if(!ObjectId.isValid(id)){
+            res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
+            return;
+        }
 
         const blog = await BlogMemoryDbRepository.getBlogById(id)
 
@@ -61,10 +61,10 @@ export const getBlogsRoutes = (db: DBType) => {
                res: Response) => {
         const id = req.params.id
 
-        // if(!ObjectId.isValid(id)){
-        //     res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
-        //     return;
-        // }
+        if(!ObjectId.isValid(id)){
+            res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
+            return;
+        }
         const updateData = {
             name: req.body.name,
             description: req.body.description,
@@ -94,10 +94,10 @@ export const getBlogsRoutes = (db: DBType) => {
 
         const id = req.params.id
 
-        // if(!ObjectId.isValid(id)){
-        //     res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
-        //     return;
-        // }
+        if(!ObjectId.isValid(id)){
+            res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
+            return;
+        }
 
         const deleteBlog = await BlogMemoryDbRepository.deleteBlogById(id)
         if(!deleteBlog) {
