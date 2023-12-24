@@ -6,7 +6,6 @@ import {ObjectId} from "mongodb";
 import {CreateBlogModel} from "../models/CreateBlogModel";
 import {UpdateBlogModel} from "../models/UpdateBlogModule";
 import {URIParamsBlogIdModel} from "../models/URIParamsBlogIdModule";
-import {BlogsViewModelCreated} from "../models/BlogViewModelCreated";
 
 export class BlogMemoryDbRepository {
     static async getAllBlogs(): Promise<BlogsViewModel[]>{
@@ -25,7 +24,7 @@ export class BlogMemoryDbRepository {
         return blogMapper(blog)
     }
 
-    static async createBlog(createData : CreateBlogModel):Promise<BlogsViewModelCreated> {
+    static async createBlog(createData : CreateBlogModel):Promise<BlogsViewModel> {
         const newBlog = {
             ...createData,
             createdAt: new Date().toISOString(),
@@ -34,8 +33,10 @@ export class BlogMemoryDbRepository {
 
         const blog = await blogsCollection.insertOne(newBlog)
 
-        return newBlog
-
+        return {
+            ...newBlog,
+            id: blog.insertedId.toString()
+        }
     }
     static async updateBlog(id: string , updateData:UpdateBlogModel): Promise<boolean> {
         const foundBlog = await blogsCollection.updateOne({_id:new ObjectId(id)}, {
