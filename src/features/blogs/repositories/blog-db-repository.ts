@@ -27,7 +27,6 @@ export class BlogMemoryDbRepository {
     static async createBlog(createData : CreateBlogModel):Promise<BlogsViewModel> {
         const newBlog = {
             ...createData,
-            id: new Date().toISOString(),
             createdAt: new Date().toISOString(),
             isMembership: false
         }

@@ -28,11 +28,10 @@ export class PostMemoryDbRepository {
     static async createPost(createData:CreatePostModel, blogName:string):Promise<PostsViewModel>  {
         const newPost = {
             ...createData,
-            id: new Date().toISOString(),
             blogName,
             createdAt: new Date().toISOString()
         }
-        const post = await postsCollection.insertOne({...newPost})
+        const post = await postsCollection.insertOne(newPost)
 
         return {
             ...newPost,
