@@ -34,8 +34,10 @@ export class PostMemoryDbRepository {
         }
         const post = await postsCollection.insertOne({...newPost})
 
-        return newPost
-
+        return {
+            ...newPost,
+            id:post.insertedId.toString()
+        }
     }
     static async updatePost(id: string, upData: UpdatePostModel): Promise<boolean> {
         const foundPost = await postsCollection.updateOne({_id:new ObjectId(id)}, {
