@@ -27,16 +27,15 @@ export class BlogMemoryDbRepository {
     static async createBlog(createData : CreateBlogModel):Promise<BlogsViewModel> {
         const newBlog = {
             ...createData,
+            id: new Date().toISOString(),
             createdAt: new Date().toISOString(),
             isMembership: false
         }
 
         const blog = await blogsCollection.insertOne({...newBlog})
 
-        return {
-            ...newBlog,
-            id: blog.insertedId.toString()
-        }
+        return newBlog
+
     }
     static async updateBlog(id: string , updateData:UpdateBlogModel): Promise<boolean> {
         const foundBlog = await blogsCollection.updateOne({_id:new ObjectId(id)}, {
