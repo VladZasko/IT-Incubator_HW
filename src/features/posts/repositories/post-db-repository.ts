@@ -28,15 +28,14 @@ export class PostMemoryDbRepository {
     static async createPost(createData:CreatePostModel, blogName:string):Promise<PostsViewModel>  {
         const newPost = {
             ...createData,
+            id: new Date().toISOString(),
             blogName,
             createdAt: new Date().toISOString()
         }
-        const post = await postsCollection.insertOne(newPost)
+        const post = await postsCollection.insertOne({...newPost})
 
-        return {
-            ...newPost,
-            id:post.insertedId.toString()
-        }
+        return newPost
+
     }
     static async updatePost(id: string, upData: UpdatePostModel): Promise<boolean> {
         const foundPost = await postsCollection.updateOne({_id:new ObjectId(id)}, {
