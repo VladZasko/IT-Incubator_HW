@@ -35,7 +35,7 @@ export class PostMemoryDbRepository {
 
         return {
             ...newPost,
-            id:post.insertedId.toString()
+            _id:post.insertedId.toString()
         }
     }
     static async updatePost(id: string, upData: UpdatePostModel): Promise<boolean> {

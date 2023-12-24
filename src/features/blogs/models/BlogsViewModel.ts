@@ -1,5 +1,5 @@
 export type BlogsViewModel = {
-    id: string
+    _id: string
     name: string
     description: string
     websiteUrl: string
