@@ -7,6 +7,7 @@ import {postMapper} from "../mappers/mappers";
 import {ObjectId} from "mongodb";
 import {CreatePostModel} from "../models/CreatePostModel";
 import {UpdatePostModel} from "../models/UpdatePostModule";
+import {PostsViewModelCreate} from "../models/PostsViewModelCreate";
 
 export class PostMemoryDbRepository {
     static async getAllPosts(): Promise<PostsViewModel[]>{
@@ -25,7 +26,7 @@ export class PostMemoryDbRepository {
         return postMapper(post)
     }
 
-    static async createPost(createData:CreatePostModel, blogName:string):Promise<PostsViewModel>  {
+    static async createPost(createData:CreatePostModel, blogName:string):Promise<PostsViewModelCreate>  {
         const newPost = {
             ...createData,
             blogName,
@@ -33,10 +34,8 @@ export class PostMemoryDbRepository {
         }
         const post = await postsCollection.insertOne(newPost)
 
-        return {
-            ...newPost,
-            id:post.insertedId.toString()
-        }
+        return newPost
+
     }
     static async updatePost(id: string, upData: UpdatePostModel): Promise<boolean> {
         const foundPost = await postsCollection.updateOne({_id:new ObjectId(id)}, {

@@ -1,9 +1,9 @@
 import {MongoClient} from "mongodb";
 import dotenv from 'dotenv'
-import {BlogDBType, BlogType} from "./types/blogs.types";
-import {PostDBType, PostType} from "./types/posts.types";
+import {BlogDBType} from "./types/blogs.types";
+import {PostDBType} from "./types/posts.types";
 import {port} from "../index";
-import {VideoDBType, VideoType} from "./types/videos.types";
+import {VideoDBType} from "./types/videos.types";
 
 dotenv.config()
 
