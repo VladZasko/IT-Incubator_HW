@@ -47,7 +47,6 @@ export class PostMemoryDbRepository {
                 blogId: upData.blogId
             }
         })
-
         return !!foundPost.matchedCount;
     }
     static async deletePostById(id: string): Promise<boolean> {
