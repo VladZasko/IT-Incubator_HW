@@ -14,8 +14,8 @@ export class BlogRepository {
         const searchNameTerm = sortData.searchNameTerm ?? null
         const sortBy = sortData.sortBy ?? 'createdAt'
         const sortDirection = sortData.sortDirection ?? 'desc'
-        const pageNumber: number = sortData.pageNumber ?? 1
-        const pageSize: number = sortData.pageSize ?? 10
+        const pageNumber = sortData.pageNumber ?? 1
+        const pageSize =  sortData.pageSize ?? 10
 
         let filter = {}
 
@@ -39,8 +39,8 @@ export class BlogRepository {
 
         return {
             pagesCount,
-            page: pageNumber,
-            pageSize,
+            page: parseFloat(pageNumber) ,
+            pageSize:parseFloat(pageSize) ,
             totalCount,
             items: blogs.map(blogMapper)
         }
@@ -66,8 +66,8 @@ export class BlogRepository {
 
         return {
             pagesCount,
-            page: pageNumber,
-            pageSize,
+            page: parseFloat(pageNumber) ,
+            pageSize:parseFloat(pageSize) ,
             totalCount,
             items: posts.map(postMapper)
         }

@@ -21,10 +21,12 @@ import {PostMemoryDbRepository} from "../posts/repositories/post-db-repository";
 import {postByIdValidation} from "../posts/validator/post-validator";
 import {queryValidation} from "./validator/blog-query-validator";
 
+
 export const getBlogsRoutes = (db: DBType) => {
     const router = express.Router()
-    router.get('/', queryValidation(), async (req: RequestWithQuery<QueryBlogsModel>,
+    router.get('/',  async (req: RequestWithQuery<QueryBlogsModel>,
                         res: Response) => {
+
         const sortData:QueryBlogsModel = {
             searchNameTerm: req.query.searchNameTerm,
             sortBy: req.query.sortBy,
