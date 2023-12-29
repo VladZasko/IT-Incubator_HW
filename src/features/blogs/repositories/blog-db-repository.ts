@@ -1,5 +1,5 @@
 import {memoryDb} from "../../../db/memory-db";
-import {BlogsViewModel} from "../models/output/BlogsViewModel";
+import {BlogsViewModel, BlogsViewModelGetAllBlogs} from "../models/output/BlogsViewModel";
 import {blogsCollection, postsCollection} from "../../../db/db";
 import {blogMapper} from "../mappers/mappers";
 import {ObjectId} from "mongodb";
@@ -10,12 +10,12 @@ import {QueryBlogsModel, QueryPostByBlogIdModel} from "../models/input/QueryBlog
 import {postMapper} from "../../posts/mappers/mappers";
 
 export class BlogRepository {
-    static async getAllBlogs(sortData: QueryBlogsModel){
+    static async getAllBlogs(sortData: QueryBlogsModel): Promise<BlogsViewModelGetAllBlogs>{
         const searchNameTerm = sortData.searchNameTerm ?? null
         const sortBy = sortData.sortBy ?? 'createdAt'
         const sortDirection = sortData.sortDirection ?? 'desc'
-        const pageNumber = sortData.pageNumber ?? 1
-        const pageSize = sortData.pageSize ?? 10
+        const pageNumber: number = sortData.pageNumber ?? 1
+        const pageSize: number = sortData.pageSize ?? 10
 
         let filter = {}
 
@@ -32,9 +32,9 @@ export class BlogRepository {
             .limit(+pageSize)
             .toArray()
 
-        const totalCount = await blogsCollection.countDocuments(filter)
+        const totalCount:number = await blogsCollection.countDocuments(filter)
 
-        const pagesCount = Math.ceil(totalCount/ +pageSize)
+        const pagesCount:number = Math.ceil(totalCount/ +pageSize)
 
 
         return {

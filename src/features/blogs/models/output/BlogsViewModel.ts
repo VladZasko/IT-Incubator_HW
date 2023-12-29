@@ -1,3 +1,5 @@
+import {blogMapper} from "../../mappers/mappers";
+
 export type BlogsViewModel = {
     id: string
     name: string
@@ -7,3 +9,10 @@ export type BlogsViewModel = {
     isMembership: boolean
 }
 
+export type BlogsViewModelGetAllBlogs = {
+    pagesCount: number
+    page: number,
+    pageSize: number
+    totalCount: number
+    items: BlogsViewModel[]
+}

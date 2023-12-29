@@ -9,7 +9,7 @@ import {QueryBlogsModel, QueryPostByBlogIdModel} from "./models/input/QueryBlogs
 import express, {Response} from "express";
 import {HTTP_STATUSES} from "../../utils";
 import {URIParamsBlogIdModel} from "./models/input/URIParamsBlogIdModule";
-import {BlogsViewModel} from "./models/output/BlogsViewModel";
+import {BlogsViewModel, BlogsViewModelGetAllBlogs} from "./models/output/BlogsViewModel";
 import {CreateBlogModel, CreatePostBlogModel} from "./models/input/CreateBlogModel";
 import {UpdateBlogModel} from "./models/input/UpdateBlogModule";
 import {DBType} from "../../db/memory-db";
@@ -19,24 +19,26 @@ import {authMiddleware} from "../../middlewares/auth/auth-middleware";
 import {ObjectId} from "mongodb";
 import {PostMemoryDbRepository} from "../posts/repositories/post-db-repository";
 import {postByIdValidation} from "../posts/validator/post-validator";
+import {queryValidation} from "./validator/blog-query-validator";
 
 export const getBlogsRoutes = (db: DBType) => {
     const router = express.Router()
-    router.get('/', async (req: RequestWithQuery<QueryBlogsModel>,
+    router.get('/', queryValidation(), async (req: RequestWithQuery<QueryBlogsModel>,
                         res: Response) => {
-        const sortData = {
+        const sortData:QueryBlogsModel = {
             searchNameTerm: req.query.searchNameTerm,
             sortBy: req.query.sortBy,
             sortDirection: req.query.sortDirection,
             pageNumber: req.query.pageNumber,
             pageSize: req.query.pageSize
         }
-        const blogs = await BlogRepository.getAllBlogs(sortData)
+
+        const blogs:BlogsViewModelGetAllBlogs = await BlogRepository.getAllBlogs(sortData)
 
         res.send(blogs)
     })
-    router.get('/:id/posts', async (req: RequestWithParamsAndQuery<URIParamsBlogIdModel,QueryPostByBlogIdModel>,
-                              res) => {
+    router.get('/:id/posts', queryValidation(), async (req: RequestWithParamsAndQuery<URIParamsBlogIdModel,QueryPostByBlogIdModel>,
+                              res: Response) => {
         const id = req.params.id
 
         const blog = await BlogRepository.getBlogById(id)

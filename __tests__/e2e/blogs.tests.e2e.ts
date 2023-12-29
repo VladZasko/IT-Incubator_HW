@@ -20,9 +20,14 @@ describe('/blogs', () => {
         await getRequest().delete('/testing/all-data')
     })
 
+    // it ('should return 200 and empty array', async () => {
+    //     await getRequest()
+    //         .get(RouterPaths.blogs)
+    //         .expect(HTTP_STATUSES.OK_200, [])
+    // })
     it ('should return 200 and empty array', async () => {
         await getRequest()
-            .get(RouterPaths.blogs)
+            .get(RouterPaths.blogs+'?pageSize=3&pageNumber=3')
             .expect(HTTP_STATUSES.OK_200, [])
     })
 

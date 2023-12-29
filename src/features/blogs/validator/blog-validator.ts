@@ -1,4 +1,4 @@
-import {body} from "express-validator";
+import {body, query} from "express-validator";
 import {inputValidation} from "../../../middlewares/input-modul-validation/input-validation";
 
 export const nameValidation = body('name').isString().trim().isLength({min:1, max:15}).withMessage('Incorrect name!')
@@ -8,3 +8,4 @@ export const websiteUrlValidation = body('websiteUrl').isString().trim()
     .matches('^https://([a-zA-Z0-9_-]+\\.)+[a-zA-Z0-9_-]+(\\/[a-zA-Z0-9_-]+)*\\/?$').withMessage('Incorrect websiteUrl!')
 
 export const blogValidation = () => [  websiteUrlValidation, nameValidation, descriptionValidation, inputValidation]
+
