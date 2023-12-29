@@ -68,7 +68,7 @@ export const getBlogsRoutes = (db: DBType) => {
 
         res.send(blog)
     })
-    router.post('/:id/posts', authMiddleware, postByIdValidation,
+    router.post('/:id/posts', authMiddleware, postByIdValidation(),
         async (req:RequestWithParamsAndBody<{id:string},CreatePostBlogModel>,
                res: Response) => {
             const createData = {
