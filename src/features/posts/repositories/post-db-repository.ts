@@ -31,8 +31,8 @@ export class PostMemoryDbRepository {
 
         return {
             pagesCount,
-            page: pageNumber,
-            pageSize,
+            page: parseFloat(pageNumber) ,
+            pageSize:parseFloat(pageSize) ,
             totalCount,
             items: posts.map(postMapper)
         }
