@@ -10,14 +10,20 @@ import {PostsViewModel} from "./models/PostsViewModel";
 import {postValidation} from "./validator/post-validator";
 import {CreatePostModel} from "./models/CreatePostModel";
 import {UpdatePostModel} from "./models/UpdatePostModule";
-import {BlogMemoryDbRepository} from "../blogs/repositories/blog-db-repository";
+import {BlogRepository} from "../blogs/repositories/blog-db-repository";
 import {ObjectId} from "mongodb";
 
 export const getPostsRoutes = (db: DBType) => {
     const router = express.Router()
     router.get('/', async (req: RequestWithQuery<QueryPostsModel>,
                      res: Response) => {
-        const posts = await PostMemoryDbRepository.getAllPosts()
+        const sortData = {
+            pageNumber: req.query.pageNumber,
+            pageSize: req.query.pageSize,
+            sortBy: req.query.sortBy,
+            sortDirection: req.query.sortDirection
+        }
+        const posts = await PostMemoryDbRepository.getAllPosts(sortData)
 
         res.send(posts)
     })
@@ -41,7 +47,7 @@ export const getPostsRoutes = (db: DBType) => {
     })
     router.post('/', authMiddleware, postValidation(), async (req:RequestWithBody<CreatePostModel>,
                                                         res: Response) => {
-        const blog = await BlogMemoryDbRepository.getBlogById(req.body.blogId)
+        const blog = await BlogRepository.getBlogById(req.body.blogId)
         const blogName = blog!.name
         const createData = {
             title: req.body.title,
@@ -49,7 +55,7 @@ export const getPostsRoutes = (db: DBType) => {
             content: req.body.content,
             blogId: req.body.blogId,
         }
-        let dataRepos = (req.body.title, req.body.shortDescription, req.body.content, req.body.blogId)
+
         const newPost = await PostMemoryDbRepository.createPost(createData, blogName)
 
         res

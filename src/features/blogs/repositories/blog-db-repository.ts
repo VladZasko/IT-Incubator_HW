@@ -1,17 +1,77 @@
 import {memoryDb} from "../../../db/memory-db";
-import {BlogsViewModel} from "../models/BlogsViewModel";
-import {blogsCollection} from "../../../db/db";
+import {BlogsViewModel} from "../models/output/BlogsViewModel";
+import {blogsCollection, postsCollection} from "../../../db/db";
 import {blogMapper} from "../mappers/mappers";
 import {ObjectId} from "mongodb";
-import {CreateBlogModel} from "../models/CreateBlogModel";
-import {UpdateBlogModel} from "../models/UpdateBlogModule";
-import {URIParamsBlogIdModel} from "../models/URIParamsBlogIdModule";
+import {CreateBlogModel, CreatePostBlogModel} from "../models/input/CreateBlogModel";
+import {UpdateBlogModel} from "../models/input/UpdateBlogModule";
+import {URIParamsBlogIdModel} from "../models/input/URIParamsBlogIdModule";
+import {QueryBlogsModel, QueryPostByBlogIdModel} from "../models/input/QueryBlogsModule";
+import {postMapper} from "../../posts/mappers/mappers";
 
-export class BlogMemoryDbRepository {
-    static async getAllBlogs(): Promise<BlogsViewModel[]>{
-        const blogs = await blogsCollection.find({}).toArray()
+export class BlogRepository {
+    static async getAllBlogs(sortData: QueryBlogsModel){
+        const searchNameTerm = sortData.searchNameTerm ?? null
+        const sortBy = sortData.sortBy ?? 'createdAt'
+        const sortDirection = sortData.sortDirection ?? 'desc'
+        const pageNumber = sortData.pageNumber ?? 1
+        const pageSize = sortData.pageSize ?? 10
 
-        return blogs.map(blogMapper)
+        let filter = {}
+
+        if(searchNameTerm){
+            filter = {
+                name: {$regex: searchNameTerm, $options: 'i'}
+            }
+        }
+
+        const blogs = await blogsCollection
+            .find(filter)
+            .sort(sortBy, sortDirection)
+            .skip((pageNumber-1)* +pageSize)
+            .limit(+pageSize)
+            .toArray()
+
+        const totalCount = await blogsCollection.countDocuments(filter)
+
+        const pagesCount = Math.ceil(totalCount/ +pageSize)
+
+
+        return {
+            pagesCount,
+            page: pageNumber,
+            pageSize,
+            totalCount,
+            items: blogs.map(blogMapper)
+        }
+
+    }
+    static async getPostsByBlogId(blogId:string, sortData: QueryPostByBlogIdModel) {
+        const sortBy = sortData.sortBy ?? 'createdAt'
+        const sortDirection = sortData.sortDirection ?? 'desc'
+        const pageNumber = sortData.pageNumber ?? 1
+        const pageSize = sortData.pageSize ?? 10
+
+        const posts = await postsCollection
+            .find({blogId: blogId})
+            .sort(sortBy, sortDirection)
+            .skip((pageNumber-1)* +pageSize)
+            .limit(+pageSize)
+            .toArray()
+
+        const totalCount = await blogsCollection
+            .countDocuments({blogId: blogId})
+
+        const pagesCount = Math.ceil(totalCount/ +pageSize)
+
+        return {
+            pagesCount,
+            page: pageNumber,
+            pageSize,
+            totalCount,
+            items: posts.map(postMapper)
+        }
+
     }
 
     static async getBlogById(id: string): Promise<BlogsViewModel | null> {
@@ -23,7 +83,20 @@ export class BlogMemoryDbRepository {
 
         return blogMapper(blog)
     }
+    static async createPostBlog(blogId:string, createData:any){
+        const blog = await this.getBlogById(blogId)
 
+        const newPostBlog = {
+            ...createData,
+            blogId: blogId,
+            blogName: blog!.name,
+            createdAt: new Date().toISOString(),
+        }
+
+        const res = await postsCollection.insertOne(newPostBlog)
+
+        return res.insertedId.toString()
+    }
     static async createBlog(createData : CreateBlogModel):Promise<BlogsViewModel> {
         const newBlog = {
             ...createData,

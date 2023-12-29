@@ -1,24 +1,54 @@
-import {RequestWithBody, RequestWithParams, RequestWithParamsAndBody, RequestWithQuery} from "../../types";
-import {QueryBlogsModel} from "./models/QueryBlogsModule";
+import {
+    RequestWithBody,
+    RequestWithParams,
+    RequestWithParamsAndBody,
+    RequestWithParamsAndQuery,
+    RequestWithQuery
+} from "../../types";
+import {QueryBlogsModel, QueryPostByBlogIdModel} from "./models/input/QueryBlogsModule";
 import express, {Response} from "express";
 import {HTTP_STATUSES} from "../../utils";
-import {URIParamsBlogIdModel} from "./models/URIParamsBlogIdModule";
-import {BlogsViewModel} from "./models/BlogsViewModel";
-import {CreateBlogModel} from "./models/CreateBlogModel";
-import {UpdateBlogModel} from "./models/UpdateBlogModule";
+import {URIParamsBlogIdModel} from "./models/input/URIParamsBlogIdModule";
+import {BlogsViewModel} from "./models/output/BlogsViewModel";
+import {CreateBlogModel, CreatePostBlogModel} from "./models/input/CreateBlogModel";
+import {UpdateBlogModel} from "./models/input/UpdateBlogModule";
 import {DBType} from "../../db/memory-db";
 import {blogValidation} from "./validator/blog-validator";
-import {BlogMemoryDbRepository} from "./repositories/blog-db-repository";
+import {BlogRepository} from "./repositories/blog-db-repository";
 import {authMiddleware} from "../../middlewares/auth/auth-middleware";
 import {ObjectId} from "mongodb";
+import {PostMemoryDbRepository} from "../posts/repositories/post-db-repository";
+import {postByIdValidation} from "../posts/validator/post-validator";
 
 export const getBlogsRoutes = (db: DBType) => {
     const router = express.Router()
     router.get('/', async (req: RequestWithQuery<QueryBlogsModel>,
                         res: Response) => {
-        const blogs = await BlogMemoryDbRepository.getAllBlogs()
+        const sortData = {
+            searchNameTerm: req.query.searchNameTerm,
+            sortBy: req.query.sortBy,
+            sortDirection: req.query.sortDirection,
+            pageNumber: req.query.pageNumber,
+            pageSize: req.query.pageSize
+        }
+        const blogs = await BlogRepository.getAllBlogs(sortData)
 
         res.send(blogs)
+    })
+    router.get('/:id/posts', async (req: RequestWithParamsAndQuery<URIParamsBlogIdModel,QueryPostByBlogIdModel>,
+                              res) => {
+        const id = req.params.id
+
+        const sortData = {
+            sortBy: req.query.sortBy,
+            sortDirection: req.query.sortDirection,
+            pageNumber: req.query.pageNumber,
+            pageSize: req.query.pageSize
+        }
+
+        const posts = await BlogRepository.getPostsByBlogId(id,sortData)
+
+        res.send(posts)
     })
     router.get('/:id', async (req: RequestWithParams<URIParamsBlogIdModel>,
                             res: Response<BlogsViewModel>) => {
@@ -29,7 +59,7 @@ export const getBlogsRoutes = (db: DBType) => {
             return;
         }
 
-        const blog = await BlogMemoryDbRepository.getBlogById(id)
+        const blog = await BlogRepository.getBlogById(id)
 
         if (!blog){
             res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
@@ -38,6 +68,38 @@ export const getBlogsRoutes = (db: DBType) => {
 
         res.send(blog)
     })
+    router.post('/:id/posts', authMiddleware, postByIdValidation,
+        async (req:RequestWithParamsAndBody<{id:string},CreatePostBlogModel>,
+               res: Response) => {
+            const createData = {
+                title: req.body.title,
+                shortDescription: req.body.shortDescription,
+                content: req.body.content,
+            }
+
+            const blogId = req.params.id
+
+            const blog = await BlogRepository.getBlogById(blogId)
+
+            if(!blog){
+                res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
+                return
+            }
+
+            const newPostId = await BlogRepository.createPostBlog(blogId,createData)
+
+            const post = await PostMemoryDbRepository.getPostById(newPostId)
+
+            if(!post){
+                res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
+                return
+            }
+
+            res
+                .status(HTTP_STATUSES.CREATED_201)
+                .send(post)
+
+        })
     router.post('/', authMiddleware, blogValidation(),
         async (req:RequestWithBody<CreateBlogModel>,
                res: Response) => {
@@ -48,7 +110,7 @@ export const getBlogsRoutes = (db: DBType) => {
             websiteUrl: req.body.websiteUrl
         }
 
-        const newBlog = await BlogMemoryDbRepository.createBlog(createData)
+        const newBlog = await BlogRepository.createBlog(createData)
 
         res
             .status(HTTP_STATUSES.CREATED_201)
@@ -71,14 +133,14 @@ export const getBlogsRoutes = (db: DBType) => {
             websiteUrl: req.body.websiteUrl
         }
 
-        const blog = await BlogMemoryDbRepository.getBlogById(id)
+        const blog = await BlogRepository.getBlogById(id)
 
         if(!blog){
             res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
             return
         }
 
-        const updateBlog = await BlogMemoryDbRepository.updateBlog(id, updateData)
+        const updateBlog = await BlogRepository.updateBlog(id, updateData)
 
         if (!updateBlog){
             res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
@@ -99,7 +161,7 @@ export const getBlogsRoutes = (db: DBType) => {
             return;
         }
 
-        const deleteBlog = await BlogMemoryDbRepository.deleteBlogById(id)
+        const deleteBlog = await BlogRepository.deleteBlogById(id)
         if(!deleteBlog) {
             res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
             return

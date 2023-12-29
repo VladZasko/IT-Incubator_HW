@@ -7,12 +7,35 @@ import {postMapper} from "../mappers/mappers";
 import {ObjectId} from "mongodb";
 import {CreatePostModel} from "../models/CreatePostModel";
 import {UpdatePostModel} from "../models/UpdatePostModule";
+import {QueryPostsModel} from "../models/QueryPostsModule";
 
 export class PostMemoryDbRepository {
-    static async getAllPosts(): Promise<PostsViewModel[]>{
-        const posts = await postsCollection.find({}).toArray()
+    static async getAllPosts(sortData: QueryPostsModel){
+        const pageNumber= sortData.pageNumber ?? 1
+        const pageSize= sortData.pageSize ?? 10
+        const sortBy= sortData.sortBy ?? 'createdAt'
+        const sortDirection= sortData.sortDirection ?? 'desc'
 
-        return posts.map(postMapper)
+        let filter = {}
+
+        const posts = await postsCollection
+            .find(filter)
+            .sort(sortBy, sortDirection)
+            .skip((pageNumber-1)* +pageSize)
+            .limit(+pageSize)
+            .toArray()
+
+        const totalCount = await blogsCollection.countDocuments(filter)
+
+        const pagesCount = Math.ceil(totalCount/ +pageSize)
+
+        return {
+            pagesCount,
+            page: pageNumber,
+            pageSize,
+            totalCount,
+            items: posts.map(postMapper)
+        }
     }
 
     static async getPostById(id: string): Promise<PostsViewModel | null> {

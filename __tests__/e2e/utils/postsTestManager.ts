@@ -1,10 +1,10 @@
-import {CreateBlogModel} from "../../../src/features/blogs/models/CreateBlogModel";
+import {CreateBlogModel} from "../../../src/features/blogs/models/input/CreateBlogModel";
 import {HTTP_STATUSES, HttpStatusType} from "../../../src/utils";
 import request from "supertest";
 import {app} from "../../../src/app";
 import {RouterPaths} from "../../../src/routerPaths";
-import {URIParamsBlogIdModel} from "../../../src/features/blogs/models/URIParamsBlogIdModule";
-import {UpdateBlogModel} from "../../../src/features/blogs/models/UpdateBlogModule";
+import {URIParamsBlogIdModel} from "../../../src/features/blogs/models/input/URIParamsBlogIdModule";
+import {UpdateBlogModel} from "../../../src/features/blogs/models/input/UpdateBlogModule";
 import {CreatePostModel} from "../../../src/features/posts/models/CreatePostModel";
 import {URIParamsPostIdModel} from "../../../src/features/posts/models/URIParamsPostIdModule";
 import {UpdatePostModel} from "../../../src/features/posts/models/UpdatePostModule";

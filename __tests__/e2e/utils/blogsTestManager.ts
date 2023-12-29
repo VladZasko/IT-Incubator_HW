@@ -1,10 +1,10 @@
 import request from "supertest";
-import {CreateBlogModel} from "../../../src/features/blogs/models/CreateBlogModel";
+import {CreateBlogModel} from "../../../src/features/blogs/models/input/CreateBlogModel";
 import {HTTP_STATUSES, HttpStatusType} from "../../../src/utils";
 import {RouterPaths} from "../../../src/routerPaths";
 import {app} from "../../../src/app";
-import {UpdateBlogModel} from "../../../src/features/blogs/models/UpdateBlogModule";
-import {URIParamsBlogIdModel} from "../../../src/features/blogs/models/URIParamsBlogIdModule";
+import {UpdateBlogModel} from "../../../src/features/blogs/models/input/UpdateBlogModule";
+import {URIParamsBlogIdModel} from "../../../src/features/blogs/models/input/URIParamsBlogIdModule";
 import {BlogType} from "../../../src/db/types/blogs.types";
 
 export const blogsTestManager = {

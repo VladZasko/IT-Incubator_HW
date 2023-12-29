@@ -2,7 +2,6 @@ import {MongoClient} from "mongodb";
 import dotenv from 'dotenv'
 import {BlogDBType} from "./types/blogs.types";
 import {PostDBType} from "./types/posts.types";
-import {port} from "../index";
 import {VideoDBType} from "./types/videos.types";
 
 dotenv.config()
@@ -17,6 +16,7 @@ export const blogsCollection = db.collection<BlogDBType>("blogs");
 export const postsCollection = db.collection<PostDBType>("posts");
 export const videosCollection = db.collection<VideoDBType>("videos");
 
+export const port = 3000
 export async function runDb() {
     try {
         // Connect the client to the server

@@ -1,7 +1,7 @@
 import {memoryDb} from "../../../db/memory-db";
-import {BlogsViewModel} from "../models/BlogsViewModel";
-import {UpdateBlogModel} from "../models/UpdateBlogModule";
-import {CreateBlogModel} from "../models/CreateBlogModel";
+import {BlogsViewModel} from "../models/output/BlogsViewModel";
+import {UpdateBlogModel} from "../models/input/UpdateBlogModule";
+import {CreateBlogModel} from "../models/input/CreateBlogModel";
 
 export class BlogMemoryDbRepository {
     static async getAllBlogs(): Promise<BlogsViewModel[]>{

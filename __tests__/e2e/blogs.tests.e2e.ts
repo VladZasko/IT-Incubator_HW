@@ -1,7 +1,7 @@
 import request from 'supertest'
 import {app} from "../../src/app";
 import {HTTP_STATUSES} from "../../src/utils";
-import {CreateBlogModel} from "../../src/features/blogs/models/CreateBlogModel";
+import {CreateBlogModel} from "../../src/features/blogs/models/input/CreateBlogModel";
 import {RouterPaths} from "../../src/routerPaths";
 import {blogsTestManager} from "./utils/blogsTestManager";
 import {
