@@ -39,7 +39,7 @@ export const getBlogsRoutes = (db: DBType) => {
 
         res.send(blogs)
     })
-    router.get('/:id/posts', queryValidation(), async (req: RequestWithParamsAndQuery<URIParamsBlogIdModel,QueryPostByBlogIdModel>,
+    router.get('/:id/posts',  async (req: RequestWithParamsAndQuery<URIParamsBlogIdModel,QueryPostByBlogIdModel>,
                               res: Response) => {
         const id = req.params.id
 
