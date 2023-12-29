@@ -39,6 +39,13 @@ export const getBlogsRoutes = (db: DBType) => {
                               res) => {
         const id = req.params.id
 
+        const blog = await BlogRepository.getBlogById(id)
+
+        if(!blog){
+            res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
+            return
+        }
+
         const sortData = {
             sortBy: req.query.sortBy,
             sortDirection: req.query.sortDirection,
