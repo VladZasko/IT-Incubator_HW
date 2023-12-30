@@ -59,7 +59,7 @@ export class BlogRepository {
             .limit(+pageSize)
             .toArray()
 
-        const totalCount = await blogsCollection
+        const totalCount = await postsCollection
             .countDocuments({blogId: blogId})
 
         const pagesCount = Math.ceil(totalCount/ +pageSize)
