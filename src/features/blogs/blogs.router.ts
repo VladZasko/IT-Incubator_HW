@@ -19,12 +19,12 @@ import {authMiddleware} from "../../middlewares/auth/auth-middleware";
 import {ObjectId} from "mongodb";
 import {PostMemoryDbRepository} from "../posts/repositories/post-db-repository";
 import {postByIdValidation} from "../posts/validator/post-validator";
-import {queryValidation} from "./validator/blog-query-validator";
+
 
 
 export const getBlogsRoutes = (db: DBType) => {
     const router = express.Router()
-    router.get('/',  async (req: RequestWithQuery<QueryBlogsModel>,
+    router.get('/', async (req: RequestWithQuery<QueryBlogsModel>,
                         res: Response) => {
 
         const sortData:QueryBlogsModel = {
@@ -42,6 +42,11 @@ export const getBlogsRoutes = (db: DBType) => {
     router.get('/:id/posts',  async (req: RequestWithParamsAndQuery<URIParamsBlogIdModel,QueryPostByBlogIdModel>,
                               res: Response) => {
         const id = req.params.id
+
+        if(!ObjectId.isValid(id)){
+            res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
+            return;
+        }
 
         const blog = await BlogRepository.getBlogById(id)
 

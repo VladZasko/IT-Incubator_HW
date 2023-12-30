@@ -25,14 +25,14 @@ export class PostMemoryDbRepository {
             .limit(+pageSize)
             .toArray()
 
-        const totalCount = await blogsCollection.countDocuments(filter)
+        const totalCount = await postsCollection.countDocuments(filter)
 
         const pagesCount = Math.ceil(totalCount/ +pageSize)
 
         return {
             pagesCount,
-            page: parseFloat(pageNumber) ,
-            pageSize:parseFloat(pageSize) ,
+            page:parseFloat(pageNumber) ,
+            pageSize: parseFloat(pageSize),
             totalCount,
             items: posts.map(postMapper)
         }

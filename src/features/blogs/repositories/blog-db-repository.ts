@@ -39,8 +39,8 @@ export class BlogRepository {
 
         return {
             pagesCount,
-            page: parseFloat(pageNumber) ,
-            pageSize:parseFloat(pageSize) ,
+            page:parseFloat(pageNumber) ,
+            pageSize: parseFloat(pageSize),
             totalCount,
             items: blogs.map(blogMapper)
         }
@@ -66,8 +66,8 @@ export class BlogRepository {
 
         return {
             pagesCount,
-            page: parseFloat(pageNumber) ,
-            pageSize:parseFloat(pageSize) ,
+            page:parseFloat(pageNumber) ,
+            pageSize: parseFloat(pageSize),
             totalCount,
             items: posts.map(postMapper)
         }
