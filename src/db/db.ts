@@ -7,16 +7,14 @@ import {VideoDBType} from "./types/videos.types";
 dotenv.config()
 
 const mongoURI =
-    process.env.MONGO_URL
-    || "mongodb+srv://vladzasko:FKSdwWJieyi7AM6u@cluster0.msxlf7v.mongodb.net/shop-memoryDb?retryWrites=true&w=majority"
-    || 'mongodb://0.0.0.0:27017'
+    process.env.MONGO_URL || 'mongodb://0.0.0.0:27017'
 export const client = new MongoClient(mongoURI)
 export const db = client.db('blogs-hws');
 export const blogsCollection = db.collection<BlogDBType>("blogs");
 export const postsCollection = db.collection<PostDBType>("posts");
 export const videosCollection = db.collection<VideoDBType>("videos");
 
-export const port = 3000
+export const port = process.env.PORT
 export async function runDb() {
     try {
         // Connect the client to the server

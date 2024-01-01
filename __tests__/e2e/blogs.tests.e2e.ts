@@ -7,9 +7,12 @@ import {blogsTestManager} from "./utils/blogsTestManager";
 import {
     dataTestBlogCreate01,
     dataTestBlogCreate02,
-    dataTestBlogUpdate01,
-    incorrectData
+    dataTestBlogUpdate01, dataTestPostByBlogCreate01,
+    incorrectBlogData
 } from "./dataForTest/dataTestforBlog";
+import {ErrorMessage, ERRORS_MESSAGES} from "./utils/types/errors";
+import {dataTestPostCreate01, incorrectPostData} from "./dataForTest/dataTestforPost";
+
 
 
 const getRequest = () => {
@@ -20,15 +23,10 @@ describe('/blogs', () => {
         await getRequest().delete('/testing/all-data')
     })
 
-    // it ('should return 200 and empty array', async () => {
-    //     await getRequest()
-    //         .get(RouterPaths.blogs)
-    //         .expect(HTTP_STATUSES.OK_200, [])
-    // })
     it ('should return 200 and empty array', async () => {
         await getRequest()
-            .get(RouterPaths.blogs+'?pageSize=3&pageNumber=3')
-            .expect(HTTP_STATUSES.OK_200, [])
+            .get(`${RouterPaths.blogs}/?pageSize=3&pageNumber=3`)
+            .expect(HTTP_STATUSES.OK_200, { pagesCount: 0, page: 3, pageSize: 3, totalCount: 0, items: [] })
     })
 
     it ('should return 404 fot not existing blogs', async () => {
@@ -49,85 +47,127 @@ describe('/blogs', () => {
 
         const data = {
             ...dataTestBlogCreate01,
-            name: incorrectData.emptyName
+            name: incorrectBlogData.emptyName
         }
-        await blogsTestManager.createBlog(data, HTTP_STATUSES.BAD_REQUEST_400)
+        const error:ErrorMessage = [ERRORS_MESSAGES.BLOG_NAME]
+
+        await blogsTestManager
+            .createBlog(data, HTTP_STATUSES.BAD_REQUEST_400, error)
 
         await request(app)
             .get(RouterPaths.blogs)
-            .expect(HTTP_STATUSES.OK_200, [])
+            .expect(HTTP_STATUSES.OK_200, { pagesCount: 0, page: 1, pageSize: 10, totalCount: 0, items: [] })
     })
 
     it(`shouldn't create blog with name more than 15 characters`, async () => {
         const data = {
             ...dataTestBlogCreate01,
-            name: incorrectData.tooLongName
+            name: incorrectBlogData.tooLongName
         }
-        await blogsTestManager.createBlog(data, HTTP_STATUSES.BAD_REQUEST_400)
+        const error:ErrorMessage = [ERRORS_MESSAGES.BLOG_NAME]
+
+        await blogsTestManager
+            .createBlog(data, HTTP_STATUSES.BAD_REQUEST_400,error)
 
         await request(app)
             .get(RouterPaths.blogs)
-            .expect(HTTP_STATUSES.OK_200, [])
+            .expect(HTTP_STATUSES.OK_200, { pagesCount: 0, page: 1, pageSize: 10, totalCount: 0, items: [] })
     })
 
     it(`shouldn't create blog with empty description`, async () => {
         const data = {
             ...dataTestBlogCreate01,
-            description: incorrectData.emptyDescription
+            description: incorrectBlogData.emptyDescription
         }
-        await blogsTestManager.createBlog(data, HTTP_STATUSES.BAD_REQUEST_400)
+        const error:ErrorMessage = [ERRORS_MESSAGES.BLOG_DESCRIPTION]
+
+        await blogsTestManager
+            .createBlog(data, HTTP_STATUSES.BAD_REQUEST_400, error)
 
         await request(app)
             .get(RouterPaths.blogs)
-            .expect(HTTP_STATUSES.OK_200, [])
+            .expect(HTTP_STATUSES.OK_200, { pagesCount: 0, page: 1, pageSize: 10, totalCount: 0, items: [] })
     })
 
     it(`shouldn't create blogs with description more than 500 characters`, async () => {
         const data = {
             ...dataTestBlogCreate01,
-            description: incorrectData.tooLongDescription
+            description: incorrectBlogData.tooLongDescription
         }
-        await blogsTestManager.createBlog(data, HTTP_STATUSES.BAD_REQUEST_400)
+        const error:ErrorMessage = [ERRORS_MESSAGES.BLOG_DESCRIPTION]
+
+        await blogsTestManager
+            .createBlog(data, HTTP_STATUSES.BAD_REQUEST_400, error)
 
         await request(app)
             .get(RouterPaths.blogs)
-            .expect(HTTP_STATUSES.OK_200, [])
+            .expect(HTTP_STATUSES.OK_200, { pagesCount: 0, page: 1, pageSize: 10, totalCount: 0, items: [] })
     })
 
     it(`shouldn't create blogs with empty websiteUrl`, async () => {
         const data = {
             ...dataTestBlogCreate01,
-            websiteUrl: incorrectData.emptyWebsiteUrl
+            websiteUrl: incorrectBlogData.emptyWebsiteUrl
         }
-        await blogsTestManager.createBlog(data, HTTP_STATUSES.BAD_REQUEST_400)
+        const error:ErrorMessage = [ERRORS_MESSAGES.BLOG_WEBSITE_URL]
+
+        await blogsTestManager
+            .createBlog(data, HTTP_STATUSES.BAD_REQUEST_400, error)
 
         await request(app)
             .get(RouterPaths.blogs)
-            .expect(HTTP_STATUSES.OK_200, [])
+            .expect(HTTP_STATUSES.OK_200, { pagesCount: 0, page: 1, pageSize: 10, totalCount: 0, items: [] })
     })
 
     it(`shouldn't create blogs with websiteUrl more than 100 characters`, async () => {
         const data = {
             ...dataTestBlogCreate01,
-            websiteUrl: incorrectData.tooLongWebsiteUrl
+            websiteUrl: incorrectBlogData.tooLongWebsiteUrl
         }
-        await blogsTestManager.createBlog(data, HTTP_STATUSES.BAD_REQUEST_400)
+        const error:ErrorMessage = [ERRORS_MESSAGES.BLOG_WEBSITE_URL]
+
+        await blogsTestManager
+            .createBlog(data, HTTP_STATUSES.BAD_REQUEST_400, error)
 
         await request(app)
             .get(RouterPaths.blogs)
-            .expect(HTTP_STATUSES.OK_200, [])
+            .expect(HTTP_STATUSES.OK_200, { pagesCount: 0, page: 1, pageSize: 10, totalCount: 0, items: [] })
     })
 
     it(`shouldn't create blogs with websiteUrl that does not match the pattern`, async () => {
         const data = {
             ...dataTestBlogCreate01,
-            websiteUrl: incorrectData.incorrectWebsiteUrl
+            websiteUrl: incorrectBlogData.incorrectWebsiteUrl
         }
-        await blogsTestManager.createBlog(data, HTTP_STATUSES.BAD_REQUEST_400)
+        const error:ErrorMessage = [ERRORS_MESSAGES.BLOG_WEBSITE_URL]
+
+        await blogsTestManager
+            .createBlog(data, HTTP_STATUSES.BAD_REQUEST_400, error)
 
         await request(app)
             .get(RouterPaths.blogs)
-            .expect(HTTP_STATUSES.OK_200, [])
+            .expect(HTTP_STATUSES.OK_200, { pagesCount: 0, page: 1, pageSize: 10, totalCount: 0, items: [] })
+    })
+
+    it(`shouldn't create blogs with incorrect data`, async () => {
+        const data = {
+            ...dataTestBlogCreate01,
+            name: incorrectBlogData.emptyName,
+            description: incorrectBlogData.emptyDescription,
+            websiteUrl: incorrectBlogData.incorrectWebsiteUrl
+        }
+        const error:ErrorMessage = [
+            ERRORS_MESSAGES.BLOG_WEBSITE_URL,
+            ERRORS_MESSAGES.BLOG_NAME,
+            ERRORS_MESSAGES.BLOG_DESCRIPTION
+        ]
+
+        await blogsTestManager
+            .createBlog(data, HTTP_STATUSES.BAD_REQUEST_400, error)
+
+        await request(app)
+            .get(RouterPaths.blogs)
+            .expect(HTTP_STATUSES.OK_200, { pagesCount: 0, page: 1, pageSize: 10, totalCount: 0, items: [] })
     })
 
     let createdNewBlog01:any = null
@@ -139,7 +179,8 @@ describe('/blogs', () => {
 
         await request(app)
             .get(RouterPaths.blogs)
-            .expect(HTTP_STATUSES.OK_200, [createdNewBlog01])
+            .expect(HTTP_STATUSES.OK_200,
+                { pagesCount: 1, page: 1, pageSize: 10, totalCount: 1, items: [createdNewBlog01] })
     })
 
     let createdNewBlog02:any = null
@@ -153,7 +194,57 @@ describe('/blogs', () => {
 
         await request(app)
             .get(RouterPaths.blogs)
-            .expect(HTTP_STATUSES.OK_200, [createdNewBlog01, createdNewBlog02])
+            .expect(HTTP_STATUSES.OK_200,
+                { pagesCount: 1, page: 1, pageSize: 10, totalCount: 2, items: [createdNewBlog02,createdNewBlog01 ]})
+    })
+
+    it(`shouldn't create post by blogId with empty title`, async () => {
+
+        const data = {
+            ...dataTestPostCreate01,
+            title: incorrectPostData.emptyTitle
+        }
+        const error:ErrorMessage = [ERRORS_MESSAGES.POST_TITLE]
+
+        await blogsTestManager
+            .createPostByBlog(createdNewBlog01,data, HTTP_STATUSES.BAD_REQUEST_400, error)
+
+        await request(app)
+            .get(RouterPaths.posts)
+            .expect(HTTP_STATUSES.OK_200, { pagesCount: 0, page: 1, pageSize: 10, totalCount: 0, items: [] })
+    })
+
+    it(`shouldn't create post by blogId with incorrect data`, async () => {
+
+        const data = {
+            ...dataTestPostCreate01,
+            title: incorrectPostData.emptyTitle,
+            content: incorrectPostData.emptyContent,
+            shortDescription: incorrectPostData.emptyShortDescription
+        }
+        const error:ErrorMessage = [
+            ERRORS_MESSAGES.POST_SHORT_DESCRIPTION,
+            ERRORS_MESSAGES.POST_TITLE,
+            ERRORS_MESSAGES.POST_CONTENT]
+
+        await blogsTestManager
+            .createPostByBlog(createdNewBlog01,data, HTTP_STATUSES.BAD_REQUEST_400, error)
+
+        await request(app)
+            .get(RouterPaths.posts)
+            .expect(HTTP_STATUSES.OK_200, { pagesCount: 0, page: 1, pageSize: 10, totalCount: 0, items: [] })
+    })
+
+    it(`should create post by blogId`, async () => {
+
+        const result = await blogsTestManager.createPostByBlog(createdNewBlog01,dataTestPostByBlogCreate01)
+
+        let createdNewPostByBlog01 = result.createdEntity;
+
+        await request(app)
+            .get(RouterPaths.posts)
+            .expect(HTTP_STATUSES.OK_200,
+                { pagesCount: 1, page: 1, pageSize: 10, totalCount: 1, items: [createdNewPostByBlog01] })
     })
 
     it ('should return 404 fot not existing blogs for update', async () => {
@@ -177,10 +268,13 @@ describe('/blogs', () => {
     it(`shouldn't update blog with empty name`, async () => {
         const data = {
             ...dataTestBlogUpdate01,
-            name: incorrectData.emptyName
+            name: incorrectBlogData.emptyName
             }
 
-        await blogsTestManager.updateBlog(createdNewBlog01, data, HTTP_STATUSES.BAD_REQUEST_400)
+        const error:ErrorMessage = [ERRORS_MESSAGES.BLOG_NAME]
+
+        await blogsTestManager
+            .updateBlog(createdNewBlog01, data, HTTP_STATUSES.BAD_REQUEST_400, error)
 
         await request(app)
             .get(`${RouterPaths.blogs}/${createdNewBlog01.id}`)
@@ -190,10 +284,12 @@ describe('/blogs', () => {
     it(`shouldn't update blog with name more than 15 characters`, async () => {
         const data = {
             ...dataTestBlogUpdate01,
-            name: incorrectData.tooLongName
+            name: incorrectBlogData.tooLongName
         }
+        const error:ErrorMessage = [ERRORS_MESSAGES.BLOG_NAME]
 
-        await blogsTestManager.updateBlog(createdNewBlog01, data, HTTP_STATUSES.BAD_REQUEST_400)
+        await blogsTestManager
+            .updateBlog(createdNewBlog01, data, HTTP_STATUSES.BAD_REQUEST_400,error)
 
         await request(app)
             .get(`${RouterPaths.blogs}/${createdNewBlog01.id}`)
@@ -203,10 +299,12 @@ describe('/blogs', () => {
     it(`shouldn't update blog with empty description`, async () => {
         const data = {
             ...dataTestBlogUpdate01,
-            description: incorrectData.emptyDescription
+            description: incorrectBlogData.emptyDescription
         }
+        const error:ErrorMessage = [ERRORS_MESSAGES.BLOG_DESCRIPTION]
 
-        await blogsTestManager.updateBlog(createdNewBlog01, data, HTTP_STATUSES.BAD_REQUEST_400)
+        await blogsTestManager
+            .updateBlog(createdNewBlog01, data, HTTP_STATUSES.BAD_REQUEST_400,error)
 
         await request(app)
             .get(`${RouterPaths.blogs}/${createdNewBlog01.id}`)
@@ -216,10 +314,13 @@ describe('/blogs', () => {
     it(`shouldn't update blogs with description more than 500 characters`, async () => {
         const data = {
             ...dataTestBlogUpdate01,
-            description: incorrectData.tooLongDescription
+            description: incorrectBlogData.tooLongDescription
         }
+        const error:ErrorMessage = [ERRORS_MESSAGES.BLOG_DESCRIPTION]
 
-        await blogsTestManager.updateBlog(createdNewBlog01, data, HTTP_STATUSES.BAD_REQUEST_400)
+
+        await blogsTestManager
+            .updateBlog(createdNewBlog01, data, HTTP_STATUSES.BAD_REQUEST_400,error)
 
         await request(app)
             .get(`${RouterPaths.blogs}/${createdNewBlog01.id}`)
@@ -229,10 +330,12 @@ describe('/blogs', () => {
     it(`shouldn't update blogs with empty websiteUrl`, async () => {
         const data = {
             ...dataTestBlogUpdate01,
-            websiteUrl: incorrectData.emptyWebsiteUrl
+            websiteUrl: incorrectBlogData.emptyWebsiteUrl
         }
+        const error:ErrorMessage = [ERRORS_MESSAGES.BLOG_WEBSITE_URL]
 
-        await blogsTestManager.updateBlog(createdNewBlog01, data, HTTP_STATUSES.BAD_REQUEST_400)
+        await blogsTestManager
+            .updateBlog(createdNewBlog01, data, HTTP_STATUSES.BAD_REQUEST_400,error)
 
         await request(app)
             .get(`${RouterPaths.blogs}/${createdNewBlog01.id}`)
@@ -242,10 +345,12 @@ describe('/blogs', () => {
     it(`shouldn't update blogs with websiteUrl more than 100 characters`, async () => {
         const data = {
             ...dataTestBlogUpdate01,
-            websiteUrl: incorrectData.tooLongWebsiteUrl
+            websiteUrl: incorrectBlogData.tooLongWebsiteUrl
         }
+        const error:ErrorMessage = [ERRORS_MESSAGES.BLOG_WEBSITE_URL]
 
-        await blogsTestManager.updateBlog(createdNewBlog01, data, HTTP_STATUSES.BAD_REQUEST_400)
+        await blogsTestManager
+            .updateBlog(createdNewBlog01, data, HTTP_STATUSES.BAD_REQUEST_400,error)
 
         await request(app)
             .get(`${RouterPaths.blogs}/${createdNewBlog01.id}`)
@@ -255,10 +360,33 @@ describe('/blogs', () => {
     it(`shouldn't update blogs with websiteUrl that does not match the pattern`, async () => {
         const data = {
             ...dataTestBlogUpdate01,
-            websiteUrl: incorrectData.incorrectWebsiteUrl
+            websiteUrl: incorrectBlogData.incorrectWebsiteUrl
         }
+        const error:ErrorMessage = [ERRORS_MESSAGES.BLOG_WEBSITE_URL]
 
-        await blogsTestManager.updateBlog(createdNewBlog01, data, HTTP_STATUSES.BAD_REQUEST_400)
+        await blogsTestManager
+            .updateBlog(createdNewBlog01, data, HTTP_STATUSES.BAD_REQUEST_400,error)
+
+        await request(app)
+            .get(`${RouterPaths.blogs}/${createdNewBlog01.id}`)
+            .expect(HTTP_STATUSES.OK_200, createdNewBlog01)
+    })
+
+    it(`shouldn't update blogs with incorrect data`, async () => {
+        const data = {
+            ...dataTestBlogUpdate01,
+            name: incorrectBlogData.emptyName,
+            description: incorrectBlogData.emptyDescription,
+            websiteUrl: incorrectBlogData.incorrectWebsiteUrl
+        }
+        const error:ErrorMessage = [
+            ERRORS_MESSAGES.BLOG_WEBSITE_URL,
+            ERRORS_MESSAGES.BLOG_NAME,
+            ERRORS_MESSAGES.BLOG_DESCRIPTION
+        ]
+
+        await blogsTestManager
+            .updateBlog(createdNewBlog01, data, HTTP_STATUSES.BAD_REQUEST_400,error)
 
         await request(app)
             .get(`${RouterPaths.blogs}/${createdNewBlog01.id}`)
@@ -312,7 +440,7 @@ describe('/blogs', () => {
 
         await request(app)
             .get(RouterPaths.blogs)
-            .expect(HTTP_STATUSES.OK_200, [])
+            .expect(HTTP_STATUSES.OK_200, { pagesCount: 0, page: 1, pageSize: 10, totalCount: 0, items: [] })
     })
 
 })

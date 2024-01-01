@@ -10,7 +10,7 @@ import {
     dataTestPostCreate01,
     dataTestPostCreate02,
     dataTestPostUpdate01,
-    incorrectData
+    incorrectPostData
 } from "./dataForTest/dataTestforPost";
 import {postsTestManager} from "./utils/postsTestManager";
 
@@ -72,7 +72,7 @@ describe('/posts', () => {
     it(`shouldn't create post with empty title`, async () => {
         const data: CreatePostModel = {
             ...dataTestPostCreate01,
-            title: incorrectData.emptyTitle,
+            title: incorrectPostData.emptyTitle,
             blogId: createdNewBlog01.id
         }
 
@@ -86,7 +86,7 @@ describe('/posts', () => {
     it(`shouldn't create post with title more than 15 characters`, async () => {
         const data: CreatePostModel = {
             ...dataTestPostCreate01,
-            title: incorrectData.tooLongTitle,
+            title: incorrectPostData.tooLongTitle,
             blogId: createdNewBlog01.id
         }
 
@@ -100,7 +100,7 @@ describe('/posts', () => {
     it(`shouldn't create post with empty shortDescription`, async () => {
         const data: CreatePostModel = {
             ...dataTestPostCreate01,
-            shortDescription: incorrectData.emptyShortDescription,
+            shortDescription: incorrectPostData.emptyShortDescription,
             blogId: createdNewBlog01.id
         }
 
@@ -114,7 +114,7 @@ describe('/posts', () => {
     it(`shouldn't create post with shortDescription more than 100 characters`, async () => {
         const data: CreatePostModel = {
             ...dataTestPostCreate01,
-            shortDescription: incorrectData.tooLongShortDescription,
+            shortDescription: incorrectPostData.tooLongShortDescription,
             blogId: createdNewBlog01.id
         }
 
@@ -128,7 +128,7 @@ describe('/posts', () => {
     it(`shouldn't create post with empty content`, async () => {
         const data: CreatePostModel = {
             ...dataTestPostCreate01,
-            content: incorrectData.emptyContent,
+            content: incorrectPostData.emptyContent,
             blogId: createdNewBlog01.id
         }
 
@@ -142,7 +142,7 @@ describe('/posts', () => {
     it(`shouldn't create post with content more than 1000 characters`, async () => {
         const data: CreatePostModel = {
             ...dataTestPostCreate01,
-            content: incorrectData.tooLongContent,
+            content: incorrectPostData.tooLongContent,
             blogId: createdNewBlog01.id
         }
 
@@ -164,7 +164,7 @@ describe('/posts', () => {
     it(`shouldn't create post with incorrect blogId`, async () => {
         const data: CreatePostModel = {
             ...dataTestPostCreate01,
-            blogId: incorrectData.incorrectBlogId
+            blogId: incorrectPostData.incorrectBlogId
         }
 
         await postsTestManager.createPost(data, HTTP_STATUSES.BAD_REQUEST_400)
@@ -240,7 +240,7 @@ describe('/posts', () => {
     it(`shouldn't update posts with empty title`, async () => {
         const data = {
             ...dataTestPostCreate01,
-            title: incorrectData.emptyTitle,
+            title: incorrectPostData.emptyTitle,
             blogId: createdNewBlog01.id
         }
 
@@ -254,7 +254,7 @@ describe('/posts', () => {
     it(`shouldn't update post with title more than 30 characters`, async () => {
         const data = {
             ...dataTestPostCreate01,
-            title: incorrectData.tooLongTitle,
+            title: incorrectPostData.tooLongTitle,
             blogId: createdNewBlog01.id
         }
 
@@ -268,7 +268,7 @@ describe('/posts', () => {
     it(`shouldn't update post with empty shortDescription`, async () => {
         const data = {
             ...dataTestPostCreate01,
-            shortDescription: incorrectData.emptyShortDescription,
+            shortDescription: incorrectPostData.emptyShortDescription,
             blogId: createdNewBlog01.id
         }
 
@@ -282,7 +282,7 @@ describe('/posts', () => {
     it(`shouldn't update blogs with shortDescription more than 100 characters`, async () => {
         const data = {
             ...dataTestPostCreate01,
-            shortDescription: incorrectData.tooLongShortDescription,
+            shortDescription: incorrectPostData.tooLongShortDescription,
             blogId: createdNewBlog01.id
         }
 
@@ -296,7 +296,7 @@ describe('/posts', () => {
     it(`shouldn't update post with empty content`, async () => {
         const data = {
             ...dataTestPostCreate01,
-            content: incorrectData.emptyContent,
+            content: incorrectPostData.emptyContent,
             blogId: createdNewBlog01.id
         }
 
@@ -310,7 +310,7 @@ describe('/posts', () => {
     it(`shouldn't update post with content more than 1000 characters`, async () => {
         const data = {
             ...dataTestPostCreate01,
-            content: incorrectData.tooLongContent,
+            content: incorrectPostData.tooLongContent,
             blogId: createdNewBlog01.id
         }
 
@@ -333,7 +333,7 @@ describe('/posts', () => {
     it(`shouldn't update blogs with incorrect blogId`, async () => {
         const data = {
             ...dataTestPostCreate01,
-            blogId: incorrectData.incorrectBlogId
+            blogId: incorrectPostData.incorrectBlogId
         }
 
         await postsTestManager.updatePost(createdNewPost01, data, HTTP_STATUSES.BAD_REQUEST_400)

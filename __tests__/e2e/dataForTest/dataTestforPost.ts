@@ -18,7 +18,7 @@ export const dataTestPostUpdate01 = {
     blogId: ''
 }
 
-export const incorrectData = {
+export const incorrectPostData = {
     emptyTitle: '',
     tooLongTitle: 'LongTitle LongTitle LongTitle LongTitle ',
     emptyShortDescription: '',

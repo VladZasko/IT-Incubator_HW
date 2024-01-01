@@ -11,6 +11,12 @@ export const dataTestBlogCreate02 = {
         'BUVCPEEnX_ldiwp9uDYI0XMDiwUWalUNGNh_'
 }
 
+export const dataTestPostByBlogCreate01 = {
+    title: 'CrateTitle',
+    shortDescription: 'CreateShortDescription',
+    content: 'CrateContent',
+}
+
 export const dataTestBlogUpdate01 = {
     name: 'UpdateName',
     description: 'UpdateDescription',
@@ -18,7 +24,7 @@ export const dataTestBlogUpdate01 = {
         'BUVCPEEnX_ldiwp9uDYI0XMDiwUWalUNGNh_'
 }
 
-export const incorrectData = {
+export const incorrectBlogData = {
     emptyName: '',
     tooLongName: 'LongNameLongName',
     emptyDescription: '',
