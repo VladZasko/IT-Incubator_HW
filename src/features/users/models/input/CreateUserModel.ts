@@ -7,3 +7,16 @@ export type CreateUserModel = {
     password: string
 }
 
+export type CreateUserPassModel = {
+    /**
+     * blog name, description, websiteUrl
+     */
+    login: string,
+    email: string,
+    createdAt: string,
+    passwordHash: string,
+    passwordSalt: string
+
+}
+
+

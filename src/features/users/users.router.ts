@@ -14,11 +14,12 @@ import {userValidation} from "./validator/user-validator";
 import {userRepository} from "./repositories/user-db-repository";
 import {authMiddleware} from "../../middlewares/auth/auth-middleware";
 import {ObjectId} from "mongodb";
+import {userService} from "./domain/user-service";
 
 
 
 
-export const getUsersRoutes = (db: DBType) => {
+export const getUsersRoutes = () => {
     const router = express.Router()
     router.get('/', authMiddleware, async (req: RequestWithQuery<QueryUserModel>,
                         res: Response) => {
@@ -47,7 +48,7 @@ export const getUsersRoutes = (db: DBType) => {
             password: req.body.password
         }
 
-        const newUser = await userRepository.createUser(createData)
+        const newUser = await userService.createUser(createData)
 
         res
             .status(HTTP_STATUSES.CREATED_201)

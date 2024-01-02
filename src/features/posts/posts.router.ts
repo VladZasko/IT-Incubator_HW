@@ -13,7 +13,7 @@ import {UpdatePostModel} from "./models/UpdatePostModule";
 import {blogRepository} from "../blogs/repositories/blog-db-repository";
 import {ObjectId} from "mongodb";
 
-export const getPostsRoutes = (db: DBType) => {
+export const getPostsRoutes = () => {
     const router = express.Router()
     router.get('/', async (req: RequestWithQuery<QueryPostsModel>,
                      res: Response) => {

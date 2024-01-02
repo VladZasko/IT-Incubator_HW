@@ -4,7 +4,7 @@ import {HTTP_STATUSES} from "../utils";
 import {app} from "../app";
 import {blogsCollection, postsCollection, usersCollection, videosCollection} from "../db/db";
 
-export const getTestsRouter = (db: DBType) => {
+export const getTestsRouter = () => {
     const router = express.Router()
 
     router.delete('/', async (req, res) => {

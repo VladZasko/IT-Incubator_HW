@@ -53,7 +53,8 @@ export const memoryDb: DBType = {
             login: "SameLogin",
             email: "SameMail",
             createdAt: "2023-12-23T13:36:16.608Z",
-            password:"11111"
+            passwordHash: "222",
+            passwordSalt: "222"
         }
     ]
 }

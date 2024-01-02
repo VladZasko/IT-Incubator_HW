@@ -2,7 +2,7 @@ import {UsersViewModel, UsersViewModelGetAllBlogs} from "../models/output/UsersV
 import {usersCollection} from "../../../db/db";
 import {userMapper} from "../mappers/mappers";
 import {ObjectId} from "mongodb";
-import {CreateUserModel} from "../models/input/CreateUserModel";
+import {CreateUserModel, CreateUserPassModel} from "../models/input/CreateUserModel";
 import {QueryUserModel} from "../models/input/QueryUserModule";
 
 export class userRepository {
@@ -45,18 +45,15 @@ export class userRepository {
 
     }
 
-    static async createUser(createData : CreateUserModel):Promise<UsersViewModel> {
-        const newUser = {
-            ...createData,
-            createdAt: new Date().toISOString()
-        }
+    static async createUser(createData : CreateUserPassModel):Promise<UsersViewModel> {
 
-        const user = await usersCollection.insertOne({...newUser})
+
+        const user = await usersCollection.insertOne({...createData})
 
         return {
-            createdAt: newUser.createdAt,
-            email: newUser.email,
-            login: newUser.login,
+            createdAt: createData.createdAt,
+            email: createData.email,
+            login: createData.login,
             id: user.insertedId.toString()
         }
     }

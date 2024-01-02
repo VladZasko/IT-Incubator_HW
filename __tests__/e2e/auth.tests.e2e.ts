@@ -10,9 +10,6 @@ const getRequest = () => {
     return request(app)
 }
 describe('/auth', () => {
-    beforeAll(async() => {
-        //await getRequest().delete('/testing/all-data')
-    })
 
     it('should return 204 ', async () => {
         await getRequest()
@@ -24,7 +21,7 @@ describe('/auth', () => {
             .expect(HTTP_STATUSES.NO_CONTENT_204, {})
     })
 
-    it('should return 404', async () => {
+    it('should return 404 incorrect login', async () => {
         await getRequest()
             .post(RouterPaths.auth)
             .send({
@@ -33,7 +30,7 @@ describe('/auth', () => {
             })
             .expect(HTTP_STATUSES.UNAUTHORIZED_401, {})
     })
-    it('should return 404 z', async () => {
+    it('should return 404 incorrect password', async () => {
         await getRequest()
             .post(RouterPaths.auth)
             .send({
