@@ -14,7 +14,6 @@ export class UserRepository {
         const pageNumber =  sortData.pageNumber ?? 1
         const pageSize =  sortData.pageSize ?? 10
 
-
         let filter = {}
 
         if(searchLoginTerm){
