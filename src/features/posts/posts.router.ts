@@ -10,7 +10,7 @@ import {PostsViewModel} from "./models/PostsViewModel";
 import {postValidation} from "./validator/post-validator";
 import {CreatePostModel} from "./models/CreatePostModel";
 import {UpdatePostModel} from "./models/UpdatePostModule";
-import {BlogRepository} from "../blogs/repositories/blog-db-repository";
+import {blogRepository} from "../blogs/repositories/blog-db-repository";
 import {ObjectId} from "mongodb";
 
 export const getPostsRoutes = (db: DBType) => {
@@ -47,7 +47,7 @@ export const getPostsRoutes = (db: DBType) => {
     })
     router.post('/', authMiddleware, postValidation(), async (req:RequestWithBody<CreatePostModel>,
                                                         res: Response) => {
-        const blog = await BlogRepository.getBlogById(req.body.blogId)
+        const blog = await blogRepository.getBlogById(req.body.blogId)
         const blogName = blog!.name
         const createData = {
             title: req.body.title,

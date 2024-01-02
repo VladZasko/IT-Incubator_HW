@@ -7,7 +7,7 @@ import {UpdateBlogModel} from "../models/input/UpdateBlogModule";
 import {QueryBlogsModel, QueryPostByBlogIdModel} from "../models/input/QueryBlogsModule";
 import {postMapper} from "../../posts/mappers/mappers";
 
-export class blogRepository {
+export class blogService {
     static async getAllBlogs(sortData: QueryBlogsModel): Promise<BlogsViewModelGetAllBlogs>{
         const searchNameTerm = sortData.searchNameTerm ?? null
         const sortBy = sortData.sortBy ?? 'createdAt'

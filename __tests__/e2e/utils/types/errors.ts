@@ -10,7 +10,11 @@ export const ERRORS_MESSAGES = {
     POST_TITLE: {message: 'Incorrect title!', field: 'title'},
     POST_SHORT_DESCRIPTION: {message: 'Incorrect shortDescription!', field: 'shortDescription'},
     POST_CONTENT: {message: 'Incorrect content', field: 'content'},
-    POST_BLOGID: {message: 'Incorrect blogId', field: 'blogId'}
+    POST_BLOGID: {message: 'Incorrect blogId', field: 'blogId'},
+
+    POST_LOGIN: {message: 'Incorrect login!', field: 'login'},
+    POST_PASSWORD: {message: 'Incorrect password!', field: 'password'},
+    POST_EMAIL: {message: 'Incorrect email!', field: 'email'}
 }
 
 

@@ -1,6 +1,6 @@
 import {body} from "express-validator";
 import {inputValidation} from "../../../middlewares/input-modul-validation/input-validation";
-import {BlogRepository} from "../../blogs/repositories/blog-db-repository";
+import {blogRepository} from "../../blogs/repositories/blog-db-repository";
 import * as wasi from "wasi";
 
 export const titleValidation = body('title').isString().trim().isLength({
@@ -17,7 +17,7 @@ export const contentValidation = body('content').isString().trim().isLength({
 }).withMessage('Incorrect content')
 export const blogIdValidation = body('blogId').isString().trim()
     .custom(async (value) => {
-    const blog = await BlogRepository.getBlogById(value)
+    const blog = await blogRepository.getBlogById(value)
         if (!blog) {
             throw Error('Incorrect blogId')
         }
