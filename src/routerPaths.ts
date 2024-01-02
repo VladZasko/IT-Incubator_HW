@@ -4,6 +4,8 @@ export const RouterPaths = {
     posts: '/posts',
     users: '/users',
 
+    auth: '/auth/login',
+
     testing: '/testing/all-data'
 
 }

@@ -11,7 +11,7 @@ import {UsersViewModelGetAllBlogs} from "./models/output/UsersViewModel";
 import {CreateUserModel} from "./models/input/CreateUserModel";
 import {DBType} from "../../db/memory-db";
 import {userValidation} from "./validator/user-validator";
-import {UserRepository} from "./repositories/user-db-repository";
+import {userRepository} from "./repositories/user-db-repository";
 import {authMiddleware} from "../../middlewares/auth/auth-middleware";
 import {ObjectId} from "mongodb";
 
@@ -32,7 +32,7 @@ export const getUsersRoutes = (db: DBType) => {
             pageSize: req.query.pageSize,
         }
 
-        const users:UsersViewModelGetAllBlogs = await UserRepository.getAllUsers(sortData)
+        const users:UsersViewModelGetAllBlogs = await userRepository.getAllUsers(sortData)
 
         res.send(users)
     })
@@ -47,7 +47,7 @@ export const getUsersRoutes = (db: DBType) => {
             password: req.body.password
         }
 
-        const newUser = await UserRepository.createUser(createData)
+        const newUser = await userRepository.createUser(createData)
 
         res
             .status(HTTP_STATUSES.CREATED_201)
@@ -66,7 +66,7 @@ export const getUsersRoutes = (db: DBType) => {
             return;
         }
 
-        const deleteUser = await UserRepository.deleteUserById(id)
+        const deleteUser = await userRepository.deleteUserById(id)
         if(!deleteUser) {
             res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
             return

@@ -5,7 +5,7 @@ import {ObjectId} from "mongodb";
 import {CreateUserModel} from "../models/input/CreateUserModel";
 import {QueryUserModel} from "../models/input/QueryUserModule";
 
-export class UserRepository {
+export class userRepository {
     static async getAllUsers(sortData: QueryUserModel): Promise<UsersViewModelGetAllBlogs>{
         const searchLoginTerm = sortData.searchLoginTerm ?? null
         const searchEmailTerm = sortData.searchEmailTerm ?? null
@@ -64,6 +64,13 @@ export class UserRepository {
             id: user.insertedId.toString()
         }
     }
+    static async findByLoginOrEmail(loginOrEmail: string) {
+        const user = await usersCollection
+            .findOne({$or: [{email: loginOrEmail}, {login: loginOrEmail}]})
+
+        return user
+    }
+
     static async deleteUserById(id: string): Promise<boolean> {
         const foundUser = await usersCollection.deleteOne({_id:new ObjectId(id)})
 

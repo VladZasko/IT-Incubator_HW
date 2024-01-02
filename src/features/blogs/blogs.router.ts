@@ -22,7 +22,7 @@ import {postByIdValidation} from "../posts/validator/post-validator";
 
 
 
-export const getBlogsRoutes = (db: DBType) => {
+export const getBlogsRoutes = () => {
     const router = express.Router()
     router.get('/', async (req: RequestWithQuery<QueryBlogsModel>,
                         res: Response) => {
