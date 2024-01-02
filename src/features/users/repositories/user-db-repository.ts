@@ -16,15 +16,11 @@ export class userRepository {
 
         let filter = {}
 
-        if(searchLoginTerm){
-            filter = {
-                login: {$regex: searchLoginTerm, $options: 'i'}
-            }
-        }
-        if(searchEmailTerm){
-            filter = {
-                email: {$regex: searchEmailTerm, $options: 'i'}
-            }
+
+        if(searchLoginTerm||searchEmailTerm){
+            filter = {$or:
+                    [{email:{$regex: sortData.searchEmailTerm, $options: 'i'}},
+                        {login: {$regex: sortData.searchLoginTerm, $options: 'i'}}]}
         }
 
         const users = await usersCollection
