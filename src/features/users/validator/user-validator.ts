@@ -7,7 +7,7 @@ export const passwordValidation = body('password').isString().trim().isLength({m
     .matches('^[a-zA-Z0-9_-]*$').withMessage('Incorrect password!')
 export const emailValidation = body('email').isString().trim()
     .withMessage('Incorrect email!')
-    //.matches("^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$\n").withMessage('Incorrect email!')
+    .matches("^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$\n").withMessage('Incorrect email!')
 
 export const userValidation = () => [  loginValidation, passwordValidation, emailValidation, inputValidation]
 

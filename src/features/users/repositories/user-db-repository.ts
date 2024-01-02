@@ -58,7 +58,9 @@ export class UserRepository {
         const user = await usersCollection.insertOne({...newUser})
 
         return {
-            ...newUser,
+            createdAt: newUser.createdAt,
+            email: newUser.email,
+            login: newUser.login,
             id: user.insertedId.toString()
         }
     }
