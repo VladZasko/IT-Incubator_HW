@@ -8,15 +8,26 @@ import {UpdateBlogModel} from "../../../src/features/blogs/models/input/UpdateBl
 import {CreatePostModel} from "../../../src/features/posts/models/CreatePostModel";
 import {URIParamsPostIdModel} from "../../../src/features/posts/models/URIParamsPostIdModule";
 import {UpdatePostModel} from "../../../src/features/posts/models/UpdatePostModule";
+import {ErrorMessage} from "./types/errors";
 
 export const postsTestManager = {
-    async createPost(data: CreatePostModel, expectedStatusCode:HttpStatusType = HTTP_STATUSES.CREATED_201) {
+    async createPost(data: CreatePostModel,
+                     expectedStatusCode:HttpStatusType = HTTP_STATUSES.CREATED_201,
+                     expectedErrorsMessages?: ErrorMessage) {
 
         const response =  await request(app)
             .post(RouterPaths.posts)
             .set('authorization', 'Basic YWRtaW46cXdlcnR5')
             .send(data)
             .expect(expectedStatusCode)
+
+        let errorMessage;
+        if (expectedStatusCode === HTTP_STATUSES.BAD_REQUEST_400) {
+            errorMessage = response.body;
+            expect(errorMessage).toEqual({
+                errorsMessages: expectedErrorsMessages
+            })
+        }
 
         let createdEntity;
         if (expectedStatusCode === HTTP_STATUSES.CREATED_201) {
@@ -32,13 +43,24 @@ export const postsTestManager = {
         return {response: response, createdEntity: createdEntity};
     },
 
-    async updatePost(paths: URIParamsPostIdModel,data: UpdatePostModel, expectedStatusCode:HttpStatusType = HTTP_STATUSES.NO_CONTENT_204) {
+    async updatePost(paths: URIParamsPostIdModel,
+                     data: UpdatePostModel,
+                     expectedStatusCode:HttpStatusType = HTTP_STATUSES.NO_CONTENT_204,
+                     expectedErrorsMessages?: ErrorMessage) {
 
         const response =  await request(app)
             .put(`${RouterPaths.posts}/${paths.id}`)
             .set('authorization', 'Basic YWRtaW46cXdlcnR5')
             .send(data)
             .expect(expectedStatusCode)
+
+        let errorMessage;
+        if (expectedStatusCode === HTTP_STATUSES.BAD_REQUEST_400) {
+            errorMessage = response.body;
+            expect(errorMessage).toEqual({
+                errorsMessages: expectedErrorsMessages
+            })
+        }
 
         let updateEntity;
         if (expectedStatusCode === HTTP_STATUSES.NO_CONTENT_204) {

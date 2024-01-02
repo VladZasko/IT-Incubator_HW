@@ -22,7 +22,7 @@ export const blogIdValidation = body('blogId').isString().trim()
             throw Error('Incorrect blogId')
         }
         return true
-}).withMessage('Incorrect content')
+}).withMessage('Incorrect blogId')
 export const postValidation = () => [ shortDescriptionValidation, titleValidation, contentValidation, blogIdValidation,inputValidation]
 
 export const postByIdValidation = () => [ shortDescriptionValidation, titleValidation, contentValidation, inputValidation]

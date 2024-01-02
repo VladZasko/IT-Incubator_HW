@@ -13,6 +13,7 @@ import {
     incorrectPostData
 } from "./dataForTest/dataTestforPost";
 import {postsTestManager} from "./utils/postsTestManager";
+import {ErrorMessage, ERRORS_MESSAGES} from "./utils/types/errors";
 
 
 const getRequest = () => {
@@ -33,7 +34,13 @@ describe('/posts', () => {
 
         await request(app)
             .get(RouterPaths.blogs)
-            .expect(HTTP_STATUSES.OK_200, [createdNewBlog01])
+            .expect(HTTP_STATUSES.OK_200, {
+                pagesCount: 1,
+                page: 1,
+                pageSize: 10,
+                totalCount: 1,
+                items: [createdNewBlog01]
+            })
 
         const result2 = await blogsTestManager.createBlog(dataTestBlogCreate02)
 
@@ -41,13 +48,25 @@ describe('/posts', () => {
 
         await request(app)
             .get(RouterPaths.blogs)
-            .expect(HTTP_STATUSES.OK_200, [createdNewBlog01, createdNewBlog02])
+            .expect(HTTP_STATUSES.OK_200, {
+                pagesCount: 1,
+                page: 1,
+                pageSize: 10,
+                totalCount: 2,
+                items: [createdNewBlog02, createdNewBlog01]
+            })
     })
 
     it('should return 200 and empty array', async () => {
         await getRequest()
             .get(RouterPaths.posts)
-            .expect(HTTP_STATUSES.OK_200, [])
+            .expect(HTTP_STATUSES.OK_200, {
+                pagesCount: 0,
+                page: 1,
+                pageSize: 10,
+                totalCount: 0,
+                items: []
+            })
     })
 
     it('should return 404 fot not existing posts', async () => {
@@ -75,12 +94,19 @@ describe('/posts', () => {
             title: incorrectPostData.emptyTitle,
             blogId: createdNewBlog01.id
         }
+        const error:ErrorMessage = [ERRORS_MESSAGES.POST_TITLE]
 
-        await postsTestManager.createPost(data, HTTP_STATUSES.BAD_REQUEST_400)
+        await postsTestManager.createPost(data, HTTP_STATUSES.BAD_REQUEST_400,error)
 
         await request(app)
             .get(RouterPaths.posts)
-            .expect(HTTP_STATUSES.OK_200, [])
+            .expect(HTTP_STATUSES.OK_200, {
+                pagesCount: 0,
+                page: 1,
+                pageSize: 10,
+                totalCount: 0,
+                items: []
+            })
     })
 
     it(`shouldn't create post with title more than 15 characters`, async () => {
@@ -90,11 +116,19 @@ describe('/posts', () => {
             blogId: createdNewBlog01.id
         }
 
-        await postsTestManager.createPost(data, HTTP_STATUSES.BAD_REQUEST_400)
+        const error:ErrorMessage = [ERRORS_MESSAGES.POST_TITLE]
+
+        await postsTestManager.createPost(data, HTTP_STATUSES.BAD_REQUEST_400,error)
 
         await request(app)
             .get(RouterPaths.posts)
-            .expect(HTTP_STATUSES.OK_200, [])
+            .expect(HTTP_STATUSES.OK_200, {
+                pagesCount: 0,
+                page: 1,
+                pageSize: 10,
+                totalCount: 0,
+                items: []
+            })
     })
 
     it(`shouldn't create post with empty shortDescription`, async () => {
@@ -104,11 +138,19 @@ describe('/posts', () => {
             blogId: createdNewBlog01.id
         }
 
-        await postsTestManager.createPost(data, HTTP_STATUSES.BAD_REQUEST_400)
+        const error:ErrorMessage = [ERRORS_MESSAGES.POST_SHORT_DESCRIPTION]
+
+        await postsTestManager.createPost(data, HTTP_STATUSES.BAD_REQUEST_400, error)
 
         await request(app)
             .get(RouterPaths.posts)
-            .expect(HTTP_STATUSES.OK_200, [])
+            .expect(HTTP_STATUSES.OK_200, {
+                pagesCount: 0,
+                page: 1,
+                pageSize: 10,
+                totalCount: 0,
+                items: []
+            })
     })
 
     it(`shouldn't create post with shortDescription more than 100 characters`, async () => {
@@ -118,11 +160,19 @@ describe('/posts', () => {
             blogId: createdNewBlog01.id
         }
 
-        await postsTestManager.createPost(data, HTTP_STATUSES.BAD_REQUEST_400)
+        const error:ErrorMessage = [ERRORS_MESSAGES.POST_SHORT_DESCRIPTION]
+
+        await postsTestManager.createPost(data, HTTP_STATUSES.BAD_REQUEST_400, error)
 
         await request(app)
             .get(RouterPaths.posts)
-            .expect(HTTP_STATUSES.OK_200, [])
+            .expect(HTTP_STATUSES.OK_200, {
+                pagesCount: 0,
+                page: 1,
+                pageSize: 10,
+                totalCount: 0,
+                items: []
+            })
     })
 
     it(`shouldn't create post with empty content`, async () => {
@@ -132,11 +182,19 @@ describe('/posts', () => {
             blogId: createdNewBlog01.id
         }
 
-        await postsTestManager.createPost(data, HTTP_STATUSES.BAD_REQUEST_400)
+        const error:ErrorMessage = [ERRORS_MESSAGES.POST_CONTENT]
+
+        await postsTestManager.createPost(data, HTTP_STATUSES.BAD_REQUEST_400, error)
 
         await request(app)
             .get(RouterPaths.posts)
-            .expect(HTTP_STATUSES.OK_200, [])
+            .expect(HTTP_STATUSES.OK_200, {
+                pagesCount: 0,
+                page: 1,
+                pageSize: 10,
+                totalCount: 0,
+                items: []
+            })
     })
 
     it(`shouldn't create post with content more than 1000 characters`, async () => {
@@ -146,19 +204,35 @@ describe('/posts', () => {
             blogId: createdNewBlog01.id
         }
 
-        await postsTestManager.createPost(data, HTTP_STATUSES.BAD_REQUEST_400)
+        const error:ErrorMessage = [ERRORS_MESSAGES.POST_CONTENT]
+
+        await postsTestManager.createPost(data, HTTP_STATUSES.BAD_REQUEST_400, error)
 
         await request(app)
             .get(RouterPaths.posts)
-            .expect(HTTP_STATUSES.OK_200, [])
+            .expect(HTTP_STATUSES.OK_200, {
+                pagesCount: 0,
+                page: 1,
+                pageSize: 10,
+                totalCount: 0,
+                items: []
+            })
     })
 
     it(`shouldn't create post with empty blogId`, async () => {
-        await postsTestManager.createPost(dataTestPostCreate01, HTTP_STATUSES.BAD_REQUEST_400)
+        const error:ErrorMessage = [ERRORS_MESSAGES.POST_BLOGID]
+
+        await postsTestManager.createPost(dataTestPostCreate01, HTTP_STATUSES.BAD_REQUEST_400, error)
 
         await request(app)
             .get(RouterPaths.posts)
-            .expect(HTTP_STATUSES.OK_200, [])
+            .expect(HTTP_STATUSES.OK_200, {
+                pagesCount: 0,
+                page: 1,
+                pageSize: 10,
+                totalCount: 0,
+                items: []
+            })
     })
 
     it(`shouldn't create post with incorrect blogId`, async () => {
@@ -167,11 +241,48 @@ describe('/posts', () => {
             blogId: incorrectPostData.incorrectBlogId
         }
 
-        await postsTestManager.createPost(data, HTTP_STATUSES.BAD_REQUEST_400)
+        const error:ErrorMessage = [ERRORS_MESSAGES.POST_BLOGID]
+
+        await postsTestManager.createPost(data, HTTP_STATUSES.BAD_REQUEST_400, error)
 
         await request(app)
             .get(RouterPaths.posts)
-            .expect(HTTP_STATUSES.OK_200, [])
+            .expect(HTTP_STATUSES.OK_200, {
+                pagesCount: 0,
+                page: 1,
+                pageSize: 10,
+                totalCount: 0,
+                items: []
+            })
+    })
+
+    it(`shouldn't create post with incorrect data`, async () => {
+        const data: CreatePostModel = {
+            ...dataTestPostCreate01,
+            blogId: incorrectPostData.incorrectBlogId,
+            title: incorrectPostData.emptyTitle,
+            content: incorrectPostData.emptyContent,
+            shortDescription: incorrectPostData.emptyShortDescription
+        }
+
+        const error:ErrorMessage = [
+            ERRORS_MESSAGES.POST_SHORT_DESCRIPTION,
+            ERRORS_MESSAGES.POST_TITLE,
+            ERRORS_MESSAGES.POST_CONTENT,
+            ERRORS_MESSAGES.POST_BLOGID
+        ]
+
+        await postsTestManager.createPost(data, HTTP_STATUSES.BAD_REQUEST_400, error)
+
+        await request(app)
+            .get(RouterPaths.posts)
+            .expect(HTTP_STATUSES.OK_200, {
+                pagesCount: 0,
+                page: 1,
+                pageSize: 10,
+                totalCount: 0,
+                items: []
+            })
     })
 
     let createdNewPost01: any = null
@@ -187,7 +298,13 @@ describe('/posts', () => {
 
         await request(app)
             .get(RouterPaths.posts)
-            .expect(HTTP_STATUSES.OK_200, [createdNewPost01])
+            .expect(HTTP_STATUSES.OK_200, {
+                pagesCount: 1,
+                page: 1,
+                pageSize: 10,
+                totalCount: 1,
+                items: [createdNewPost01]
+            })
     })
 
     let createdNewPost02:any = null
@@ -203,7 +320,13 @@ describe('/posts', () => {
 
         await request(app)
             .get(RouterPaths.posts)
-            .expect(HTTP_STATUSES.OK_200, [createdNewPost01, createdNewPost02])
+            .expect(HTTP_STATUSES.OK_200, {
+                pagesCount: 1,
+                page: 1,
+                pageSize: 10,
+                totalCount: 2,
+                items: [createdNewPost02, createdNewPost01]
+            })
 
         expect.setState({post2: result.createdEntity})
     })
@@ -244,7 +367,9 @@ describe('/posts', () => {
             blogId: createdNewBlog01.id
         }
 
-        await postsTestManager.updatePost(createdNewPost01, data, HTTP_STATUSES.BAD_REQUEST_400)
+        const error:ErrorMessage = [ERRORS_MESSAGES.POST_TITLE]
+
+        await postsTestManager.updatePost(createdNewPost01, data, HTTP_STATUSES.BAD_REQUEST_400, error)
 
         await request(app)
             .get(`${RouterPaths.posts}/${createdNewPost01.id}`)
@@ -258,7 +383,9 @@ describe('/posts', () => {
             blogId: createdNewBlog01.id
         }
 
-        await postsTestManager.updatePost(createdNewPost01, data, HTTP_STATUSES.BAD_REQUEST_400)
+        const error:ErrorMessage = [ERRORS_MESSAGES.POST_TITLE]
+
+        await postsTestManager.updatePost(createdNewPost01, data, HTTP_STATUSES.BAD_REQUEST_400, error)
 
         await request(app)
             .get(`${RouterPaths.posts}/${createdNewPost01.id}`)
@@ -272,7 +399,9 @@ describe('/posts', () => {
             blogId: createdNewBlog01.id
         }
 
-        await postsTestManager.updatePost(createdNewPost01, data, HTTP_STATUSES.BAD_REQUEST_400)
+        const error:ErrorMessage = [ERRORS_MESSAGES.POST_SHORT_DESCRIPTION]
+
+        await postsTestManager.updatePost(createdNewPost01, data, HTTP_STATUSES.BAD_REQUEST_400, error)
 
         await request(app)
             .get(`${RouterPaths.posts}/${createdNewPost01.id}`)
@@ -286,7 +415,9 @@ describe('/posts', () => {
             blogId: createdNewBlog01.id
         }
 
-        await postsTestManager.updatePost(createdNewPost01, data, HTTP_STATUSES.BAD_REQUEST_400)
+        const error:ErrorMessage = [ERRORS_MESSAGES.POST_SHORT_DESCRIPTION]
+
+        await postsTestManager.updatePost(createdNewPost01, data, HTTP_STATUSES.BAD_REQUEST_400, error)
 
         await request(app)
             .get(`${RouterPaths.posts}/${createdNewPost01.id}`)
@@ -300,7 +431,9 @@ describe('/posts', () => {
             blogId: createdNewBlog01.id
         }
 
-        await postsTestManager.updatePost(createdNewPost01, data, HTTP_STATUSES.BAD_REQUEST_400)
+        const error:ErrorMessage = [ERRORS_MESSAGES.POST_CONTENT]
+
+        await postsTestManager.updatePost(createdNewPost01, data, HTTP_STATUSES.BAD_REQUEST_400, error)
 
         await request(app)
             .get(`${RouterPaths.posts}/${createdNewPost01.id}`)
@@ -314,7 +447,9 @@ describe('/posts', () => {
             blogId: createdNewBlog01.id
         }
 
-        await postsTestManager.updatePost(createdNewPost01, data, HTTP_STATUSES.BAD_REQUEST_400)
+        const error:ErrorMessage = [ERRORS_MESSAGES.POST_CONTENT]
+
+        await postsTestManager.updatePost(createdNewPost01, data, HTTP_STATUSES.BAD_REQUEST_400, error)
 
         await request(app)
             .get(`${RouterPaths.posts}/${createdNewPost01.id}`)
@@ -323,7 +458,9 @@ describe('/posts', () => {
 
     it(`shouldn't update post with empty blogId`, async () => {
 
-        await postsTestManager.updatePost(createdNewPost01, dataTestPostCreate01, HTTP_STATUSES.BAD_REQUEST_400)
+        const error:ErrorMessage = [ERRORS_MESSAGES.POST_BLOGID]
+
+        await postsTestManager.updatePost(createdNewPost01, dataTestPostCreate01, HTTP_STATUSES.BAD_REQUEST_400, error)
 
         await request(app)
             .get(`${RouterPaths.posts}/${createdNewPost01.id}`)
@@ -331,12 +468,39 @@ describe('/posts', () => {
     })
 
     it(`shouldn't update blogs with incorrect blogId`, async () => {
+
         const data = {
             ...dataTestPostCreate01,
             blogId: incorrectPostData.incorrectBlogId
         }
 
-        await postsTestManager.updatePost(createdNewPost01, data, HTTP_STATUSES.BAD_REQUEST_400)
+        const error:ErrorMessage = [ERRORS_MESSAGES.POST_BLOGID]
+
+        await postsTestManager.updatePost(createdNewPost01, data, HTTP_STATUSES.BAD_REQUEST_400, error)
+
+        await request(app)
+            .get(`${RouterPaths.posts}/${createdNewPost01.id}`)
+            .expect(HTTP_STATUSES.OK_200, createdNewPost01)
+    })
+
+    it(`shouldn't update blogs with incorrect data`, async () => {
+
+        const data = {
+            ...dataTestPostCreate01,
+            blogId: incorrectPostData.incorrectBlogId,
+            title: incorrectPostData.emptyTitle,
+            content: incorrectPostData.emptyContent,
+            shortDescription: incorrectPostData.emptyShortDescription
+        }
+
+        const error:ErrorMessage = [
+            ERRORS_MESSAGES.POST_SHORT_DESCRIPTION,
+            ERRORS_MESSAGES.POST_TITLE,
+            ERRORS_MESSAGES.POST_CONTENT,
+            ERRORS_MESSAGES.POST_BLOGID
+        ]
+
+        await postsTestManager.updatePost(createdNewPost01, data, HTTP_STATUSES.BAD_REQUEST_400, error)
 
         await request(app)
             .get(`${RouterPaths.posts}/${createdNewPost01.id}`)
@@ -387,7 +551,12 @@ describe('/posts', () => {
 
         await request(app)
             .get(RouterPaths.posts)
-            .expect(HTTP_STATUSES.OK_200, [])
+            .expect(HTTP_STATUSES.OK_200, {
+                pagesCount: 0,
+                page: 1,
+                pageSize: 10,
+                totalCount: 0,
+                items: [] })
     })
 
 })

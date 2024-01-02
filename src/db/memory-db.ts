@@ -1,11 +1,13 @@
 import {VideoType} from "./types/videos.types";
 import {BlogType} from "./types/blogs.types";
 import {PostType} from "./types/posts.types";
+import {UserType} from "./types/users.types";
 
 export type DBType = {
     videos: VideoType[]
     blogs: BlogType[]
     posts: PostType[]
+    users: UserType[]
 }
 
 export const memoryDb: DBType = {
@@ -42,6 +44,14 @@ export const memoryDb: DBType = {
             content: "Posts Content",
             blogId: 'Posts Blog Id',
             blogName: 'Post Blog Name',
+            createdAt: "2023-12-23T13:36:16.608Z"
+        }
+    ],
+    users: [
+        {
+            id: "111111",
+            login: "SameLogin",
+            email: "SameMail",
             createdAt: "2023-12-23T13:36:16.608Z"
         }
     ]

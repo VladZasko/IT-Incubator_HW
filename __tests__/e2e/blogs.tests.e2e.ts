@@ -23,13 +23,13 @@ describe('/blogs', () => {
         await getRequest().delete('/testing/all-data')
     })
 
-    it ('should return 200 and empty array', async () => {
+    it('should return 200 and empty array', async () => {
         await getRequest()
-            .get(`${RouterPaths.blogs}/?pageSize=3&pageNumber=3`)
-            .expect(HTTP_STATUSES.OK_200, { pagesCount: 0, page: 3, pageSize: 3, totalCount: 0, items: [] })
+            .get(RouterPaths.blogs)
+            .expect(HTTP_STATUSES.OK_200, { pagesCount: 0, page: 1, pageSize: 10, totalCount: 0, items: [] })
     })
 
-    it ('should return 404 fot not existing blogs', async () => {
+    it('should return 404 fot not existing blogs', async () => {
         await getRequest()
             .get(`${RouterPaths.blogs}/1`)
             .expect(HTTP_STATUSES.NOT_FOUND_404)
@@ -214,6 +214,86 @@ describe('/blogs', () => {
             .expect(HTTP_STATUSES.OK_200, { pagesCount: 0, page: 1, pageSize: 10, totalCount: 0, items: [] })
     })
 
+    it(`shouldn't create post by blogId with incorrect title`, async () => {
+
+        const data = {
+            ...dataTestPostCreate01,
+            title: incorrectPostData.tooLongTitle
+        }
+        const error:ErrorMessage = [ERRORS_MESSAGES.POST_TITLE]
+
+        await blogsTestManager
+            .createPostByBlog(createdNewBlog01,data, HTTP_STATUSES.BAD_REQUEST_400, error)
+
+        await request(app)
+            .get(RouterPaths.posts)
+            .expect(HTTP_STATUSES.OK_200, { pagesCount: 0, page: 1, pageSize: 10, totalCount: 0, items: [] })
+    })
+
+    it(`shouldn't create post by blogId with empty short description`, async () => {
+
+        const data = {
+            ...dataTestPostCreate01,
+            shortDescription: incorrectPostData.emptyShortDescription
+        }
+        const error:ErrorMessage = [ERRORS_MESSAGES.POST_SHORT_DESCRIPTION]
+
+        await blogsTestManager
+            .createPostByBlog(createdNewBlog01,data, HTTP_STATUSES.BAD_REQUEST_400, error)
+
+        await request(app)
+            .get(RouterPaths.posts)
+            .expect(HTTP_STATUSES.OK_200, { pagesCount: 0, page: 1, pageSize: 10, totalCount: 0, items: [] })
+    })
+
+    it(`shouldn't create post by blogId with incorrect short description`, async () => {
+
+        const data = {
+            ...dataTestPostCreate01,
+            shortDescription: incorrectPostData.tooLongShortDescription
+        }
+        const error:ErrorMessage = [ERRORS_MESSAGES.POST_SHORT_DESCRIPTION]
+
+        await blogsTestManager
+            .createPostByBlog(createdNewBlog01,data, HTTP_STATUSES.BAD_REQUEST_400, error)
+
+        await request(app)
+            .get(RouterPaths.posts)
+            .expect(HTTP_STATUSES.OK_200, { pagesCount: 0, page: 1, pageSize: 10, totalCount: 0, items: [] })
+    })
+
+    it(`shouldn't create post by blogId with empty content`, async () => {
+
+        const data = {
+            ...dataTestPostCreate01,
+            content: incorrectPostData.emptyContent
+        }
+        const error:ErrorMessage = [ERRORS_MESSAGES.POST_CONTENT]
+
+        await blogsTestManager
+            .createPostByBlog(createdNewBlog01,data, HTTP_STATUSES.BAD_REQUEST_400, error)
+
+        await request(app)
+            .get(RouterPaths.posts)
+            .expect(HTTP_STATUSES.OK_200, { pagesCount: 0, page: 1, pageSize: 10, totalCount: 0, items: [] })
+    })
+
+    it(`shouldn't create post by blogId with incorrect title`, async () => {
+
+        const data = {
+            ...dataTestPostCreate01,
+            content: incorrectPostData.tooLongContent
+        }
+        const error:ErrorMessage = [ERRORS_MESSAGES.POST_CONTENT]
+
+        await blogsTestManager
+            .createPostByBlog(createdNewBlog01,data, HTTP_STATUSES.BAD_REQUEST_400, error)
+
+        await request(app)
+            .get(RouterPaths.posts)
+            .expect(HTTP_STATUSES.OK_200, { pagesCount: 0, page: 1, pageSize: 10, totalCount: 0, items: [] })
+    })
+
     it(`shouldn't create post by blogId with incorrect data`, async () => {
 
         const data = {
@@ -235,11 +315,12 @@ describe('/blogs', () => {
             .expect(HTTP_STATUSES.OK_200, { pagesCount: 0, page: 1, pageSize: 10, totalCount: 0, items: [] })
     })
 
+    let createdNewPostByBlog01 :any= null
     it(`should create post by blogId`, async () => {
 
         const result = await blogsTestManager.createPostByBlog(createdNewBlog01,dataTestPostByBlogCreate01)
 
-        let createdNewPostByBlog01 = result.createdEntity;
+        createdNewPostByBlog01 = result.createdEntity;
 
         await request(app)
             .get(RouterPaths.posts)
@@ -247,7 +328,34 @@ describe('/blogs', () => {
                 { pagesCount: 1, page: 1, pageSize: 10, totalCount: 1, items: [createdNewPostByBlog01] })
     })
 
-    it ('should return 404 fot not existing blogs for update', async () => {
+    it('should return post for blog', async () => {
+        await getRequest()
+            .get(`${RouterPaths.blogs}/${createdNewBlog01.id}/posts`)
+            .expect(HTTP_STATUSES.OK_200, { pagesCount: 1, page: 1, pageSize: 10, totalCount: 1, items: [createdNewPostByBlog01] })
+    })
+
+    it('should return page 2 and page size 1', async () => {
+        await getRequest()
+            .get(`${RouterPaths.blogs}/?pageSize=1&pageNumber=2`)
+            .expect(HTTP_STATUSES.OK_200,
+                { pagesCount: 2, page: 2, pageSize: 1, totalCount: 2, items: [createdNewBlog01] })
+    })
+
+    it('should return Blog02', async () => {
+        await getRequest()
+            .get(`${RouterPaths.blogs}/?searchNameTerm=02`)
+            .expect(HTTP_STATUSES.OK_200,
+                { pagesCount: 1, page: 1, pageSize: 10, totalCount: 1, items: [createdNewBlog02] })
+    })
+
+    it('should return Blog01 after Blog02', async () => {
+        await getRequest()
+            .get(`${RouterPaths.blogs}/?sortDirection=asc`)
+            .expect(HTTP_STATUSES.OK_200,
+                { pagesCount: 1, page: 1, pageSize: 10, totalCount: 2, items: [createdNewBlog01, createdNewBlog02] })
+    })
+
+    it('should return 404 fot not existing blogs for update', async () => {
 
         await getRequest()
             .put(`${RouterPaths.blogs}/11515`)
