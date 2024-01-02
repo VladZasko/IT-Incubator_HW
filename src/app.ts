@@ -4,7 +4,7 @@ import {getTestsRouter} from "./routes/tests";
 import {getBlogsRoutes} from "./features/blogs/blogs.router";
 import {getPostsRoutes} from "./features/posts/posts.router";
 import {getUsersRoutes} from "./features/users/users.router";
-import {authUsersRoutes} from "./features/users/auth-router";
+import {authUsersRoutes} from "./routes/auth-router";
 
 export const app = express()
 export const jsonBodyMiddleWare = express.json()

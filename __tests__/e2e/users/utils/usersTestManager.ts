@@ -1,9 +1,9 @@
 import request from "supertest";
-import {HTTP_STATUSES, HttpStatusType} from "../../../src/utils";
-import {RouterPaths} from "../../../src/routerPaths";
-import {app} from "../../../src/app";
-import {ErrorMessage} from "./types/errors";
-import {CreateUserModel} from "../../../src/features/users/models/input/CreateUserModel";
+import {HTTP_STATUSES, HttpStatusType} from "../../../../src/utils/utils";
+import {RouterPaths} from "../../../../src/routerPaths";
+import {app} from "../../../../src/app";
+import {ErrorMessage} from "../../../../src/utils/errors";
+import {CreateUserModel} from "../../../../src/features/users/models/input/CreateUserModel";
 
 
 

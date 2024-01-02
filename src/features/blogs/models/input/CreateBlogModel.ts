@@ -1,10 +1,21 @@
-export type CreateBlogModel = {
+export type CreateBlogServiceModel = {
     /**
      * blog name, description, websiteUrl
      */
     name: string,
     description: string,
     websiteUrl: string
+}
+
+export type CreateBlogReposModel = {
+    /**
+     * blog name, description, websiteUrl
+     */
+    name: string,
+    description: string,
+    websiteUrl: string
+    createdAt: string
+    isMembership: boolean
 }
 
 export type CreatePostBlogModel = {

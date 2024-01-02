@@ -1,17 +1,8 @@
 import request from 'supertest'
-import {app} from "../../src/app";
-import {HTTP_STATUSES} from "../../src/utils";
-import {CreateBlogModel} from "../../src/features/blogs/models/input/CreateBlogModel";
-import {RouterPaths} from "../../src/routerPaths";
-import {blogsTestManager} from "./utils/blogsTestManager";
-import {
-    dataTestBlogCreate01,
-    dataTestBlogCreate02,
-    dataTestBlogUpdate01, dataTestPostByBlogCreate01,
-    incorrectBlogData
-} from "./dataForTest/dataTestforBlog";
-import {ErrorMessage, ERRORS_MESSAGES} from "./utils/types/errors";
-import {dataTestPostCreate01, incorrectPostData} from "./dataForTest/dataTestforPost";
+import {app} from "../../../src/app";
+import {HTTP_STATUSES} from "../../../src/utils/utils";
+import {RouterPaths} from "../../../src/routerPaths";
+import {ErrorMessage, ERRORS_MESSAGES} from "../../../src/utils/errors";
 import {dataTestUserCreate01, dataTestUserCreate02, incorrectUserData} from "./dataForTest/dataTestforUser";
 import {usersTestManager} from "./utils/usersTestManager";
 

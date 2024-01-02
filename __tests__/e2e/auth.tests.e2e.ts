@@ -1,6 +1,6 @@
 import request from 'supertest'
 import {app} from "../../src/app";
-import {HTTP_STATUSES} from "../../src/utils";
+import {HTTP_STATUSES} from "../../src/utils/utils";
 import {RouterPaths} from "../../src/routerPaths";
 
 

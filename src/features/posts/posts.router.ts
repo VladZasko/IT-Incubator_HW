@@ -1,17 +1,17 @@
-import {RequestWithBody, RequestWithParams, RequestWithParamsAndBody, RequestWithQuery} from "../../types";
+import {RequestWithBody, RequestWithParams, RequestWithParamsAndBody, RequestWithQuery} from "../../utils/types";
 import express, {Response} from "express";
-import {HTTP_STATUSES} from "../../utils";
-import {DBType} from "../../db/memory-db";
+import {HTTP_STATUSES} from "../../utils/utils";
 import {authMiddleware} from "../../middlewares/auth/auth-middleware";
 import {QueryPostsModel} from "./models/QueryPostsModule";
-import {PostMemoryDbRepository} from "./repositories/post-db-repository";
 import {URIParamsPostIdModel} from "./models/URIParamsPostIdModule";
 import {PostsViewModel} from "./models/PostsViewModel";
 import {postValidation} from "./validator/post-validator";
-import {CreatePostModel} from "./models/CreatePostModel";
+import {CreatePostServiceModel} from "./models/CreatePostServiceModel";
 import {UpdatePostModel} from "./models/UpdatePostModule";
-import {blogRepository} from "../blogs/repositories/blog-db-repository";
 import {ObjectId} from "mongodb";
+import {blogQueryRepository} from "../blogs/repositories/blog-query-repository";
+import {postQueryRepository} from "./repositories/post-query-repository";
+import {postService} from "./domain/post-service";
 
 export const getPostsRoutes = () => {
     const router = express.Router()
@@ -23,7 +23,7 @@ export const getPostsRoutes = () => {
             sortBy: req.query.sortBy,
             sortDirection: req.query.sortDirection
         }
-        const posts = await PostMemoryDbRepository.getAllPosts(sortData)
+        const posts = await postQueryRepository.getAllPosts(sortData)
 
         res.send(posts)
     })
@@ -36,7 +36,7 @@ export const getPostsRoutes = () => {
             return;
         }
 
-        const post = await PostMemoryDbRepository.getPostById(id)
+        const post = await postQueryRepository.getPostById(id)
 
         if (!post){
             res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
@@ -45,9 +45,9 @@ export const getPostsRoutes = () => {
 
         res.send(post)
     })
-    router.post('/', authMiddleware, postValidation(), async (req:RequestWithBody<CreatePostModel>,
+    router.post('/', authMiddleware, postValidation(), async (req:RequestWithBody<CreatePostServiceModel>,
                                                         res: Response) => {
-        const blog = await blogRepository.getBlogById(req.body.blogId)
+        const blog = await blogQueryRepository.getBlogById(req.body.blogId)
         const blogName = blog!.name
         const createData = {
             title: req.body.title,
@@ -56,7 +56,7 @@ export const getPostsRoutes = () => {
             blogId: req.body.blogId,
         }
 
-        const newPost = await PostMemoryDbRepository.createPost(createData, blogName)
+        const newPost = await postService.createPost(createData, blogName)
 
         res
             .status(HTTP_STATUSES.CREATED_201)
@@ -80,7 +80,7 @@ export const getPostsRoutes = () => {
             blogId: req.body.blogId,
         }
 
-        const updatePost = await PostMemoryDbRepository.updatePost(id, upData)
+        const updatePost = await postService.updatePost(id, upData)
 
         if (!updatePost){
             res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
@@ -99,7 +99,7 @@ export const getPostsRoutes = () => {
             return;
         }
 
-        const deletePost = await PostMemoryDbRepository.deletePostById(id)
+        const deletePost = await postService.deletePostById(id)
         if(!deletePost) {
             res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
             return

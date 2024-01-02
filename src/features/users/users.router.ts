@@ -2,19 +2,19 @@ import {
     RequestWithBody,
     RequestWithParams,
     RequestWithQuery
-} from "../../types";
+} from "../../utils/types";
 import { QueryUserModel} from "./models/input/QueryUserModule";
 import express, {Response} from "express";
-import {HTTP_STATUSES} from "../../utils";
+import {HTTP_STATUSES} from "../../utils/utils";
 import {URIParamsUserIdModel} from "./models/input/URIParamsUserIdModule";
 import {UsersViewModelGetAllBlogs} from "./models/output/UsersViewModel";
 import {CreateUserModel} from "./models/input/CreateUserModel";
-import {DBType} from "../../db/memory-db";
 import {userValidation} from "./validator/user-validator";
-import {userRepository} from "./repositories/user-db-repository";
+import {userRepository} from "./repositories/user-repository";
 import {authMiddleware} from "../../middlewares/auth/auth-middleware";
 import {ObjectId} from "mongodb";
 import {userService} from "./domain/user-service";
+import {userQueryRepository} from "./repositories/user-query-repository";
 
 
 
@@ -33,7 +33,7 @@ export const getUsersRoutes = () => {
             pageSize: req.query.pageSize,
         }
 
-        const users:UsersViewModelGetAllBlogs = await userRepository.getAllUsers(sortData)
+        const users:UsersViewModelGetAllBlogs = await userQueryRepository.getAllUsers(sortData)
 
         res.send(users)
     })

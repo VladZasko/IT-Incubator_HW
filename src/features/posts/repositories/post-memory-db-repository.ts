@@ -2,7 +2,7 @@ import {memoryDb} from "../../../db/memory-db";
 import {PostType} from "../../../db/types/posts.types";
 import {PostsViewModel} from "../models/PostsViewModel";
 import {UpdatePostModel} from "../models/UpdatePostModule";
-import {CreatePostModel} from "../models/CreatePostModel";
+import {CreatePostServiceModel} from "../models/CreatePostServiceModel";
 
 export class PostMemoryDbRepository {
     static async getAllPosts(): Promise<PostsViewModel[]>{
@@ -18,7 +18,7 @@ export class PostMemoryDbRepository {
         }
     }
 
-    static async createPost(createData:CreatePostModel, blogName:string):Promise<PostsViewModel>  {
+    static async createPost(createData:CreatePostServiceModel, blogName:string):Promise<PostsViewModel>  {
 
         const newPost = {
             ...createData,

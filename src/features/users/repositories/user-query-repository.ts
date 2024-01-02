@@ -1,11 +1,10 @@
-import {UsersViewModel, UsersViewModelGetAllBlogs} from "../models/output/UsersViewModel";
+import {UsersViewModelGetAllBlogs} from "../models/output/UsersViewModel";
 import {usersCollection} from "../../../db/db";
 import {userMapper} from "../mappers/mappers";
 import {ObjectId} from "mongodb";
-import {CreateUserModel, CreateUserPassModel} from "../models/input/CreateUserModel";
 import {QueryUserModel} from "../models/input/QueryUserModule";
 
-export class userRepository {
+export class userQueryRepository {
     static async getAllUsers(sortData: QueryUserModel): Promise<UsersViewModelGetAllBlogs>{
         const searchLoginTerm = sortData.searchLoginTerm ?? null
         const searchEmailTerm = sortData.searchEmailTerm ?? null
@@ -44,29 +43,10 @@ export class userRepository {
         }
 
     }
-
-    static async createUser(createData : CreateUserPassModel):Promise<UsersViewModel> {
-
-
-        const user = await usersCollection.insertOne({...createData})
-
-        return {
-            createdAt: createData.createdAt,
-            email: createData.email,
-            login: createData.login,
-            id: user.insertedId.toString()
-        }
-    }
     static async findByLoginOrEmail(loginOrEmail: string) {
         const user = await usersCollection
             .findOne({$or: [{email: loginOrEmail}, {login: loginOrEmail}]})
 
         return user
-    }
-
-    static async deleteUserById(id: string): Promise<boolean> {
-        const foundUser = await usersCollection.deleteOne({_id:new ObjectId(id)})
-
-        return !!foundUser.deletedCount
     }
 }

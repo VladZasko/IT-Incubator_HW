@@ -1,88 +1,12 @@
-import {BlogsViewModel, BlogsViewModelGetAllBlogs} from "../models/output/BlogsViewModel";
-import {blogsCollection, postsCollection} from "../../../db/db";
-import {blogMapper} from "../mappers/mappers";
-import {ObjectId} from "mongodb";
-import {CreateBlogModel, CreatePostBlogModel} from "../models/input/CreateBlogModel";
+import {BlogsViewModel} from "../models/output/BlogsViewModel";
+import { CreateBlogServiceModel} from "../models/input/CreateBlogModel";
 import {UpdateBlogModel} from "../models/input/UpdateBlogModule";
-import {QueryBlogsModel, QueryPostByBlogIdModel} from "../models/input/QueryBlogsModule";
-import {postMapper} from "../../posts/mappers/mappers";
+import {blogQueryRepository} from "../repositories/blog-query-repository";
+import {blogRepository} from "../repositories/blog-repository";
 
 export class blogService {
-    static async getAllBlogs(sortData: QueryBlogsModel): Promise<BlogsViewModelGetAllBlogs>{
-        const searchNameTerm = sortData.searchNameTerm ?? null
-        const sortBy = sortData.sortBy ?? 'createdAt'
-        const sortDirection = sortData.sortDirection ?? 'desc'
-        const pageNumber = sortData.pageNumber ?? 1
-        const pageSize =  sortData.pageSize ?? 10
-
-        let filter = {}
-
-        if(searchNameTerm){
-            filter = {
-                name: {$regex: searchNameTerm, $options: 'i'}
-            }
-        }
-
-        const blogs = await blogsCollection
-            .find(filter)
-            .sort(sortBy, sortDirection)
-            .skip((pageNumber-1)* +pageSize)
-            .limit(+pageSize)
-            .toArray()
-
-        const totalCount:number = await blogsCollection.countDocuments(filter)
-
-        const pagesCount:number = Math.ceil(totalCount/ +pageSize)
-
-
-        return {
-            pagesCount,
-            page: +pageNumber ,
-            pageSize: +pageSize,
-            totalCount,
-            items: blogs.map(blogMapper)
-        }
-
-    }
-    static async getPostsByBlogId(blogId:string, sortData: QueryPostByBlogIdModel) {
-        const sortBy = sortData.sortBy ?? 'createdAt'
-        const sortDirection = sortData.sortDirection ?? 'desc'
-        const pageNumber = sortData.pageNumber ?? 1
-        const pageSize = sortData.pageSize ?? 10
-
-        const posts = await postsCollection
-            .find({blogId: blogId})
-            .sort(sortBy, sortDirection)
-            .skip((pageNumber-1)* +pageSize)
-            .limit(+pageSize)
-            .toArray()
-
-        const totalCount = await postsCollection
-            .countDocuments({blogId: blogId})
-
-        const pagesCount = Math.ceil(totalCount/ +pageSize)
-
-        return {
-            pagesCount,
-            page: +pageNumber ,
-            pageSize: +pageSize,
-            totalCount,
-            items: posts.map(postMapper)
-        }
-
-    }
-
-    static async getBlogById(id: string): Promise<BlogsViewModel | null> {
-        const blog = await blogsCollection.findOne({_id: new ObjectId(id)})
-
-        if (!blog){
-            return null
-        }
-
-        return blogMapper(blog)
-    }
     static async createPostBlog(blogId:string, createData:any){
-        const blog = await this.getBlogById(blogId)
+        const blog = await blogQueryRepository.getBlogById(blogId)
 
         const newPostBlog = {
             ...createData,
@@ -91,38 +15,29 @@ export class blogService {
             createdAt: new Date().toISOString(),
         }
 
-        const res = await postsCollection.insertOne(newPostBlog)
+        const res = await blogRepository.createPostBlog(newPostBlog)
 
-        return res.insertedId.toString()
+        return res
     }
-    static async createBlog(createData : CreateBlogModel):Promise<BlogsViewModel> {
+    static async createBlog(createData: CreateBlogServiceModel):Promise<BlogsViewModel> {
         const newBlog = {
             ...createData,
             createdAt: new Date().toISOString(),
             isMembership: false
         }
 
-        const blog = await blogsCollection.insertOne({...newBlog})
+        const blog = await blogRepository.createBlog(newBlog)
 
-        return {
-            ...newBlog,
-            id: blog.insertedId.toString()
-        }
+        return blog
     }
     static async updateBlog(id: string , updateData:UpdateBlogModel): Promise<boolean> {
-        const foundBlog = await blogsCollection.updateOne({_id:new ObjectId(id)}, {
-            $set:{
-                name : updateData.name,
-                description: updateData.description,
-                websiteUrl: updateData.websiteUrl
-            }
-        })
+        const updateBlog = await blogRepository.updateBlog(id, updateData)
 
-        return !!foundBlog.matchedCount;
+        return updateBlog;
     }
     static async deleteBlogById(id: string): Promise<boolean> {
-        const foundBlog = await blogsCollection.deleteOne({_id:new ObjectId(id)})
+        const deleteBlog = await blogRepository.deleteBlogById(id)
 
-        return !!foundBlog.deletedCount
+        return deleteBlog
     }
 }

@@ -1,24 +1,25 @@
 import request from 'supertest'
-import {app} from "../../src/app";
-import {HTTP_STATUSES} from "../../src/utils";
-import {CreateBlogModel} from "../../src/features/blogs/models/input/CreateBlogModel";
-import {RouterPaths} from "../../src/routerPaths";
+import {app} from "../../../src/app";
+import {HTTP_STATUSES} from "../../../src/utils/utils";
+import {RouterPaths} from "../../../src/routerPaths";
 import {blogsTestManager} from "./utils/blogsTestManager";
 import {
+    dataTestBlogCreate,
     dataTestBlogCreate01,
     dataTestBlogCreate02,
     dataTestBlogUpdate01, dataTestPostByBlogCreate01,
     incorrectBlogData
 } from "./dataForTest/dataTestforBlog";
-import {ErrorMessage, ERRORS_MESSAGES} from "./utils/types/errors";
-import {dataTestPostCreate01, incorrectPostData} from "./dataForTest/dataTestforPost";
+import {ErrorMessage, ERRORS_MESSAGES} from "../../../src/utils/errors";
+import {dataTestPostCreate01, incorrectPostData} from "../posts/dataForTest/dataTestforPost";
+import {CreateBlogServiceModel} from "../../../src/features/blogs/models/input/CreateBlogModel";
 
 
 
 const getRequest = () => {
     return request(app)
 }
-describe('/blogs', () => {
+describe('CUD /blogs tests', () => {
     beforeAll(async() => {
         await getRequest().delete('/testing/all-data')
     })
@@ -46,7 +47,7 @@ describe('/blogs', () => {
     it(`shouldn't create blog with empty name`, async () => {
 
         const data = {
-            ...dataTestBlogCreate01,
+            ...dataTestBlogCreate.data01,
             name: incorrectBlogData.emptyName
         }
         const error:ErrorMessage = [ERRORS_MESSAGES.BLOG_NAME]
@@ -61,7 +62,7 @@ describe('/blogs', () => {
 
     it(`shouldn't create blog with name more than 15 characters`, async () => {
         const data = {
-            ...dataTestBlogCreate01,
+            ...dataTestBlogCreate.data01,
             name: incorrectBlogData.tooLongName
         }
         const error:ErrorMessage = [ERRORS_MESSAGES.BLOG_NAME]
@@ -76,7 +77,7 @@ describe('/blogs', () => {
 
     it(`shouldn't create blog with empty description`, async () => {
         const data = {
-            ...dataTestBlogCreate01,
+            ...dataTestBlogCreate.data01,
             description: incorrectBlogData.emptyDescription
         }
         const error:ErrorMessage = [ERRORS_MESSAGES.BLOG_DESCRIPTION]
@@ -91,7 +92,7 @@ describe('/blogs', () => {
 
     it(`shouldn't create blogs with description more than 500 characters`, async () => {
         const data = {
-            ...dataTestBlogCreate01,
+            ...dataTestBlogCreate.data01,
             description: incorrectBlogData.tooLongDescription
         }
         const error:ErrorMessage = [ERRORS_MESSAGES.BLOG_DESCRIPTION]
@@ -106,7 +107,7 @@ describe('/blogs', () => {
 
     it(`shouldn't create blogs with empty websiteUrl`, async () => {
         const data = {
-            ...dataTestBlogCreate01,
+            ...dataTestBlogCreate.data01,
             websiteUrl: incorrectBlogData.emptyWebsiteUrl
         }
         const error:ErrorMessage = [ERRORS_MESSAGES.BLOG_WEBSITE_URL]
@@ -121,7 +122,7 @@ describe('/blogs', () => {
 
     it(`shouldn't create blogs with websiteUrl more than 100 characters`, async () => {
         const data = {
-            ...dataTestBlogCreate01,
+            ...dataTestBlogCreate.data01,
             websiteUrl: incorrectBlogData.tooLongWebsiteUrl
         }
         const error:ErrorMessage = [ERRORS_MESSAGES.BLOG_WEBSITE_URL]
@@ -136,7 +137,7 @@ describe('/blogs', () => {
 
     it(`shouldn't create blogs with websiteUrl that does not match the pattern`, async () => {
         const data = {
-            ...dataTestBlogCreate01,
+            ...dataTestBlogCreate.data01,
             websiteUrl: incorrectBlogData.incorrectWebsiteUrl
         }
         const error:ErrorMessage = [ERRORS_MESSAGES.BLOG_WEBSITE_URL]
@@ -151,7 +152,7 @@ describe('/blogs', () => {
 
     it(`shouldn't create blogs with incorrect data`, async () => {
         const data = {
-            ...dataTestBlogCreate01,
+            ...dataTestBlogCreate.data01,
             name: incorrectBlogData.emptyName,
             description: incorrectBlogData.emptyDescription,
             websiteUrl: incorrectBlogData.incorrectWebsiteUrl
@@ -186,7 +187,7 @@ describe('/blogs', () => {
     let createdNewBlog02:any = null
     it(`created one more blogs`, async () => {
 
-        const data: CreateBlogModel = dataTestBlogCreate02
+        const data: CreateBlogServiceModel = dataTestBlogCreate02
 
         const result = await blogsTestManager.createBlog(data)
 
@@ -332,36 +333,6 @@ describe('/blogs', () => {
         await getRequest()
             .get(`${RouterPaths.blogs}/${createdNewBlog01.id}/posts`)
             .expect(HTTP_STATUSES.OK_200, { pagesCount: 1, page: 1, pageSize: 10, totalCount: 1, items: [createdNewPostByBlog01] })
-    })
-
-    it('should return page 2 and page size 1', async () => {
-        await getRequest()
-            .get(`${RouterPaths.blogs}/?pageSize=1&pageNumber=2`)
-            .expect(HTTP_STATUSES.OK_200,
-                { pagesCount: 2, page: 2, pageSize: 1, totalCount: 2, items: [createdNewBlog01] })
-    })
-
-    it('should return Blog02', async () => {
-        await getRequest()
-            .get(`${RouterPaths.blogs}/?searchNameTerm=02`)
-            .expect(HTTP_STATUSES.OK_200,
-                { pagesCount: 1, page: 1, pageSize: 10, totalCount: 1, items: [createdNewBlog02] })
-    })
-
-    it('should return Blog01 after Blog02', async () => {
-        await getRequest()
-            .get(`${RouterPaths.blogs}/?sortDirection=asc`)
-            .expect(HTTP_STATUSES.OK_200,
-                { pagesCount: 1, page: 1, pageSize: 10, totalCount: 2, items: [createdNewBlog01, createdNewBlog02] })
-    })
-
-    it('should return 404 fot not existing blogs for update', async () => {
-
-        await getRequest()
-            .put(`${RouterPaths.blogs}/11515`)
-            .set('authorization', 'Basic YWRtaW46cXdlcnR5')
-            .send(dataTestBlogUpdate01)
-            .expect(HTTP_STATUSES.NOT_FOUND_404)
     })
 
     it(`shouldn't update blog with UNAUTHORIZED`, async () => {

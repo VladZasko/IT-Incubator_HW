@@ -1,16 +1,16 @@
 import request from "supertest";
-import {CreateBlogModel, CreatePostBlogModel} from "../../../src/features/blogs/models/input/CreateBlogModel";
-import {HTTP_STATUSES, HttpStatusType} from "../../../src/utils";
-import {RouterPaths} from "../../../src/routerPaths";
-import {app} from "../../../src/app";
-import {UpdateBlogModel} from "../../../src/features/blogs/models/input/UpdateBlogModule";
-import {BlogType} from "../../../src/db/types/blogs.types";
-import {ErrorMessage} from "./types/errors";
+import {CreateBlogServiceModel, CreatePostBlogModel} from "../../../../src/features/blogs/models/input/CreateBlogModel";
+import {HTTP_STATUSES, HttpStatusType} from "../../../../src/utils/utils";
+import {RouterPaths} from "../../../../src/routerPaths";
+import {app} from "../../../../src/app";
+import {UpdateBlogModel} from "../../../../src/features/blogs/models/input/UpdateBlogModule";
+import {BlogType} from "../../../../src/db/types/blogs.types";
+import {ErrorMessage} from "../../../../src/utils/errors";
 
 
 
 export const blogsTestManager = {
-    async createBlog(data: CreateBlogModel,
+    async createBlog(data: CreateBlogServiceModel,
                      expectedStatusCode: HttpStatusType = HTTP_STATUSES.CREATED_201,
                      expectedErrorsMessages?: ErrorMessage) {
 

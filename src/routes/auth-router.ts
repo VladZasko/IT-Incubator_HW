@@ -1,5 +1,5 @@
 import express, {Response, Request} from "express";
-import {userService} from "./domain/user-service";
+import {userService} from "../features/users/domain/user-service";
 
 
 export const authUsersRoutes = () => {

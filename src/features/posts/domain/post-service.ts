@@ -5,77 +5,29 @@ import {blogsCollection, postsCollection} from "../../../db/db";
 import {blogMapper} from "../../blogs/mappers/mappers";
 import {postMapper} from "../mappers/mappers";
 import {ObjectId} from "mongodb";
-import {CreatePostModel} from "../models/CreatePostModel";
+import {CreatePostServiceModel} from "../models/CreatePostServiceModel";
 import {UpdatePostModel} from "../models/UpdatePostModule";
 import {QueryPostsModel} from "../models/QueryPostsModule";
+import {postRepository} from "../repositories/post-repository";
 
-export class PostMemoryDbRepository {
-    static async getAllPosts(sortData: QueryPostsModel){
-        const pageNumber= sortData.pageNumber ?? 1
-        const pageSize= sortData.pageSize ?? 10
-        const sortBy= sortData.sortBy ?? 'createdAt'
-        const sortDirection= sortData.sortDirection ?? 'desc'
-
-        let filter = {}
-
-        const posts = await postsCollection
-            .find(filter)
-            .sort(sortBy, sortDirection)
-            .skip((pageNumber-1)* +pageSize)
-            .limit(+pageSize)
-            .toArray()
-
-        const totalCount = await postsCollection.countDocuments(filter)
-
-        const pagesCount = Math.ceil(totalCount/ +pageSize)
-
-        return {
-            pagesCount,
-            page: +pageNumber ,
-            pageSize: +pageSize,
-            totalCount,
-            items: posts.map(postMapper)
-        }
-    }
-
-    static async getPostById(id: string): Promise<PostsViewModel | null> {
-        const post = await postsCollection.findOne({_id: new ObjectId(id)})
-
-        if (!post){
-            return null
-        }
-
-        return postMapper(post)
-    }
-
-    static async createPost(createData:CreatePostModel, blogName:string):Promise<PostsViewModel>  {
+export class postService {
+    static async createPost(createData:CreatePostServiceModel, blogName:string):Promise<PostsViewModel>  {
         const newPost = {
             ...createData,
             blogName,
             createdAt: new Date().toISOString()
         }
-        const post = await postsCollection.insertOne({...newPost})
+        const post = await postRepository.createPost(newPost)
 
-        return {
-            ...newPost,
-            id:post.insertedId.toString()
-        }
+        return post
     }
     static async updatePost(id: string, upData: UpdatePostModel): Promise<boolean> {
-        const foundPost = await postsCollection.updateOne({_id:new ObjectId(id)}, {
-            $set:{
-                title : upData.title,
-                shortDescription: upData.shortDescription,
-                content: upData.content,
-                blogId: upData.blogId
-            }
-        })
-        return !!foundPost.matchedCount;
+        const foundPost = await postRepository.updatePost(id, upData)
+        return foundPost;
     }
     static async deletePostById(id: string): Promise<boolean> {
-        const foundPost = await postsCollection.deleteOne({_id:new ObjectId(id)})
+        const foundPost = await postRepository.deletePostById(id)
 
-        return !!foundPost.deletedCount
-
+        return foundPost
     }
 }

@@ -1,6 +1,6 @@
 import {NextFunction, Response, Request} from "express";
 import dotenv from 'dotenv'
-import {HTTP_STATUSES} from "../../utils";
+import {HTTP_STATUSES} from "../../utils/utils";
 
 dotenv.config()
 export const authMiddleware = (req: Request, res: Response, next: NextFunction) => {

@@ -1,11 +1,10 @@
 import request from 'supertest'
-import {app} from "../../src/app";
-import {HTTP_STATUSES} from "../../src/utils";
-import {CreateBlogModel} from "../../src/features/blogs/models/input/CreateBlogModel";
-import {CreatePostModel} from "../../src/features/posts/models/CreatePostModel";
-import {RouterPaths} from "../../src/routerPaths";
-import {dataTestBlogCreate01, dataTestBlogCreate02, dataTestBlogUpdate01} from "./dataForTest/dataTestforBlog";
-import {blogsTestManager} from "./utils/blogsTestManager";
+import {app} from "../../../src/app";
+import {HTTP_STATUSES} from "../../../src/utils/utils";
+import {CreatePostServiceModel} from "../../../src/features/posts/models/CreatePostServiceModel";
+import {RouterPaths} from "../../../src/routerPaths";
+import {dataTestBlogCreate01, dataTestBlogCreate02, dataTestBlogUpdate01} from "../blogs/dataForTest/dataTestforBlog";
+import {blogsTestManager} from "../blogs/utils/blogsTestManager";
 import {
     dataTestPostCreate01,
     dataTestPostCreate02,
@@ -13,7 +12,7 @@ import {
     incorrectPostData
 } from "./dataForTest/dataTestforPost";
 import {postsTestManager} from "./utils/postsTestManager";
-import {ErrorMessage, ERRORS_MESSAGES} from "./utils/types/errors";
+import {ErrorMessage, ERRORS_MESSAGES} from "../../../src/utils/errors";
 
 
 const getRequest = () => {
@@ -76,7 +75,7 @@ describe('/posts', () => {
     })
 
     it(`shouldn't create post with UNAUTHORIZED`, async () => {
-        const data: CreatePostModel = {
+        const data: CreatePostServiceModel = {
             ...dataTestPostCreate01,
             blogId: createdNewBlog01.id
         }
@@ -89,7 +88,7 @@ describe('/posts', () => {
     })
 
     it(`shouldn't create post with empty title`, async () => {
-        const data: CreatePostModel = {
+        const data: CreatePostServiceModel = {
             ...dataTestPostCreate01,
             title: incorrectPostData.emptyTitle,
             blogId: createdNewBlog01.id
@@ -110,7 +109,7 @@ describe('/posts', () => {
     })
 
     it(`shouldn't create post with title more than 15 characters`, async () => {
-        const data: CreatePostModel = {
+        const data: CreatePostServiceModel = {
             ...dataTestPostCreate01,
             title: incorrectPostData.tooLongTitle,
             blogId: createdNewBlog01.id
@@ -132,7 +131,7 @@ describe('/posts', () => {
     })
 
     it(`shouldn't create post with empty shortDescription`, async () => {
-        const data: CreatePostModel = {
+        const data: CreatePostServiceModel = {
             ...dataTestPostCreate01,
             shortDescription: incorrectPostData.emptyShortDescription,
             blogId: createdNewBlog01.id
@@ -154,7 +153,7 @@ describe('/posts', () => {
     })
 
     it(`shouldn't create post with shortDescription more than 100 characters`, async () => {
-        const data: CreatePostModel = {
+        const data: CreatePostServiceModel = {
             ...dataTestPostCreate01,
             shortDescription: incorrectPostData.tooLongShortDescription,
             blogId: createdNewBlog01.id
@@ -176,7 +175,7 @@ describe('/posts', () => {
     })
 
     it(`shouldn't create post with empty content`, async () => {
-        const data: CreatePostModel = {
+        const data: CreatePostServiceModel = {
             ...dataTestPostCreate01,
             content: incorrectPostData.emptyContent,
             blogId: createdNewBlog01.id
@@ -198,7 +197,7 @@ describe('/posts', () => {
     })
 
     it(`shouldn't create post with content more than 1000 characters`, async () => {
-        const data: CreatePostModel = {
+        const data: CreatePostServiceModel = {
             ...dataTestPostCreate01,
             content: incorrectPostData.tooLongContent,
             blogId: createdNewBlog01.id
@@ -236,7 +235,7 @@ describe('/posts', () => {
     })
 
     it(`shouldn't create post with incorrect blogId`, async () => {
-        const data: CreatePostModel = {
+        const data: CreatePostServiceModel = {
             ...dataTestPostCreate01,
             blogId: incorrectPostData.incorrectBlogId
         }
@@ -257,7 +256,7 @@ describe('/posts', () => {
     })
 
     it(`shouldn't create post with incorrect data`, async () => {
-        const data: CreatePostModel = {
+        const data: CreatePostServiceModel = {
             ...dataTestPostCreate01,
             blogId: incorrectPostData.incorrectBlogId,
             title: incorrectPostData.emptyTitle,

@@ -4,21 +4,21 @@ import {
     RequestWithParamsAndBody,
     RequestWithParamsAndQuery,
     RequestWithQuery
-} from "../../types";
+} from "../../utils/types";
 import {QueryBlogsModel, QueryPostByBlogIdModel} from "./models/input/QueryBlogsModule";
 import express, {Response} from "express";
-import {HTTP_STATUSES} from "../../utils";
+import {HTTP_STATUSES} from "../../utils/utils";
 import {URIParamsBlogIdModel} from "./models/input/URIParamsBlogIdModule";
 import {BlogsViewModel, BlogsViewModelGetAllBlogs} from "./models/output/BlogsViewModel";
-import {CreateBlogModel, CreatePostBlogModel} from "./models/input/CreateBlogModel";
+import {CreateBlogServiceModel, CreatePostBlogModel} from "./models/input/CreateBlogModel";
 import {UpdateBlogModel} from "./models/input/UpdateBlogModule";
-import {DBType} from "../../db/memory-db";
 import {blogValidation} from "./validator/blog-validator";
-import {blogRepository} from "./repositories/blog-db-repository";
 import {authMiddleware} from "../../middlewares/auth/auth-middleware";
 import {ObjectId} from "mongodb";
-import {PostMemoryDbRepository} from "../posts/repositories/post-db-repository";
 import {postByIdValidation} from "../posts/validator/post-validator";
+import {blogQueryRepository} from "./repositories/blog-query-repository";
+import {blogService} from "./domain/blog-service";
+import {postQueryRepository} from "../posts/repositories/post-query-repository";
 
 
 
@@ -35,7 +35,7 @@ export const getBlogsRoutes = () => {
             pageSize: req.query.pageSize
         }
 
-        const blogs:BlogsViewModelGetAllBlogs = await blogRepository.getAllBlogs(sortData)
+        const blogs:BlogsViewModelGetAllBlogs = await blogQueryRepository.getAllBlogs(sortData)
 
         res.send(blogs)
     })
@@ -48,7 +48,7 @@ export const getBlogsRoutes = () => {
             return;
         }
 
-        const blog = await blogRepository.getBlogById(id)
+        const blog = await blogQueryRepository.getBlogById(id)
 
         if(!blog){
             res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
@@ -62,7 +62,7 @@ export const getBlogsRoutes = () => {
             pageSize: req.query.pageSize
         }
 
-        const posts = await blogRepository.getPostsByBlogId(id,sortData)
+        const posts = await blogQueryRepository.getPostsByBlogId(id,sortData)
 
         res.send(posts)
     })
@@ -75,7 +75,7 @@ export const getBlogsRoutes = () => {
             return;
         }
 
-        const blog = await blogRepository.getBlogById(id)
+        const blog = await blogQueryRepository.getBlogById(id)
 
         if (!blog){
             res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
@@ -95,16 +95,16 @@ export const getBlogsRoutes = () => {
 
             const blogId = req.params.id
 
-            const blog = await blogRepository.getBlogById(blogId)
+            const blog = await blogQueryRepository.getBlogById(blogId)
 
             if(!blog){
                 res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
                 return
             }
 
-            const newPostId = await blogRepository.createPostBlog(blogId,createData)
+            const newPostId = await blogService.createPostBlog(blogId,createData)
 
-            const post = await PostMemoryDbRepository.getPostById(newPostId)
+            const post = await postQueryRepository.getPostById(newPostId)
 
             if(!post){
                 res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
@@ -117,7 +117,7 @@ export const getBlogsRoutes = () => {
 
         })
     router.post('/', authMiddleware, blogValidation(),
-        async (req:RequestWithBody<CreateBlogModel>,
+        async (req:RequestWithBody<CreateBlogServiceModel>,
                res: Response) => {
 
         const createData = {
@@ -126,7 +126,7 @@ export const getBlogsRoutes = () => {
             websiteUrl: req.body.websiteUrl
         }
 
-        const newBlog = await blogRepository.createBlog(createData)
+        const newBlog = await blogService.createBlog(createData)
 
         res
             .status(HTTP_STATUSES.CREATED_201)
@@ -149,14 +149,14 @@ export const getBlogsRoutes = () => {
             websiteUrl: req.body.websiteUrl
         }
 
-        const blog = await blogRepository.getBlogById(id)
+        const blog = await blogQueryRepository.getBlogById(id)
 
         if(!blog){
             res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
             return
         }
 
-        const updateBlog = await blogRepository.updateBlog(id, updateData)
+        const updateBlog = await blogService.updateBlog(id, updateData)
 
         if (!updateBlog){
             res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
@@ -177,7 +177,7 @@ export const getBlogsRoutes = () => {
             return;
         }
 
-        const deleteBlog = await blogRepository.deleteBlogById(id)
+        const deleteBlog = await blogService.deleteBlogById(id)
         if(!deleteBlog) {
             res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
             return

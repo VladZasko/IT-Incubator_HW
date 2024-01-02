@@ -2,12 +2,11 @@ import {BlogsViewModel, BlogsViewModelGetAllBlogs} from "../models/output/BlogsV
 import {blogsCollection, postsCollection} from "../../../db/db";
 import {blogMapper} from "../mappers/mappers";
 import {ObjectId} from "mongodb";
-import {CreateBlogModel, CreatePostBlogModel} from "../models/input/CreateBlogModel";
 import {UpdateBlogModel} from "../models/input/UpdateBlogModule";
 import {QueryBlogsModel, QueryPostByBlogIdModel} from "../models/input/QueryBlogsModule";
 import {postMapper} from "../../posts/mappers/mappers";
 
-export class blogRepository {
+export class blogQueryRepository {
     static async getAllBlogs(sortData: QueryBlogsModel): Promise<BlogsViewModelGetAllBlogs>{
         const searchNameTerm = sortData.searchNameTerm ?? null
         const sortBy = sortData.sortBy ?? 'createdAt'
@@ -71,7 +70,6 @@ export class blogRepository {
         }
 
     }
-
     static async getBlogById(id: string): Promise<BlogsViewModel | null> {
         const blog = await blogsCollection.findOne({_id: new ObjectId(id)})
 
@@ -80,49 +78,5 @@ export class blogRepository {
         }
 
         return blogMapper(blog)
-    }
-    static async createPostBlog(blogId:string, createData:any){
-        const blog = await this.getBlogById(blogId)
-
-        const newPostBlog = {
-            ...createData,
-            blogId: blogId,
-            blogName: blog!.name,
-            createdAt: new Date().toISOString(),
-        }
-
-        const res = await postsCollection.insertOne(newPostBlog)
-
-        return res.insertedId.toString()
-    }
-    static async createBlog(createData : CreateBlogModel):Promise<BlogsViewModel> {
-        const newBlog = {
-            ...createData,
-            createdAt: new Date().toISOString(),
-            isMembership: false
-        }
-
-        const blog = await blogsCollection.insertOne({...newBlog})
-
-        return {
-            ...newBlog,
-            id: blog.insertedId.toString()
-        }
-    }
-    static async updateBlog(id: string , updateData:UpdateBlogModel): Promise<boolean> {
-        const foundBlog = await blogsCollection.updateOne({_id:new ObjectId(id)}, {
-            $set:{
-                name : updateData.name,
-                description: updateData.description,
-                websiteUrl: updateData.websiteUrl
-            }
-        })
-
-        return !!foundBlog.matchedCount;
-    }
-    static async deleteBlogById(id: string): Promise<boolean> {
-        const foundBlog = await blogsCollection.deleteOne({_id:new ObjectId(id)})
-
-        return !!foundBlog.deletedCount
     }
 }

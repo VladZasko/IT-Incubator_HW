@@ -1,17 +1,14 @@
-import {CreateBlogModel} from "../../../src/features/blogs/models/input/CreateBlogModel";
-import {HTTP_STATUSES, HttpStatusType} from "../../../src/utils";
+import {HTTP_STATUSES, HttpStatusType} from "../../../../src/utils/utils";
 import request from "supertest";
-import {app} from "../../../src/app";
-import {RouterPaths} from "../../../src/routerPaths";
-import {URIParamsBlogIdModel} from "../../../src/features/blogs/models/input/URIParamsBlogIdModule";
-import {UpdateBlogModel} from "../../../src/features/blogs/models/input/UpdateBlogModule";
-import {CreatePostModel} from "../../../src/features/posts/models/CreatePostModel";
-import {URIParamsPostIdModel} from "../../../src/features/posts/models/URIParamsPostIdModule";
-import {UpdatePostModel} from "../../../src/features/posts/models/UpdatePostModule";
-import {ErrorMessage} from "./types/errors";
+import {app} from "../../../../src/app";
+import {RouterPaths} from "../../../../src/routerPaths";
+import {CreatePostServiceModel} from "../../../../src/features/posts/models/CreatePostServiceModel";
+import {URIParamsPostIdModel} from "../../../../src/features/posts/models/URIParamsPostIdModule";
+import {UpdatePostModel} from "../../../../src/features/posts/models/UpdatePostModule";
+import {ErrorMessage} from "../../../../src/utils/errors";
 
 export const postsTestManager = {
-    async createPost(data: CreatePostModel,
+    async createPost(data: CreatePostServiceModel,
                      expectedStatusCode:HttpStatusType = HTTP_STATUSES.CREATED_201,
                      expectedErrorsMessages?: ErrorMessage) {
 
