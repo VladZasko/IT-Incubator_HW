@@ -33,6 +33,15 @@ describe('/auth', () => {
             })
             .expect(HTTP_STATUSES.UNAUTHORIZED_401, {})
     })
+    it('should return 404 z', async () => {
+        await getRequest()
+            .post(RouterPaths.auth)
+            .send({
+                loginOrEmail:'TwoLon',
+                password: 'qwrty'
+            })
+            .expect(HTTP_STATUSES.UNAUTHORIZED_401, {})
+    })
 
 
 })

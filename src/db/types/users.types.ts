@@ -4,10 +4,12 @@ export type UserType = {
     login: string,
     email: string,
     createdAt: string
+    password: string
 }
 
 export type UserDBType = {
     login: string,
     email: string,
     createdAt: string
+    password: string
 }

@@ -52,7 +52,8 @@ export const memoryDb: DBType = {
             id: "111111",
             login: "SameLogin",
             email: "SameMail",
-            createdAt: "2023-12-23T13:36:16.608Z"
+            createdAt: "2023-12-23T13:36:16.608Z",
+            password:"11111"
         }
     ]
 }
