@@ -135,7 +135,7 @@ describe('/user', () => {
             .expect(HTTP_STATUSES.OK_200, { pagesCount: 0, page: 1, pageSize: 10, totalCount: 0, items: [] })
     })
 
-    it(`shouldn't create blogs with password that does not match the pattern`, async () => {
+    it(`shouldn't create user with password that does not match the pattern`, async () => {
         const data = {
             ...dataTestUserCreate01,
             password: incorrectUserData.incorrectPassword
@@ -151,7 +151,7 @@ describe('/user', () => {
             .expect(HTTP_STATUSES.OK_200, { pagesCount: 0, page: 1, pageSize: 10, totalCount: 0, items: [] })
     })
 
-    it(`shouldn't create blogs with incorrect data`, async () => {
+    it(`shouldn't create user with incorrect data`, async () => {
         const data = {
             ...dataTestUserCreate01,
             login: incorrectUserData.emptyLogin,
@@ -198,6 +198,68 @@ describe('/user', () => {
             .set('authorization', 'Basic YWRtaW46cXdlcnR5')
             .expect(HTTP_STATUSES.OK_200,
                 { pagesCount: 1, page: 1, pageSize: 10, totalCount: 2, items: [createdNewUser02,createdNewUser01 ]})
+    })
+    it(`shouldn't make auth, empty login Or Email`, async () => {
+
+        await request(app)
+            .post(RouterPaths.auth)
+            .set('authorization', 'Basic YWRtaW46cXdlcnR5')
+            .send({
+                loginOrEmail: "",
+                password: dataTestUserCreate01.password
+            })
+            .expect(HTTP_STATUSES.BAD_REQUEST_400, {
+                errorsMessages: [ { message: 'empty loginOrEmail', field: 'loginOrEmail' } ]
+            })
+    })
+    it(`shouldn't make auth, empty password`, async () => {
+
+        await request(app)
+            .post(RouterPaths.auth)
+            .set('authorization', 'Basic YWRtaW46cXdlcnR5')
+            .send({
+                loginOrEmail: dataTestUserCreate01.email,
+                password: ""
+            })
+            .expect(HTTP_STATUSES.BAD_REQUEST_400, {
+                errorsMessages: [ { message: 'empty password', field: 'password' } ]
+            })
+    })
+
+    it(`shouldn't make auth, incorrect login Or Email`, async () => {
+
+        await request(app)
+            .post(RouterPaths.auth)
+            .set('authorization', 'Basic YWRtaW46cXdlcnR5')
+            .send({
+                loginOrEmail: dataTestUserCreate02.login,
+                password: dataTestUserCreate01.password
+            })
+            .expect(HTTP_STATUSES.UNAUTHORIZED_401)
+    })
+
+    it(`shouldn't make auth, incorrect password`, async () => {
+
+        await request(app)
+            .post(RouterPaths.auth)
+            .set('authorization', 'Basic YWRtaW46cXdlcnR5')
+            .send({
+                loginOrEmail: dataTestUserCreate01.login,
+                password: dataTestUserCreate02.password
+            })
+            .expect(HTTP_STATUSES.UNAUTHORIZED_401)
+    })
+
+    it(`should make auth`, async () => {
+
+        await request(app)
+            .post(RouterPaths.auth)
+            .set('authorization', 'Basic YWRtaW46cXdlcnR5')
+            .send({
+                loginOrEmail: dataTestUserCreate01.login,
+                password: dataTestUserCreate01.password
+            })
+            .expect(HTTP_STATUSES.NO_CONTENT_204)
     })
 
     it(`shouldn't delete  user UNAUTHORIZED`, async () => {

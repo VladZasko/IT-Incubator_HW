@@ -28,14 +28,12 @@ export class userService {
         }
 
         const passwordHash = await this._generateHash(password, user.passwordHash)
-        if(user.passwordHash !== passwordHash) {
-            return false
-        }
-        return true
+
+        return user.passwordHash === passwordHash;
+
     }
     static async _generateHash(password: string, salt: string){
-        const hash = await bcrypt.hash(password,salt)
-        return hash
+        return await bcrypt.hash(password, salt)
     }
     static async deleteUserById(id: string): Promise<boolean> {
         const foundUser = await usersCollection.deleteOne({_id:new ObjectId(id)})

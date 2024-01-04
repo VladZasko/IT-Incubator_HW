@@ -1,95 +1,99 @@
-// import request from 'supertest'
-// import {app} from "../../../src/app";
-// import {HTTP_STATUSES} from "../../../src/utils/utils";
-// import {RouterPaths} from "../../../src/routerPaths";
-// import {blogsTestManager} from "./utils/blogsTestManager";
-// import {
-//     dataTestBlogCreate,
-//     dataTestBlogCreate01,
-//     dataTestBlogCreate02, dataTestBlogCreate2,
-//     dataTestBlogUpdate01, dataTestPostByBlogCreate01,
-//     incorrectBlogData, queryExpect
-// } from "./dataForTest/dataTestforBlog";
-// import {ErrorMessage, ERRORS_MESSAGES} from "../../../src/utils/errors";
-// import {dataTestPostCreate01, incorrectPostData} from "../posts/dataForTest/dataTestforPost";
-// import {CreateBlogServiceModel} from "../../../src/features/blogs/models/input/CreateBlogModel";
-// import {BlogType} from "../../../src/db/types/blogs.types";
-//
-//
-//
-// const getRequest = () => {
-//     return request(app)
-// }
-// describe('test for query /blogs', () => {
-//     beforeAll(async() => {
-//         await getRequest().delete('/testing/all-data')
-//     })
-//
-//     let createdNewBlog01:Array<Object> = []
-//     it(`should create blog with correct input data`, async () => {
-//
-//         for (let i = 0; i < dataTestBlogCreate2.length; i++){
-//             const result = await blogsTestManager.createBlog(dataTestBlogCreate2[i])
-//             createdNewBlog01.push(result.createdEntity)
-//         }
-//
-//
-//         await request(app)
-//             .get(RouterPaths.blogs)
-//             .expect(HTTP_STATUSES.OK_200,
-//                 { pagesCount: 2, page: 1, pageSize: 10, totalCount: 12, items: queryExpect })
-//     })
-//     //
-//     // it('should return 200 and empty array', async () => {
-//     //     await getRequest()
-//     //         .get(RouterPaths.blogs)
-//     //         .expect(HTTP_STATUSES.OK_200, { pagesCount: 0, page: 1, pageSize: 10, totalCount: 0, items: [] })
-//     // })
-//     //
-//     // it('should return 404 fot not existing blogs', async () => {
-//     //     await getRequest()
-//     //         .get(`${RouterPaths.blogs}/1`)
-//     //         .expect(HTTP_STATUSES.NOT_FOUND_404)
-//     // })
-//     //
-//     // it('should return post for blog', async () => {
-//     //     await getRequest()
-//     //         .get(`${RouterPaths.blogs}/${createdNewBlog01.id}/posts`)
-//     //         .expect(HTTP_STATUSES.OK_200, { pagesCount: 1, page: 1, pageSize: 10, totalCount: 1, items: [createdNewPostByBlog01] })
-//     // })
-//     //
-//     // it('should return page 2 and page size 1', async () => {
-//     //     await getRequest()
-//     //         .get(`${RouterPaths.blogs}/?pageSize=1&pageNumber=2`)
-//     //         .expect(HTTP_STATUSES.OK_200,
-//     //             { pagesCount: 2, page: 2, pageSize: 1, totalCount: 2, items: [createdNewBlog01] })
-//     // })
-//     //
-//     // it('should return Blog02', async () => {
-//     //     await getRequest()
-//     //         .get(`${RouterPaths.blogs}/?searchNameTerm=02`)
-//     //         .expect(HTTP_STATUSES.OK_200,
-//     //             { pagesCount: 1, page: 1, pageSize: 10, totalCount: 1, items: [createdNewBlog02] })
-//     // })
-//     //
-//     // it('should return Blog01 after Blog02', async () => {
-//     //     await getRequest()
-//     //         .get(`${RouterPaths.blogs}/?sortDirection=asc`)
-//     //         .expect(HTTP_STATUSES.OK_200,
-//     //             { pagesCount: 1, page: 1, pageSize: 10, totalCount: 2, items: [createdNewBlog01, createdNewBlog02] })
-//     // })
-//     //
-//     // it('should return 404 fot not existing blogs for update', async () => {
-//     //
-//     //     await getRequest()
-//     //         .put(`${RouterPaths.blogs}/11515`)
-//     //         .set('authorization', 'Basic YWRtaW46cXdlcnR5')
-//     //         .send(dataTestBlogUpdate01)
-//     //         .expect(HTTP_STATUSES.NOT_FOUND_404)
-//     // })
-//
-// })
-//
-//
-//
-//
+import request from 'supertest'
+import {app} from "../../../src/app";
+import {HTTP_STATUSES} from "../../../src/utils/utils";
+import {RouterPaths} from "../../../src/routerPaths";
+import {blogsTestManager} from "./utils/blogsTestManager";
+import {dataTestBlogCreate, dataTestPostByBlogCreate} from "./dataForTest/dataTestforBlog";
+
+
+
+const getRequest = () => {
+    return request(app)
+}
+describe('test for query /blogs', () => {
+    beforeAll(async() => {
+        await getRequest().delete('/testing/all-data')
+    })
+
+    let createdNewBlog01:any = []
+    it(`should create 12 blogs with correct input data`, async () => {
+
+        for (let i = 0; i < dataTestBlogCreate.length; i++){
+            const result = await blogsTestManager.createBlog(dataTestBlogCreate[i])
+            createdNewBlog01.unshift(result.createdEntity)
+        }
+
+        await request(app)
+            .get(`${RouterPaths.blogs}/?pageSize=15`)
+            .expect(HTTP_STATUSES.OK_200,
+                {
+                    pagesCount: 1,
+                    page: 1,
+                    pageSize: 15,
+                    totalCount: 12,
+                    items: createdNewBlog01
+                })
+    })
+
+    it('should return page 3 and empty page size 3', async () => {
+        await getRequest()
+            .get(`${RouterPaths.blogs}/?pageSize=3&pageNumber=3`)
+            .expect(HTTP_STATUSES.OK_200, { pagesCount: 4, page: 3, pageSize: 3, totalCount: 12, items: createdNewBlog01.slice(6,9) })
+    })
+
+    it('should return blog with "eW" ', async () => {
+        await getRequest()
+            .get(`${RouterPaths.blogs}/?searchNameTerm=eW`)
+            .expect(HTTP_STATUSES.OK_200, { pagesCount: 1, page: 1, pageSize: 10, totalCount: 1, items:[ createdNewBlog01[0] ]})
+    })
+
+    it('should return blogs "asc" ', async () => {
+        let blog = []
+        for (let i = 0; i < createdNewBlog01.length; i++){
+            blog.unshift(createdNewBlog01[i])
+        }
+        await getRequest()
+            .get(`${RouterPaths.blogs}/?pageSize=15&sortDirection=asc`)
+            .expect(HTTP_STATUSES.OK_200, { pagesCount: 1, page: 1, pageSize: 15, totalCount: 12, items:blog })
+    })
+
+    let createdNewPostByBlog:any = []
+    it(`should create 10 posts by blogs with correct input data`, async () => {
+
+        for (let i = 0; i < dataTestPostByBlogCreate.length; i++){
+            const result = await blogsTestManager.createPostByBlog(createdNewBlog01[0],dataTestPostByBlogCreate[i])
+            createdNewPostByBlog.unshift(result.createdEntity)
+        }
+
+        await request(app)
+            .get(`${RouterPaths.blogs}/${createdNewBlog01[0].id}/posts`)
+            .expect(HTTP_STATUSES.OK_200,
+                {
+                    pagesCount: 1,
+                    page: 1,
+                    pageSize: 10,
+                    totalCount: 10,
+                    items: createdNewPostByBlog
+                })
+    })
+
+    it('should return page 3 and page size 3', async () => {
+        await getRequest()
+            .get(`${RouterPaths.blogs}/${createdNewBlog01[0].id}/posts/?pageSize=3&pageNumber=3`)
+            .expect(HTTP_STATUSES.OK_200, { pagesCount: 4, page: 3, pageSize: 3, totalCount: 10, items: createdNewPostByBlog.slice(6,9) })
+    })
+
+    it('should return posts by blogs "asc" ', async () => {
+        let postByBlog = []
+        for (let i = 0; i < createdNewPostByBlog.length; i++){
+            postByBlog.unshift(createdNewPostByBlog[i])
+        }
+        await getRequest()
+            .get(`${RouterPaths.blogs}/${createdNewBlog01[0].id}/posts/?sortDirection=asc`)
+            .expect(HTTP_STATUSES.OK_200, { pagesCount: 1, page: 1, pageSize: 10, totalCount: 10, items:postByBlog })
+    })
+})
+
+
+
+

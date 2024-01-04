@@ -1,5 +1,4 @@
 import {memoryDb} from "../../../db/memory-db";
-import {PostType} from "../../../db/types/posts.types";
 import {PostsViewModel} from "../models/PostsViewModel";
 import {UpdatePostModel} from "../models/UpdatePostModule";
 import {CreatePostServiceModel} from "../models/CreatePostServiceModel";

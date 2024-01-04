@@ -1,7 +1,6 @@
 import {UsersViewModelGetAllBlogs} from "../models/output/UsersViewModel";
 import {usersCollection} from "../../../db/db";
 import {userMapper} from "../mappers/mappers";
-import {ObjectId} from "mongodb";
 import {QueryUserModel} from "../models/input/QueryUserModule";
 
 export class userQueryRepository {
@@ -44,9 +43,7 @@ export class userQueryRepository {
 
     }
     static async findByLoginOrEmail(loginOrEmail: string) {
-        const user = await usersCollection
+        return await usersCollection
             .findOne({$or: [{email: loginOrEmail}, {login: loginOrEmail}]})
-
-        return user
     }
 }

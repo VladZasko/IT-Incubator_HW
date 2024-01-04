@@ -5,9 +5,7 @@ import {RouterPaths} from "../../../src/routerPaths";
 import {blogsTestManager} from "./utils/blogsTestManager";
 import {
     dataTestBlogCreate,
-    dataTestBlogCreate01,
-    dataTestBlogCreate02,
-    dataTestBlogUpdate01, dataTestPostByBlogCreate01,
+    dataTestBlogUpdate01, dataTestPostByBlogCreate,
     incorrectBlogData
 } from "./dataForTest/dataTestforBlog";
 import {ErrorMessage, ERRORS_MESSAGES} from "../../../src/utils/errors";
@@ -19,7 +17,7 @@ import {CreateBlogServiceModel} from "../../../src/features/blogs/models/input/C
 const getRequest = () => {
     return request(app)
 }
-describe('CUD /blogs tests', () => {
+describe('/blogs tests', () => {
     beforeAll(async() => {
         await getRequest().delete('/testing/all-data')
     })
@@ -40,14 +38,14 @@ describe('CUD /blogs tests', () => {
         await request(app)
             .post(RouterPaths.blogs)
             .set('authorization', 'Basic YWRtaW')
-            .send(dataTestBlogCreate01)
+            .send(dataTestBlogCreate[0])
             .expect(HTTP_STATUSES.UNAUTHORIZED_401)
     })
 
     it(`shouldn't create blog with empty name`, async () => {
 
         const data = {
-            ...dataTestBlogCreate.data01,
+            ...dataTestBlogCreate[0],
             name: incorrectBlogData.emptyName
         }
         const error:ErrorMessage = [ERRORS_MESSAGES.BLOG_NAME]
@@ -62,7 +60,7 @@ describe('CUD /blogs tests', () => {
 
     it(`shouldn't create blog with name more than 15 characters`, async () => {
         const data = {
-            ...dataTestBlogCreate.data01,
+            ...dataTestBlogCreate[0],
             name: incorrectBlogData.tooLongName
         }
         const error:ErrorMessage = [ERRORS_MESSAGES.BLOG_NAME]
@@ -77,7 +75,7 @@ describe('CUD /blogs tests', () => {
 
     it(`shouldn't create blog with empty description`, async () => {
         const data = {
-            ...dataTestBlogCreate.data01,
+            ...dataTestBlogCreate[0],
             description: incorrectBlogData.emptyDescription
         }
         const error:ErrorMessage = [ERRORS_MESSAGES.BLOG_DESCRIPTION]
@@ -92,7 +90,7 @@ describe('CUD /blogs tests', () => {
 
     it(`shouldn't create blogs with description more than 500 characters`, async () => {
         const data = {
-            ...dataTestBlogCreate.data01,
+            ...dataTestBlogCreate[0],
             description: incorrectBlogData.tooLongDescription
         }
         const error:ErrorMessage = [ERRORS_MESSAGES.BLOG_DESCRIPTION]
@@ -107,7 +105,7 @@ describe('CUD /blogs tests', () => {
 
     it(`shouldn't create blogs with empty websiteUrl`, async () => {
         const data = {
-            ...dataTestBlogCreate.data01,
+            ...dataTestBlogCreate[0],
             websiteUrl: incorrectBlogData.emptyWebsiteUrl
         }
         const error:ErrorMessage = [ERRORS_MESSAGES.BLOG_WEBSITE_URL]
@@ -122,7 +120,7 @@ describe('CUD /blogs tests', () => {
 
     it(`shouldn't create blogs with websiteUrl more than 100 characters`, async () => {
         const data = {
-            ...dataTestBlogCreate.data01,
+            ...dataTestBlogCreate[0],
             websiteUrl: incorrectBlogData.tooLongWebsiteUrl
         }
         const error:ErrorMessage = [ERRORS_MESSAGES.BLOG_WEBSITE_URL]
@@ -137,7 +135,7 @@ describe('CUD /blogs tests', () => {
 
     it(`shouldn't create blogs with websiteUrl that does not match the pattern`, async () => {
         const data = {
-            ...dataTestBlogCreate.data01,
+            ...dataTestBlogCreate[0],
             websiteUrl: incorrectBlogData.incorrectWebsiteUrl
         }
         const error:ErrorMessage = [ERRORS_MESSAGES.BLOG_WEBSITE_URL]
@@ -152,7 +150,7 @@ describe('CUD /blogs tests', () => {
 
     it(`shouldn't create blogs with incorrect data`, async () => {
         const data = {
-            ...dataTestBlogCreate.data01,
+            ...dataTestBlogCreate[0],
             name: incorrectBlogData.emptyName,
             description: incorrectBlogData.emptyDescription,
             websiteUrl: incorrectBlogData.incorrectWebsiteUrl
@@ -174,7 +172,7 @@ describe('CUD /blogs tests', () => {
     let createdNewBlog01:any = null
     it(`should create blog with correct input data`, async () => {
 
-        const result = await blogsTestManager.createBlog(dataTestBlogCreate01)
+        const result = await blogsTestManager.createBlog(dataTestBlogCreate[0])
 
         createdNewBlog01 = result.createdEntity;
 
@@ -187,7 +185,7 @@ describe('CUD /blogs tests', () => {
     let createdNewBlog02:any = null
     it(`created one more blogs`, async () => {
 
-        const data: CreateBlogServiceModel = dataTestBlogCreate02
+        const data: CreateBlogServiceModel = dataTestBlogCreate[1]
 
         const result = await blogsTestManager.createBlog(data)
 
@@ -319,7 +317,7 @@ describe('CUD /blogs tests', () => {
     let createdNewPostByBlog01 :any= null
     it(`should create post by blogId`, async () => {
 
-        const result = await blogsTestManager.createPostByBlog(createdNewBlog01,dataTestPostByBlogCreate01)
+        const result = await blogsTestManager.createPostByBlog(createdNewBlog01,dataTestPostByBlogCreate[0])
 
         createdNewPostByBlog01 = result.createdEntity;
 

@@ -1,13 +1,6 @@
-import {memoryDb} from "../../../db/memory-db";
-import {PostType} from "../../../db/types/posts.types";
 import {PostsViewModel} from "../models/PostsViewModel";
-import {blogsCollection, postsCollection} from "../../../db/db";
-import {blogMapper} from "../../blogs/mappers/mappers";
-import {postMapper} from "../mappers/mappers";
-import {ObjectId} from "mongodb";
 import {CreatePostServiceModel} from "../models/CreatePostServiceModel";
 import {UpdatePostModel} from "../models/UpdatePostModule";
-import {QueryPostsModel} from "../models/QueryPostsModule";
 import {postRepository} from "../repositories/post-repository";
 
 export class postService {
@@ -17,17 +10,13 @@ export class postService {
             blogName,
             createdAt: new Date().toISOString()
         }
-        const post = await postRepository.createPost(newPost)
 
-        return post
+        return await postRepository.createPost(newPost)
     }
     static async updatePost(id: string, upData: UpdatePostModel): Promise<boolean> {
-        const foundPost = await postRepository.updatePost(id, upData)
-        return foundPost;
+        return await postRepository.updatePost(id, upData)
     }
     static async deletePostById(id: string): Promise<boolean> {
-        const foundPost = await postRepository.deletePostById(id)
-
-        return foundPost
+        return await postRepository.deletePostById(id)
     }
 }

@@ -2,7 +2,6 @@ import {BlogsViewModel, BlogsViewModelGetAllBlogs} from "../models/output/BlogsV
 import {blogsCollection, postsCollection} from "../../../db/db";
 import {blogMapper} from "../mappers/mappers";
 import {ObjectId} from "mongodb";
-import {UpdateBlogModel} from "../models/input/UpdateBlogModule";
 import {QueryBlogsModel, QueryPostByBlogIdModel} from "../models/input/QueryBlogsModule";
 import {postMapper} from "../../posts/mappers/mappers";
 

@@ -1,7 +1,7 @@
 import {memoryDb} from "../../../db/memory-db";
 import {BlogsViewModel} from "../models/output/BlogsViewModel";
 import {UpdateBlogModel} from "../models/input/UpdateBlogModule";
-import {CreateBlogModel} from "../models/input/CreateBlogModel";
+import {CreateBlogServiceModel} from "../models/input/CreateBlogModel";
 
 export class BlogMemoryDbRepository {
     static async getAllBlogs(): Promise<BlogsViewModel[]>{
@@ -18,7 +18,7 @@ export class BlogMemoryDbRepository {
         //return memoryDb.blogs.find(b => b.id === id)
     }
 
-    static async createBlog(createData:CreateBlogModel):Promise<BlogsViewModel> {
+    static async createBlog(createData:CreateBlogServiceModel):Promise<BlogsViewModel> {
         const newBlog = {
             id: (new Date()).toISOString(),
             name: createData.name,
