@@ -46,7 +46,7 @@ export const getFeedbacksRoutes = () => {
             const comment = await feedbacksQueryRepository.getCommentById(id)
 
             if(comment!.commentatorInfo.userId !== req.user!.id){
-                res.sendStatus(203)
+                res.sendStatus(403)
                 return
             }
 
