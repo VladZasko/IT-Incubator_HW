@@ -14,6 +14,11 @@ export const authTokenMiddleware = async (req: Request, res: Response, next: Nex
     }
     const [bearer, token]= auth.split(" ")
 
+    if(bearer === 'Basic'){
+        res.sendStatus(HTTP_STATUSES.UNAUTHORIZED_401)
+        return;
+    }
+
     //const token = req.headers.authorization.split(' ')[1]
 
     const userId = await jwtService.getUserIdByToken(token)
