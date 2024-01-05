@@ -43,15 +43,20 @@ export const getFeedbacksRoutes = () => {
                res: Response) => {
             const id = req.params.id
 
+            if (!ObjectId.isValid(id)) {
+                res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
+                return;
+            }
+
             const comment = await feedbacksQueryRepository.getCommentById(id)
+
+            if (!comment) {
+                res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
+                return;
+            }
 
             if(comment!.commentatorInfo.userId !== req.user!.id){
                 res.sendStatus(403)
-                return
-            }
-
-            if (!ObjectId.isValid(id)) {
-                res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
                 return;
             }
 
@@ -78,12 +83,24 @@ export const getFeedbacksRoutes = () => {
                 res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
                 return;
             }
+            const comment = await feedbacksQueryRepository.getCommentById(id)
+
+            if (!comment) {
+                res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
+                return;
+            }
+
+            if(comment!.commentatorInfo.userId !== req.user!.id){
+                res.sendStatus(403)
+                return;
+            }
 
             const deleteComment = await feedbackService.deleteCommentById(id)
             if (!deleteComment) {
                 res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
                 return
             }
+
             res.sendStatus(HTTP_STATUSES.NO_CONTENT_204)
         })
     return router;
