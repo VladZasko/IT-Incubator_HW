@@ -14,7 +14,13 @@ export const authTokenMiddleware = async (req: Request, res: Response, next: Nex
     }
     const [bearer, token]= auth.split(" ")
 
-    if(bearer === 'Basic'){
+    if(bearer !== 'Bearer'){
+        res.sendStatus(HTTP_STATUSES.UNAUTHORIZED_401)
+        return;
+    }
+
+    const tokenValid = token.indexOf('.',0)
+    if(tokenValid === -1){
         res.sendStatus(HTTP_STATUSES.UNAUTHORIZED_401)
         return;
     }
