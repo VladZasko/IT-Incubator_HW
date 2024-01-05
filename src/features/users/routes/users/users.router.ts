@@ -2,19 +2,19 @@ import {
     RequestWithBody,
     RequestWithParams,
     RequestWithQuery
-} from "../../utils/types";
-import { QueryUserModel} from "./models/input/QueryUserModule";
+} from "../../../../utils/types";
+import { QueryUserModel} from "../../models/input/QueryUserModule";
 import express, {Response} from "express";
-import {HTTP_STATUSES} from "../../utils/utils";
-import {URIParamsUserIdModel} from "./models/input/URIParamsUserIdModule";
-import {UsersViewModelGetAllBlogs} from "./models/output/UsersViewModel";
-import {CreateUserModel} from "./models/input/CreateUserModel";
-import {userValidation} from "./validator/user-validator";
-import {userRepository} from "./repositories/user-repository";
-import {authMiddleware} from "../../middlewares/auth/auth-middleware";
+import {HTTP_STATUSES} from "../../../../utils/utils";
+import {URIParamsUserIdModel} from "../../models/input/URIParamsUserIdModule";
+import {UsersViewModelGetAllBlogs} from "../../models/output/UsersViewModel";
+import {CreateUserModel} from "../../models/input/CreateUserModel";
+import {userValidation} from "../../validator/users/user-validator";
+import {userRepository} from "../../repositories/user-repository";
+import {authMiddleware} from "../../../../middlewares/auth/auth-middleware";
 import {ObjectId} from "mongodb";
-import {userService} from "./domain/user-service";
-import {userQueryRepository} from "./repositories/user-query-repository";
+import {usersService} from "../../domain/users-service";
+import {userQueryRepository} from "../../repositories/user-query-repository";
 
 
 
@@ -48,7 +48,7 @@ export const getUsersRoutes = () => {
             password: req.body.password
         }
 
-        const newUser = await userService.createUser(createData)
+        const newUser = await usersService.createUser(createData)
 
         res
             .status(HTTP_STATUSES.CREATED_201)

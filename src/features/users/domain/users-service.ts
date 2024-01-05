@@ -5,8 +5,9 @@ import {CreateUserModel} from "../models/input/CreateUserModel";
 import bcrypt from 'bcrypt'
 import {userRepository} from "../repositories/user-repository";
 import {userQueryRepository} from "../repositories/user-query-repository";
+import {userMapper} from "../mappers/mappers";
 
-export class userService {
+export class usersService {
     static async createUser(createData : CreateUserModel):Promise<UsersViewModel> {
 
         const passwordSalt = await bcrypt.genSalt(10)
@@ -21,15 +22,19 @@ export class userService {
         }
         return await userRepository.createUser(newUser)
     }
-    static async checkCredentials(loginOrEmail: string, password: string){
+    static async checkCredentials(loginOrEmail: string, password: string): Promise<UsersViewModel | null>{
         const user = await userQueryRepository.findByLoginOrEmail(loginOrEmail)
         if (!user) {
-            return false
+            return null
         }
 
         const passwordHash = await this._generateHash(password, user.passwordHash)
 
-        return user.passwordHash === passwordHash;
+        if(user.passwordHash !== passwordHash){
+            return null
+        }
+
+        return userMapper(user)
 
     }
     static async _generateHash(password: string, salt: string){

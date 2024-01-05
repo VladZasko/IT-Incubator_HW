@@ -1,4 +1,10 @@
-import {RequestWithBody, RequestWithParams, RequestWithParamsAndBody, RequestWithQuery} from "../../utils/types";
+import {
+    RequestWithBody,
+    RequestWithParams,
+    RequestWithParamsAndBody,
+    RequestWithParamsAndQuery,
+    RequestWithQuery
+} from "../../utils/types";
 import express, {Response} from "express";
 import {HTTP_STATUSES} from "../../utils/utils";
 import {authMiddleware} from "../../middlewares/auth/auth-middleware";
@@ -12,6 +18,11 @@ import {ObjectId} from "mongodb";
 import {blogQueryRepository} from "../blogs/repositories/blog-query-repository";
 import {postQueryRepository} from "./repositories/post-query-repository";
 import {postService} from "./domain/post-service";
+import {authTokenMiddleware} from "../../middlewares/auth/auth-token-middleware";
+import {commentValidation} from "../feedback/validator/feedback-validator";
+import {CreateFeedbackModel} from "../feedback/models/CreateFeedbackModel";
+import {userQueryRepository} from "../users/repositories/user-query-repository";
+import {FeedbackViewModel, FeedbackViewModelGetAllComments} from "../feedback/models/FeedbackViewModel";
 
 export const getPostsRoutes = () => {
     const router = express.Router()
@@ -45,6 +56,33 @@ export const getPostsRoutes = () => {
 
         res.send(post)
     })
+    router.get('/:id/comments', async (req: RequestWithParamsAndQuery<URIParamsPostIdModel,QueryPostsModel>,
+                              res: Response<FeedbackViewModelGetAllComments>) => {
+        const postId = req.params.id
+
+        if(!ObjectId.isValid(postId)){
+            res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
+            return;
+        }
+
+        const post = await postQueryRepository.getPostById(postId)
+
+        if(!post){
+            res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
+            return
+        }
+
+        const sortData = {
+            pageNumber: req.query.pageNumber,
+            pageSize: req.query.pageSize,
+            sortBy: req.query.sortBy,
+            sortDirection: req.query.sortDirection
+        }
+
+        const comment = await postQueryRepository.getCommentByPostId(postId,sortData)
+
+        res.send(comment)
+    })
     router.post('/', authMiddleware, postValidation(), async (req:RequestWithBody<CreatePostServiceModel>,
                                                         res: Response) => {
         const blog = await blogQueryRepository.getBlogById(req.body.blogId)
@@ -61,6 +99,33 @@ export const getPostsRoutes = () => {
         res
             .status(HTTP_STATUSES.CREATED_201)
             .send(newPost)
+
+    })
+
+    router.post('/:id/comments',
+        authTokenMiddleware, commentValidation(),
+        async (
+            req:RequestWithParamsAndBody<URIParamsPostIdModel,CreateFeedbackModel>,
+            res: Response) => {
+
+        const user = await userQueryRepository.getUserById(req.user!.id)
+
+        if(!user){
+            res.status(HTTP_STATUSES.NOT_FOUND_404)
+            return
+        }
+
+        const createData = {
+            userId: req.user!.id,
+            content: req.body.content,
+            userLogin: user!.login
+        }
+
+        const newComment = await postService.createCommentByPost(createData)
+
+        res
+            .status(HTTP_STATUSES.CREATED_201)
+            .send(newComment)
 
     })
 

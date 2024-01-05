@@ -1,7 +1,10 @@
-import {UsersViewModelGetAllBlogs} from "../models/output/UsersViewModel";
-import {usersCollection} from "../../../db/db";
+import {UsersViewModel, UsersViewModelGetAllBlogs} from "../models/output/UsersViewModel";
+import {blogsCollection, usersCollection} from "../../../db/db";
 import {userMapper} from "../mappers/mappers";
 import {QueryUserModel} from "../models/input/QueryUserModule";
+import {BlogsViewModel} from "../../blogs/models/output/BlogsViewModel";
+import {ObjectId} from "mongodb";
+import {blogMapper} from "../../blogs/mappers/mappers";
 
 export class userQueryRepository {
     static async getAllUsers(sortData: QueryUserModel): Promise<UsersViewModelGetAllBlogs>{
@@ -41,6 +44,15 @@ export class userQueryRepository {
             items: users.map(userMapper)
         }
 
+    }
+    static async getUserById(id: string): Promise<UsersViewModel | null> {
+        const user = await usersCollection.findOne({_id: new ObjectId(id)})
+
+        if (!user){
+            return null
+        }
+
+        return userMapper(user)
     }
     static async findByLoginOrEmail(loginOrEmail: string) {
         return await usersCollection

@@ -1,8 +1,10 @@
 import {PostsViewModel} from "../models/PostsViewModel";
-import {postsCollection} from "../../../db/db";
+import {feedbacksCollection, postsCollection} from "../../../db/db";
 import {ObjectId} from "mongodb";
 import {CreatePostReposModel} from "../models/CreatePostServiceModel";
 import {UpdatePostModel} from "../models/UpdatePostModule";
+import {CreateFeedbackReposModel} from "../../feedback/models/CreateFeedbackModel";
+import {FeedbackViewModel} from "../../feedback/models/FeedbackViewModel";
 
 export class postRepository {
     static async createPost(createData:CreatePostReposModel):Promise<PostsViewModel>  {
@@ -12,6 +14,15 @@ export class postRepository {
         return {
             ...createData,
             id:post.insertedId.toString()
+        }
+    }
+    static async createCommentByPost(createData:CreateFeedbackReposModel):Promise<FeedbackViewModel>  {
+
+        const comment = await feedbacksCollection.insertOne({...createData})
+
+        return {
+            ...createData,
+            id:comment.insertedId.toString()
         }
     }
     static async updatePost(id: string, upData: UpdatePostModel): Promise<boolean> {

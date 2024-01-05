@@ -1,23 +1,22 @@
 import {MongoClient} from "mongodb";
-import dotenv from 'dotenv'
 import {BlogDBType} from "./types/blogs.types";
 import {PostDBType} from "./types/posts.types";
 import {VideoDBType} from "./types/videos.types";
 import {UserDBType} from "./types/users.types";
+import {settings} from "../../settings";
+import {FeedbacksDBType} from "./types/feedbacks.types";
 
-dotenv.config()
-
-const mongoURI =
-    process.env.MONGO_URL || 'mongodb://0.0.0.0:27017'
+const mongoURI = settings.MONGO_URI
 export const client = new MongoClient(mongoURI)
 export const db = client.db('blogs-hws');
 export const blogsCollection = db.collection<BlogDBType>("blogs");
 export const postsCollection = db.collection<PostDBType>("posts");
+export const feedbacksCollection = db.collection<FeedbacksDBType>("feedbacks");
 export const usersCollection = db.collection<UserDBType>("users");
 
 export const videosCollection = db.collection<VideoDBType>("videos");
 
-export const port = process.env.PORT
+export const port = settings.PORT
 export async function runDb() {
     try {
         // Connect the client to the server
