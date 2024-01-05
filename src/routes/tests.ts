@@ -2,7 +2,7 @@ import {memoryDb, DBType} from "../db/memory-db";
 import express from "express";
 import {HTTP_STATUSES} from "../utils/utils";
 import {app} from "../app";
-import {blogsCollection, postsCollection, usersCollection, videosCollection} from "../db/db";
+import {blogsCollection, feedbacksCollection, postsCollection, usersCollection, videosCollection} from "../db/db";
 
 export const getTestsRouter = () => {
     const router = express.Router()
@@ -12,6 +12,8 @@ export const getTestsRouter = () => {
             await postsCollection.deleteMany({})
             await videosCollection.deleteMany({})
             await usersCollection.deleteMany({})
+            await feedbacksCollection.deleteMany({})
+
         res.sendStatus(HTTP_STATUSES.NO_CONTENT_204)
     })
 

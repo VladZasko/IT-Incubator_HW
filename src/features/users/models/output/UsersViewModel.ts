@@ -13,3 +13,4 @@ export type UsersViewModelGetAllBlogs = {
     totalCount: number
     items: UsersViewModel[]
 }
+

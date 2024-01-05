@@ -6,19 +6,21 @@ import {jwtService} from "../../features/users/application/jwt-service";
 
 
 export const authTokenMiddleware = async (req: Request, res: Response, next: NextFunction)=> {
+    const auth = req.headers['authorization']
 
-    if(!req.headers.authorization) {
-        res.send(HTTP_STATUSES.UNAUTHORIZED_401)
+    if(!auth) {
+        res.sendStatus(HTTP_STATUSES.UNAUTHORIZED_401)
         return
     }
+    const [bearer, token]= auth.split(" ")
 
-    const token = req.headers.authorization.split(' ')[1]
+    //const token = req.headers.authorization.split(' ')[1]
 
     const userId = await jwtService.getUserIdByToken(token)
     if (userId) {
         req.user = await userQueryRepository.getUserById(userId)
         next()
     }
-    res.send(HTTP_STATUSES.UNAUTHORIZED_401)
-    next()
+    res.status(HTTP_STATUSES.UNAUTHORIZED_401)
+    return
 }

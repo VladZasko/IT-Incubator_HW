@@ -21,8 +21,13 @@ export class postRepository {
         const comment = await feedbacksCollection.insertOne({...createData})
 
         return {
-            ...createData,
-            id:comment.insertedId.toString()
+            id:comment.insertedId.toString(),
+            content: createData.content,
+            commentatorInfo: {
+                userId: createData.commentatorInfo.userId,
+                userLogin: createData.commentatorInfo.userLogin
+            },
+            createdAt: createData.createdAt
         }
     }
     static async updatePost(id: string, upData: UpdatePostModel): Promise<boolean> {

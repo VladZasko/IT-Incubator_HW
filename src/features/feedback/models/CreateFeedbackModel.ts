@@ -22,4 +22,5 @@ export type CreateFeedbackReposModel = {
     content: string
     commentatorInfo: commentatorInfoModel
     createdAt: string
+    postId: string
 }

@@ -108,20 +108,20 @@ export const getPostsRoutes = () => {
             req:RequestWithParamsAndBody<URIParamsPostIdModel,CreateFeedbackModel>,
             res: Response) => {
 
-        const user = await userQueryRepository.getUserById(req.user!.id)
+        const post = await postQueryRepository.getPostById(req.params.id)
 
-        if(!user){
-            res.status(HTTP_STATUSES.NOT_FOUND_404)
+        if(!post){
+            res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
             return
         }
 
         const createData = {
             userId: req.user!.id,
             content: req.body.content,
-            userLogin: user!.login
+            userLogin: req.user!.login,
         }
 
-        const newComment = await postService.createCommentByPost(createData)
+        const newComment = await postService.createCommentByPost(createData,post.id)
 
         res
             .status(HTTP_STATUSES.CREATED_201)

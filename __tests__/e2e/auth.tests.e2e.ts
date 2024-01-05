@@ -36,13 +36,13 @@ describe('/auth', () => {
             loginOrEmail:'NewLog',
                 password: 'Qwerty123'
         })
-            .expect(HTTP_STATUSES.CREATED_201, {})
+            .expect(HTTP_STATUSES.OK_200, {})
     })
 
     it('should return 200 ', async () => {
         await getRequest()
             .post(`${RouterPaths.auth}/me`)
-            .set('authorization', 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NTk3NDZmZTE1YmVjMmFmZDhjMGE5ZGUiLCJpYXQiOjE3MDQ0MTI5MjYsImV4cCI6MTcwNDQxNjUyNn0.nccPRUWrm8kbjN4biQ5NLFN2h35I2qqLyZBBG5OnsFE')
+            .set('authorization', 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY1OTc1NzI5NGY0Y2Y5MDRjOWIwNzA2MCIsImlhdCI6MTcwNDQ0OTE3MiwiZXhwIjoxNzA0NDUyNzcyfQ.ZuQ6weYc010IT0J-BeRitJLhWNumWP1INerz0IRTvr8')
             .expect(HTTP_STATUSES.OK_200, {})
     })
 

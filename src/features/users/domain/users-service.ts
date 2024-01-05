@@ -5,7 +5,8 @@ import {CreateUserModel} from "../models/input/CreateUserModel";
 import bcrypt from 'bcrypt'
 import {userRepository} from "../repositories/user-repository";
 import {userQueryRepository} from "../repositories/user-query-repository";
-import {userMapper} from "../mappers/mappers";
+import {userDBMapper, userMapper} from "../mappers/mappers";
+import {UserType} from "../../../db/types/users.types";
 
 export class usersService {
     static async createUser(createData : CreateUserModel):Promise<UsersViewModel> {
@@ -22,7 +23,7 @@ export class usersService {
         }
         return await userRepository.createUser(newUser)
     }
-    static async checkCredentials(loginOrEmail: string, password: string): Promise<UsersViewModel | null>{
+    static async checkCredentials(loginOrEmail: string, password: string): Promise<UserType | null>{
         const user = await userQueryRepository.findByLoginOrEmail(loginOrEmail)
         if (!user) {
             return null
@@ -34,7 +35,7 @@ export class usersService {
             return null
         }
 
-        return userMapper(user)
+        return userDBMapper(user)
 
     }
     static async _generateHash(password: string, salt: string){

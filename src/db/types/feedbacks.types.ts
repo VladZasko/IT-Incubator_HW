@@ -5,10 +5,13 @@ export type FeedbacksType = {
         content: string
         commentatorInfo: commentatorInfoModel
         createdAt: string
-    }
+        postId: string
+
+}
 
 export type FeedbacksDBType = {
         content: string
         commentatorInfo: commentatorInfoModel
         createdAt: string
+        postId: string
 }

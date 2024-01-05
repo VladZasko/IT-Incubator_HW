@@ -20,7 +20,7 @@ export const authUsersRoutes = () => {
 
         const token = await jwtService.createJWT(user)
 
-        res.status(HTTP_STATUSES.CREATED_201).send(token)
+        res.status(HTTP_STATUSES.OK_200).send(token)
         })
     router.get('/me', authTokenMiddleware,
         async (req: Request,

@@ -41,14 +41,16 @@ export class postQueryRepository {
         const sortBy= sortData.sortBy ?? 'createdAt'
         const sortDirection= sortData.sortDirection ?? 'desc'
 
+        let filter = {}
+
         const comments = await feedbacksCollection
-            .find({id: id})
+            .find({postId: id})
             .sort(sortBy, sortDirection)
             .skip((pageNumber-1)* +pageSize)
             .limit(+pageSize)
             .toArray()
 
-        const totalCount = await feedbacksCollection.countDocuments({id: id})
+        const totalCount = await feedbacksCollection.countDocuments({postId: id})
 
         const pagesCount = Math.ceil(totalCount/ +pageSize)
 

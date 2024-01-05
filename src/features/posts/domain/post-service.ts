@@ -15,14 +15,15 @@ export class postService {
 
         return await postRepository.createPost(newPost)
     }
-    static async createCommentByPost(createData:CreateFeedbackServiceModel):Promise<FeedbackViewModel>  {
+    static async createCommentByPost(createData:CreateFeedbackServiceModel, postId: string):Promise<FeedbackViewModel>  {
         const newComment = {
             content: createData.content,
             commentatorInfo: {
                 userId: createData.userId,
                 userLogin: createData.userLogin
             },
-            createdAt: new Date().toISOString()
+            createdAt: new Date().toISOString(),
+            postId: postId
         }
 
         return await postRepository.createCommentByPost(newComment)
