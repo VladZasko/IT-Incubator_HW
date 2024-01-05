@@ -13,6 +13,7 @@ import {commentValidation} from "./validator/feedback-validator";
 import {URIParamsFeedbackIdModule} from "./models/URIParamsFeedbackIdModule";
 import {UpdateFeedbackModuleModel} from "./models/UpdateFeedbackModule";
 import {feedbackService} from "./domain/feedback-service";
+import {userQueryRepository} from "../users/repositories/user-query-repository";
 
 export const getFeedbacksRoutes = () => {
     const router = express.Router()
@@ -41,7 +42,9 @@ export const getFeedbacksRoutes = () => {
         async (req: RequestWithParamsAndBody<URIParamsFeedbackIdModule, UpdateFeedbackModuleModel>,
                res: Response) => {
             const id = req.params.id
-
+            if(id !== req.user!.id){
+                res.sendStatus(403)
+            }
             if (!ObjectId.isValid(id)) {
                 res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
                 return;
