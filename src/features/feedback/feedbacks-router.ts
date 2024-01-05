@@ -42,9 +42,14 @@ export const getFeedbacksRoutes = () => {
         async (req: RequestWithParamsAndBody<URIParamsFeedbackIdModule, UpdateFeedbackModuleModel>,
                res: Response) => {
             const id = req.params.id
-            if(id !== req.user!.id){
-                res.sendStatus(403)
+
+            const comment = await feedbacksQueryRepository.getCommentById(id)
+
+            if(comment!.commentatorInfo.userId !== req.user!.id){
+                res.sendStatus(203)
+                return
             }
+
             if (!ObjectId.isValid(id)) {
                 res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
                 return;
