@@ -1,15 +1,18 @@
-export const dataTestPostCreate01 = {
-    title: 'CrateTitle',
-    shortDescription: 'CreateShortDescription',
-    content: 'CrateContent',
-    blogId: ''
-}
-export const dataTestPostCreate02 = {
-    title: 'CrateTitle02',
-    shortDescription: 'CreateShortDescription02',
-    content: 'CrateContent02',
-    blogId: ''
-}
+export const dataTestPostsCreate01 =
+    {
+        title: 'CrateTitle',
+        shortDescription: 'CreateShortDescription',
+        content: 'CrateContent',
+        blogId: ''
+    }
+
+export const dataTestPostsCreate02 =
+    {
+        title: 'NewTitle',
+        shortDescription: 'NewShortDescription',
+        content: 'NewContent',
+        blogId: ''
+    }
 
 export const dataTestPostUpdate01 = {
     title: 'UpdateTitle',

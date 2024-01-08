@@ -4,12 +4,12 @@ import {HTTP_STATUSES} from "../../../src/utils/utils";
 import {RouterPaths} from "../../../src/routerPaths";
 import {blogsTestManager} from "./utils/blogsTestManager";
 import {
-    dataTestBlogCreate,
+    dataTestBlogCreate01, dataTestBlogCreate02,
     dataTestBlogUpdate01, dataTestPostByBlogCreate,
     incorrectBlogData
 } from "./dataForTest/dataTestforBlog";
 import {ErrorMessage, ERRORS_MESSAGES} from "../../../src/utils/errors";
-import {dataTestPostCreate01, incorrectPostData} from "../posts/dataForTest/dataTestforPost";
+import {dataTestPostsCreate01, incorrectPostData} from "../posts/dataForTest/dataTestforPost";
 import {CreateBlogServiceModel} from "../../../src/features/blogs/models/input/CreateBlogModel";
 
 
@@ -38,14 +38,14 @@ describe('/blogs tests', () => {
         await request(app)
             .post(RouterPaths.blogs)
             .set('authorization', 'Basic YWRtaW')
-            .send(dataTestBlogCreate[0])
+            .send(dataTestBlogCreate01)
             .expect(HTTP_STATUSES.UNAUTHORIZED_401)
     })
 
     it(`shouldn't create blog with empty name`, async () => {
 
         const data = {
-            ...dataTestBlogCreate[0],
+            ...dataTestBlogCreate01,
             name: incorrectBlogData.emptyName
         }
         const error:ErrorMessage = [ERRORS_MESSAGES.BLOG_NAME]
@@ -60,7 +60,7 @@ describe('/blogs tests', () => {
 
     it(`shouldn't create blog with name more than 15 characters`, async () => {
         const data = {
-            ...dataTestBlogCreate[0],
+            ...dataTestBlogCreate01,
             name: incorrectBlogData.tooLongName
         }
         const error:ErrorMessage = [ERRORS_MESSAGES.BLOG_NAME]
@@ -75,7 +75,7 @@ describe('/blogs tests', () => {
 
     it(`shouldn't create blog with empty description`, async () => {
         const data = {
-            ...dataTestBlogCreate[0],
+            ...dataTestBlogCreate01,
             description: incorrectBlogData.emptyDescription
         }
         const error:ErrorMessage = [ERRORS_MESSAGES.BLOG_DESCRIPTION]
@@ -90,7 +90,7 @@ describe('/blogs tests', () => {
 
     it(`shouldn't create blogs with description more than 500 characters`, async () => {
         const data = {
-            ...dataTestBlogCreate[0],
+            ...dataTestBlogCreate01,
             description: incorrectBlogData.tooLongDescription
         }
         const error:ErrorMessage = [ERRORS_MESSAGES.BLOG_DESCRIPTION]
@@ -105,7 +105,7 @@ describe('/blogs tests', () => {
 
     it(`shouldn't create blogs with empty websiteUrl`, async () => {
         const data = {
-            ...dataTestBlogCreate[0],
+            ...dataTestBlogCreate01,
             websiteUrl: incorrectBlogData.emptyWebsiteUrl
         }
         const error:ErrorMessage = [ERRORS_MESSAGES.BLOG_WEBSITE_URL]
@@ -120,7 +120,7 @@ describe('/blogs tests', () => {
 
     it(`shouldn't create blogs with websiteUrl more than 100 characters`, async () => {
         const data = {
-            ...dataTestBlogCreate[0],
+            ...dataTestBlogCreate01,
             websiteUrl: incorrectBlogData.tooLongWebsiteUrl
         }
         const error:ErrorMessage = [ERRORS_MESSAGES.BLOG_WEBSITE_URL]
@@ -135,7 +135,7 @@ describe('/blogs tests', () => {
 
     it(`shouldn't create blogs with websiteUrl that does not match the pattern`, async () => {
         const data = {
-            ...dataTestBlogCreate[0],
+            ...dataTestBlogCreate01,
             websiteUrl: incorrectBlogData.incorrectWebsiteUrl
         }
         const error:ErrorMessage = [ERRORS_MESSAGES.BLOG_WEBSITE_URL]
@@ -150,7 +150,7 @@ describe('/blogs tests', () => {
 
     it(`shouldn't create blogs with incorrect data`, async () => {
         const data = {
-            ...dataTestBlogCreate[0],
+            ...dataTestBlogCreate01,
             name: incorrectBlogData.emptyName,
             description: incorrectBlogData.emptyDescription,
             websiteUrl: incorrectBlogData.incorrectWebsiteUrl
@@ -172,7 +172,7 @@ describe('/blogs tests', () => {
     let createdNewBlog01:any = null
     it(`should create blog with correct input data`, async () => {
 
-        const result = await blogsTestManager.createBlog(dataTestBlogCreate[0])
+        const result = await blogsTestManager.createBlog(dataTestBlogCreate01)
 
         createdNewBlog01 = result.createdEntity;
 
@@ -180,12 +180,14 @@ describe('/blogs tests', () => {
             .get(RouterPaths.blogs)
             .expect(HTTP_STATUSES.OK_200,
                 { pagesCount: 1, page: 1, pageSize: 10, totalCount: 1, items: [createdNewBlog01] })
+
+
     })
 
     let createdNewBlog02:any = null
     it(`created one more blogs`, async () => {
 
-        const data: CreateBlogServiceModel = dataTestBlogCreate[1]
+        const data: CreateBlogServiceModel = dataTestBlogCreate02
 
         const result = await blogsTestManager.createBlog(data)
 
@@ -200,7 +202,7 @@ describe('/blogs tests', () => {
     it(`shouldn't create post by blogId with empty title`, async () => {
 
         const data = {
-            ...dataTestPostCreate01,
+            ...dataTestPostsCreate01,
             title: incorrectPostData.emptyTitle
         }
         const error:ErrorMessage = [ERRORS_MESSAGES.POST_TITLE]
@@ -216,7 +218,7 @@ describe('/blogs tests', () => {
     it(`shouldn't create post by blogId with incorrect title`, async () => {
 
         const data = {
-            ...dataTestPostCreate01,
+            ...dataTestPostsCreate01,
             title: incorrectPostData.tooLongTitle
         }
         const error:ErrorMessage = [ERRORS_MESSAGES.POST_TITLE]
@@ -232,7 +234,7 @@ describe('/blogs tests', () => {
     it(`shouldn't create post by blogId with empty short description`, async () => {
 
         const data = {
-            ...dataTestPostCreate01,
+            ...dataTestPostsCreate01,
             shortDescription: incorrectPostData.emptyShortDescription
         }
         const error:ErrorMessage = [ERRORS_MESSAGES.POST_SHORT_DESCRIPTION]
@@ -248,7 +250,7 @@ describe('/blogs tests', () => {
     it(`shouldn't create post by blogId with incorrect short description`, async () => {
 
         const data = {
-            ...dataTestPostCreate01,
+            ...dataTestPostsCreate01,
             shortDescription: incorrectPostData.tooLongShortDescription
         }
         const error:ErrorMessage = [ERRORS_MESSAGES.POST_SHORT_DESCRIPTION]
@@ -264,7 +266,7 @@ describe('/blogs tests', () => {
     it(`shouldn't create post by blogId with empty content`, async () => {
 
         const data = {
-            ...dataTestPostCreate01,
+            ...dataTestPostsCreate01,
             content: incorrectPostData.emptyContent
         }
         const error:ErrorMessage = [ERRORS_MESSAGES.POST_CONTENT]
@@ -280,7 +282,7 @@ describe('/blogs tests', () => {
     it(`shouldn't create post by blogId with incorrect title`, async () => {
 
         const data = {
-            ...dataTestPostCreate01,
+            ...dataTestPostsCreate01,
             content: incorrectPostData.tooLongContent
         }
         const error:ErrorMessage = [ERRORS_MESSAGES.POST_CONTENT]
@@ -296,7 +298,7 @@ describe('/blogs tests', () => {
     it(`shouldn't create post by blogId with incorrect data`, async () => {
 
         const data = {
-            ...dataTestPostCreate01,
+            ...dataTestPostsCreate01,
             title: incorrectPostData.emptyTitle,
             content: incorrectPostData.emptyContent,
             shortDescription: incorrectPostData.emptyShortDescription
@@ -317,7 +319,7 @@ describe('/blogs tests', () => {
     let createdNewPostByBlog01 :any= null
     it(`should create post by blogId`, async () => {
 
-        const result = await blogsTestManager.createPostByBlog(createdNewBlog01,dataTestPostByBlogCreate[0])
+        const result = await blogsTestManager.createPostByBlog(createdNewBlog01,dataTestPostByBlogCreate)
 
         createdNewPostByBlog01 = result.createdEntity;
 

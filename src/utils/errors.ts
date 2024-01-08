@@ -14,7 +14,11 @@ export const ERRORS_MESSAGES = {
 
     POST_LOGIN: {message: 'Incorrect login!', field: 'login'},
     POST_PASSWORD: {message: 'Incorrect password!', field: 'password'},
-    POST_EMAIL: {message: 'Incorrect email!', field: 'email'}
+    POST_EMAIL: {message: 'Incorrect email!', field: 'email'},
+
+    AUTH_LOGIN_OR_EMAIL: { message: 'empty loginOrEmail', field: 'loginOrEmail' },
+    AUTH_PASSWORD: { message: 'empty password', field: 'password' }
+
 }
 
 

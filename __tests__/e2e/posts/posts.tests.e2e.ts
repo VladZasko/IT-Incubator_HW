@@ -3,16 +3,15 @@ import {app} from "../../../src/app";
 import {HTTP_STATUSES} from "../../../src/utils/utils";
 import {CreatePostServiceModel} from "../../../src/features/posts/models/CreatePostServiceModel";
 import {RouterPaths} from "../../../src/routerPaths";
-import {dataTestBlogCreate01, dataTestBlogCreate02, dataTestBlogUpdate01} from "../blogs/dataForTest/dataTestforBlog";
 import {blogsTestManager} from "../blogs/utils/blogsTestManager";
 import {
-    dataTestPostCreate01,
-    dataTestPostCreate02,
+    dataTestPostsCreate01,
     dataTestPostUpdate01,
     incorrectPostData
 } from "./dataForTest/dataTestforPost";
 import {postsTestManager} from "./utils/postsTestManager";
 import {ErrorMessage, ERRORS_MESSAGES} from "../../../src/utils/errors";
+import {dataTestBlogCreate01} from "../blogs/dataForTest/dataTestforBlog";
 
 
 const getRequest = () => {
@@ -41,7 +40,7 @@ describe('/posts', () => {
                 items: [createdNewBlog01]
             })
 
-        const result2 = await blogsTestManager.createBlog(dataTestBlogCreate02)
+        const result2 = await blogsTestManager.createBlog(dataTestBlogCreate01)
 
         createdNewBlog02 = result2.createdEntity;
 
@@ -76,7 +75,7 @@ describe('/posts', () => {
 
     it(`shouldn't create post with UNAUTHORIZED`, async () => {
         const data: CreatePostServiceModel = {
-            ...dataTestPostCreate01,
+            ...dataTestPostsCreate01,
             blogId: createdNewBlog01.id
         }
 
@@ -89,7 +88,7 @@ describe('/posts', () => {
 
     it(`shouldn't create post with empty title`, async () => {
         const data: CreatePostServiceModel = {
-            ...dataTestPostCreate01,
+            ...dataTestPostsCreate01,
             title: incorrectPostData.emptyTitle,
             blogId: createdNewBlog01.id
         }
@@ -110,7 +109,7 @@ describe('/posts', () => {
 
     it(`shouldn't create post with title more than 15 characters`, async () => {
         const data: CreatePostServiceModel = {
-            ...dataTestPostCreate01,
+            ...dataTestPostsCreate01,
             title: incorrectPostData.tooLongTitle,
             blogId: createdNewBlog01.id
         }
@@ -132,7 +131,7 @@ describe('/posts', () => {
 
     it(`shouldn't create post with empty shortDescription`, async () => {
         const data: CreatePostServiceModel = {
-            ...dataTestPostCreate01,
+            ...dataTestPostsCreate01,
             shortDescription: incorrectPostData.emptyShortDescription,
             blogId: createdNewBlog01.id
         }
@@ -154,7 +153,7 @@ describe('/posts', () => {
 
     it(`shouldn't create post with shortDescription more than 100 characters`, async () => {
         const data: CreatePostServiceModel = {
-            ...dataTestPostCreate01,
+            ...dataTestPostsCreate01,
             shortDescription: incorrectPostData.tooLongShortDescription,
             blogId: createdNewBlog01.id
         }
@@ -176,7 +175,7 @@ describe('/posts', () => {
 
     it(`shouldn't create post with empty content`, async () => {
         const data: CreatePostServiceModel = {
-            ...dataTestPostCreate01,
+            ...dataTestPostsCreate01,
             content: incorrectPostData.emptyContent,
             blogId: createdNewBlog01.id
         }
@@ -198,7 +197,7 @@ describe('/posts', () => {
 
     it(`shouldn't create post with content more than 1000 characters`, async () => {
         const data: CreatePostServiceModel = {
-            ...dataTestPostCreate01,
+            ...dataTestPostsCreate01,
             content: incorrectPostData.tooLongContent,
             blogId: createdNewBlog01.id
         }
@@ -221,7 +220,7 @@ describe('/posts', () => {
     it(`shouldn't create post with empty blogId`, async () => {
         const error:ErrorMessage = [ERRORS_MESSAGES.POST_BLOGID]
 
-        await postsTestManager.createPost(dataTestPostCreate01, HTTP_STATUSES.BAD_REQUEST_400, error)
+        await postsTestManager.createPost(dataTestPostsCreate01, HTTP_STATUSES.BAD_REQUEST_400, error)
 
         await request(app)
             .get(RouterPaths.posts)
@@ -236,7 +235,7 @@ describe('/posts', () => {
 
     it(`shouldn't create post with incorrect blogId`, async () => {
         const data: CreatePostServiceModel = {
-            ...dataTestPostCreate01,
+            ...dataTestPostsCreate01,
             blogId: incorrectPostData.incorrectBlogId
         }
 
@@ -257,7 +256,7 @@ describe('/posts', () => {
 
     it(`shouldn't create post with incorrect data`, async () => {
         const data: CreatePostServiceModel = {
-            ...dataTestPostCreate01,
+            ...dataTestPostsCreate01,
             blogId: incorrectPostData.incorrectBlogId,
             title: incorrectPostData.emptyTitle,
             content: incorrectPostData.emptyContent,
@@ -287,7 +286,7 @@ describe('/posts', () => {
     let createdNewPost01: any = null
     it(`should create post with correct input data`, async () => {
         const data = {
-            ...dataTestPostCreate01,
+            ...dataTestPostsCreate01,
             blogId: createdNewBlog01.id
         }
 
@@ -309,7 +308,7 @@ describe('/posts', () => {
     let createdNewPost02:any = null
     it(`created one more posts`, async () => {
         const data = {
-            ...dataTestPostCreate02,
+            ...dataTestPostsCreate01,
             blogId: createdNewBlog02.id
         }
 
@@ -331,10 +330,9 @@ describe('/posts', () => {
     })
 
     it ('should return 404 fot not existing posts for update', async () => {
-        const {post2} = expect.getState()
 
         const data = {
-            ...dataTestPostCreate01,
+            ...dataTestPostsCreate01,
             blogId: createdNewBlog01.id
         }
 
@@ -348,7 +346,7 @@ describe('/posts', () => {
 
     it(`shouldn't update posts with UNAUTHORIZED`, async () => {
         const data = {
-            ...dataTestPostCreate01,
+            ...dataTestPostsCreate01,
             blogId: createdNewBlog01.id
         }
 
@@ -361,7 +359,7 @@ describe('/posts', () => {
 
     it(`shouldn't update posts with empty title`, async () => {
         const data = {
-            ...dataTestPostCreate01,
+            ...dataTestPostsCreate01,
             title: incorrectPostData.emptyTitle,
             blogId: createdNewBlog01.id
         }
@@ -377,7 +375,7 @@ describe('/posts', () => {
 
     it(`shouldn't update post with title more than 30 characters`, async () => {
         const data = {
-            ...dataTestPostCreate01,
+            ...dataTestPostsCreate01,
             title: incorrectPostData.tooLongTitle,
             blogId: createdNewBlog01.id
         }
@@ -393,7 +391,7 @@ describe('/posts', () => {
 
     it(`shouldn't update post with empty shortDescription`, async () => {
         const data = {
-            ...dataTestPostCreate01,
+            ...dataTestPostsCreate01,
             shortDescription: incorrectPostData.emptyShortDescription,
             blogId: createdNewBlog01.id
         }
@@ -409,7 +407,7 @@ describe('/posts', () => {
 
     it(`shouldn't update blogs with shortDescription more than 100 characters`, async () => {
         const data = {
-            ...dataTestPostCreate01,
+            ...dataTestPostsCreate01,
             shortDescription: incorrectPostData.tooLongShortDescription,
             blogId: createdNewBlog01.id
         }
@@ -425,7 +423,7 @@ describe('/posts', () => {
 
     it(`shouldn't update post with empty content`, async () => {
         const data = {
-            ...dataTestPostCreate01,
+            ...dataTestPostsCreate01,
             content: incorrectPostData.emptyContent,
             blogId: createdNewBlog01.id
         }
@@ -441,7 +439,7 @@ describe('/posts', () => {
 
     it(`shouldn't update post with content more than 1000 characters`, async () => {
         const data = {
-            ...dataTestPostCreate01,
+            ...dataTestPostsCreate01,
             content: incorrectPostData.tooLongContent,
             blogId: createdNewBlog01.id
         }
@@ -459,17 +457,17 @@ describe('/posts', () => {
 
         const error:ErrorMessage = [ERRORS_MESSAGES.POST_BLOGID]
 
-        await postsTestManager.updatePost(createdNewPost01, dataTestPostCreate01, HTTP_STATUSES.BAD_REQUEST_400, error)
+        await postsTestManager.updatePost(createdNewPost01, dataTestPostsCreate01, HTTP_STATUSES.BAD_REQUEST_400, error)
 
         await request(app)
             .get(`${RouterPaths.posts}/${createdNewPost01.id}`)
             .expect(HTTP_STATUSES.OK_200, createdNewPost01)
     })
 
-    it(`shouldn't update blogs with incorrect blogId`, async () => {
+    it(`shouldn't update post with incorrect blogId`, async () => {
 
         const data = {
-            ...dataTestPostCreate01,
+            ...dataTestPostsCreate01,
             blogId: incorrectPostData.incorrectBlogId
         }
 
@@ -482,10 +480,10 @@ describe('/posts', () => {
             .expect(HTTP_STATUSES.OK_200, createdNewPost01)
     })
 
-    it(`shouldn't update blogs with incorrect data`, async () => {
+    it(`shouldn't update post with incorrect data`, async () => {
 
         const data = {
-            ...dataTestPostCreate01,
+            ...dataTestPostsCreate01,
             blogId: incorrectPostData.incorrectBlogId,
             title: incorrectPostData.emptyTitle,
             content: incorrectPostData.emptyContent,
@@ -506,7 +504,7 @@ describe('/posts', () => {
             .expect(HTTP_STATUSES.OK_200, createdNewPost01)
     })
 
-    it(`should update blog with correct input module`, async () => {
+    it(`should update post with correct input module`, async () => {
         const data = {
             ...dataTestPostUpdate01,
             blogId: createdNewBlog01.id
@@ -519,7 +517,7 @@ describe('/posts', () => {
             .expect(HTTP_STATUSES.OK_200, createdNewPost02)
     })
 
-    it(`shouldn't delete  blog`, async () => {
+    it(`shouldn't delete post`, async () => {
 
         await request(app)
             .delete(`${RouterPaths.posts}/7779161`)
@@ -527,7 +525,7 @@ describe('/posts', () => {
             .expect(HTTP_STATUSES.NOT_FOUND_404)
     })
 
-    it(`should delete both blog`, async () => {
+    it(`should delete both posts`, async () => {
 
         await request(app)
             .delete(`${RouterPaths.posts}/${createdNewPost01.id}`)

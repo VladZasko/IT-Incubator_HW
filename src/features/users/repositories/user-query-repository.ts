@@ -1,10 +1,8 @@
 import {UsersViewModel, UsersViewModelGetAllBlogs} from "../models/output/UsersViewModel";
-import {blogsCollection, usersCollection} from "../../../db/db";
+import {usersCollection} from "../../../db/db";
 import {userMapper} from "../mappers/mappers";
 import {QueryUserModel} from "../models/input/QueryUserModule";
-import {BlogsViewModel} from "../../blogs/models/output/BlogsViewModel";
 import {ObjectId} from "mongodb";
-import {blogMapper} from "../../blogs/mappers/mappers";
 
 export class userQueryRepository {
     static async getAllUsers(sortData: QueryUserModel): Promise<UsersViewModelGetAllBlogs>{
@@ -18,10 +16,20 @@ export class userQueryRepository {
         let filter = {}
 
 
-        if(searchLoginTerm||searchEmailTerm){
+        if(searchLoginTerm){
+            filter = {
+                login: {$regex: searchLoginTerm, $options: 'i'}
+            }
+        }
+        if (searchEmailTerm){
+            filter = {
+                email: {$regex: searchEmailTerm, $options: 'i'}
+            }
+        }
+        if (searchLoginTerm && searchEmailTerm){
             filter = {$or:
-                    [{email:{$regex: sortData.searchEmailTerm, $options: 'i'}},
-                        {login: {$regex: sortData.searchLoginTerm, $options: 'i'}}]}
+                    [{email:{$regex: searchEmailTerm, $options: 'i'}},
+                        {login: {$regex: searchLoginTerm, $options: 'i'}}]}
         }
 
         const users = await usersCollection
