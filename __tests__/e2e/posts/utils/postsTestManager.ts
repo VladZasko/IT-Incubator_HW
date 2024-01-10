@@ -6,6 +6,7 @@ import {CreatePostServiceModel} from "../../../../src/features/posts/models/Crea
 import {URIParamsPostIdModel} from "../../../../src/features/posts/models/URIParamsPostIdModule";
 import {UpdatePostModel} from "../../../../src/features/posts/models/UpdatePostModule";
 import {ErrorMessage} from "../../../../src/utils/errors";
+import {PostsViewModel} from "../../../../src/features/posts/models/PostsViewModel";
 
 export const postsTestManager = {
     async createPost(data: CreatePostServiceModel,

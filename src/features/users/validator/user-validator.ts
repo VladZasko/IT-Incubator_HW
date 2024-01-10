@@ -1,5 +1,5 @@
 import {body, query} from "express-validator";
-import {inputValidation} from "../../../../middlewares/input-modul-validation/input-validation";
+import {inputValidation} from "../../../middlewares/input-modul-validation/input-validation";
 
 export const loginValidation = body('login').isString().trim().isLength({min:3, max:10}).withMessage('Incorrect login!')
 export const passwordValidation = body('password').isString().trim().isLength({min:6, max:20})

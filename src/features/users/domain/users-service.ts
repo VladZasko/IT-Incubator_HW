@@ -5,7 +5,7 @@ import {CreateUserModel} from "../models/input/CreateUserModel";
 import bcrypt from 'bcrypt'
 import {userRepository} from "../repositories/user-repository";
 import {userQueryRepository} from "../repositories/user-query-repository";
-import {userDBMapper, userMapper} from "../mappers/mappers";
+import {userDBMapper} from "../mappers/mappers";
 import {UserType} from "../../../db/types/users.types";
 
 export class usersService {

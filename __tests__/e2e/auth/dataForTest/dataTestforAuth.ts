@@ -1,8 +1,8 @@
+import {dataTestUserCreate01} from "../../users/dataForTest/dataTestforUser";
 
-export const dataTestUserCreate01 = {
-    login: "NewLog",
-    email: "newemail@gmail.com",
-    password: 'Qwerty123'
+export const dataTestUserAuth = {
+    loginOrEmail: dataTestUserCreate01.login,
+    password: dataTestUserCreate01.password
 }
 export const dataTestUserCreate02 = {
     login: 'SecondLog',

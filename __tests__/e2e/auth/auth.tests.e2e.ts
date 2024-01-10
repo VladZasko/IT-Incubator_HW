@@ -2,9 +2,13 @@ import request from 'supertest'
 import {app} from "../../../src/app";
 import {HTTP_STATUSES} from "../../../src/utils/utils";
 import {RouterPaths} from "../../../src/routerPaths";
+import {ERRORS_MESSAGES} from "../../../src/utils/errors";
 import {usersTestManager} from "../users/utils/usersTestManager";
 import {dataTestUserCreate01, dataTestUserCreate02} from "../users/dataForTest/dataTestforUser";
-import {ERRORS_MESSAGES} from "../../../src/utils/errors";
+import {blogsTestManager} from "../blogs/utils/blogsTestManager";
+import {dataTestBlogCreate01} from "../blogs/dataForTest/dataTestforBlog";
+import {authTestManager} from "./utils/authTestManager";
+import {dataTestUserAuth} from "./dataForTest/dataTestforAuth";
 
 const getRequest = () => {
     return request(app)
@@ -70,15 +74,10 @@ describe('/auth', () => {
 
     let token:any = null
     it('should return 200 and token', async () => {
-        const result = await getRequest()
-            .post(`${RouterPaths.auth}/login`)
-            .send({
-            loginOrEmail:dataTestUserCreate01.login,
-                password: dataTestUserCreate01.password
-        })
-            .expect(HTTP_STATUSES.OK_200)
 
-        token = result.body.accessToken
+        const result = await authTestManager.createToken(dataTestUserAuth)
+
+        token = result.createdEntity.accessToken
 
         const responseData = {
             email: createdNewUser01.email,

@@ -2,7 +2,7 @@ import request from 'supertest'
 import {app} from "../../../src/app";
 import {HTTP_STATUSES} from "../../../src/utils/utils";
 import {RouterPaths} from "../../../src/routerPaths";
-import {blogsTestManager} from "./utils/blogsTestManager";
+import {feedbacksTestManager} from "./utils/feedbacksTestManager";
 import {dataTestBlogCreate, dataTestPostByBlogCreate} from "./dataForTest/dataTestforFeedbacks";
 import {dataTestPostCreate01} from "../posts/dataForTest/dataTestforPost";
 import {postsTestManager} from "../posts/utils/postsTestManager";
@@ -26,7 +26,7 @@ describe('test for query /feedbacks', () => {
 
     it(`should create post, blog and user for feedback tests`, async () => {
 
-        const resultBlog = await blogsTestManager.createBlog(dataTestBlogCreate[0])
+        const resultBlog = await feedbacksTestManager.createBlog(dataTestBlogCreate[0])
 
         createdNewBlog01 = resultBlog.createdEntity;
 
@@ -99,7 +99,7 @@ describe('test for query /feedbacks', () => {
     it(`should create 12 feedbacks with correct input data`, async () => {
 
         for (let i = 0; i < dataTestBlogCreate.length; i++){
-            const result = await blogsTestManager.createBlog(dataTestBlogCreate[i])
+            const result = await feedbacksTestManager.createBlog(dataTestBlogCreate[i])
             createdNewBlog01.unshift(result.createdEntity)
         }
 
@@ -141,7 +141,7 @@ describe('test for query /feedbacks', () => {
     it(`should create 10 posts by blogs with correct input data`, async () => {
 
         for (let i = 0; i < dataTestPostByBlogCreate.length; i++){
-            const result = await blogsTestManager.createPostByBlog(createdNewBlog01[0],dataTestPostByBlogCreate[i])
+            const result = await feedbacksTestManager.createPostByBlog(createdNewBlog01[0],dataTestPostByBlogCreate[i])
             createdNewPostByBlog.unshift(result.createdEntity)
         }
 

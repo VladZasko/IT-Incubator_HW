@@ -17,18 +17,40 @@ export const usersCollection = db.collection<UserDBType>("users");
 export const videosCollection = db.collection<VideoDBType>("videos");
 
 export const port = settings.PORT
-export async function runDb() {
-    try {
-        // Connect the client to the server
-        await client.connect();
-        // Establish and verify connection
-        await client.db("blogs-hws").command({ping: 1});
-        console.log(`Example app listening on port ${port}`)
-        console.log("Connected successfully to mongo server");
 
-    } catch {
-        console.log("Can't connect to db")
-        //Ensurens that the client will close when you finish/error
+export const dbControl = {
+    async run() {
+        try {
+            // Connect the client to the server
+            await client.connect();
+            // Establish and verify connection
+            await client.db("blogs-hws").command({ping: 1});
+            console.log(`Example app listening on port ${port}`)
+            console.log("Connected successfully to mongo server");
+
+        } catch {
+            console.log("Can't connect to db")
+            //Ensurens that the client will close when you finish/error
+            await client.close();
+        }
+    },
+    async stop() {
         await client.close();
+        console.log("Connection successful closed")
     }
 }
+// export async function runDb() {
+//     try {
+//         // Connect the client to the server
+//         await client.connect();
+//         // Establish and verify connection
+//         await client.db("blogs-hws").command({ping: 1});
+//         console.log(`Example app listening on port ${port}`)
+//         console.log("Connected successfully to mongo server");
+//
+//     } catch {
+//         console.log("Can't connect to db")
+//         //Ensurens that the client will close when you finish/error
+//         await client.close();
+//     }
+// }

@@ -1,9 +1,9 @@
 import express, {Response, Request} from "express";
-import {usersService} from "../../domain/users-service";
-import {authValidation} from "../../validator/auth/auth-validator";
-import {jwtService} from "../../application/jwt-service";
-import {HTTP_STATUSES} from "../../../../utils/utils";
-import {authTokenMiddleware} from "../../../../middlewares/auth/auth-token-middleware";
+import {usersService} from "../users/domain/users-service";
+import {authValidation} from "./validator/auth-validator";
+import {jwtService} from "./application/jwt-service";
+import {HTTP_STATUSES} from "../../utils/utils";
+import {authTokenMiddleware} from "../../middlewares/auth/auth-token-middleware";
 
 
 export const authUsersRoutes = () => {
