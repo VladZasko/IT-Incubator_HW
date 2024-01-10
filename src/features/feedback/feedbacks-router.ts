@@ -13,7 +13,6 @@ import {commentValidation} from "./validator/feedback-validator";
 import {URIParamsFeedbackIdModule} from "./models/URIParamsFeedbackIdModule";
 import {UpdateFeedbackModuleModel} from "./models/UpdateFeedbackModule";
 import {feedbackService} from "./domain/feedback-service";
-import {userQueryRepository} from "../users/repositories/user-query-repository";
 
 export const getFeedbacksRoutes = () => {
     const router = express.Router()

@@ -6,7 +6,7 @@ import {app} from "../../../../src/app";
 import {UpdateBlogModel} from "../../../../src/features/blogs/models/input/UpdateBlogModule";
 import {BlogType} from "../../../../src/db/types/blogs.types";
 import {ErrorMessage} from "../../../../src/utils/errors";
-
+import {dataTestBlogCreate01, dataTestPostByBlogCreate} from "../dataForTest/dataTestforBlog";
 
 
 export const blogsTestManager = {
@@ -42,6 +42,25 @@ export const blogsTestManager = {
         return {response: response, createdEntity: createdEntity};
     },
 
+    async createBlogs(data: CreateBlogServiceModel,
+    ) {
+
+        const blogs = []
+
+        for (let i = 0; i < 12; i++) {
+            const dataBlogs = {
+                ...data,
+                name: `${data.name}${i}`,
+                description: `${data.description}${i}`
+            }
+            const result = await blogsTestManager.createBlog(dataBlogs)
+
+            blogs.unshift(result.createdEntity)
+        }
+
+        return blogs;
+    },
+
     async createPostByBlog(createdNewBlog01: BlogType,
                            data: CreatePostBlogModel,
                            expectedStatusCode: HttpStatusType = HTTP_STATUSES.CREATED_201,
@@ -73,6 +92,27 @@ export const blogsTestManager = {
         }
         return {response: response, createdEntity: createdEntity};
     },
+
+    async createPostsByBlog(blog: BlogType, data: any
+    ) {
+
+        const postsByBlogs = []
+
+        for (let i = 0; i < 12; i++) {
+            const dataPosts = {
+                title: `${data.title}${i}`,
+                shortDescription: `${data.shortDescription}${i}`,
+                content: `${data.content}${i}`,
+            }
+
+            const result = await blogsTestManager.createPostByBlog(blog, dataPosts)
+
+            postsByBlogs.unshift(result.createdEntity)
+        }
+
+        return postsByBlogs;
+    },
+
     async updateBlog(createdNewBlog01: BlogType,
                      data: UpdateBlogModel,
                      expectedStatusCode: HttpStatusType = HTTP_STATUSES.NO_CONTENT_204,

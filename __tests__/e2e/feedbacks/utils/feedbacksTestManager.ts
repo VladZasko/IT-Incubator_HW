@@ -1,22 +1,18 @@
 import request from "supertest";
-import {CreateBlogServiceModel, CreatePostBlogModel} from "../../../../src/features/blogs/models/input/CreateBlogModel";
 import {HTTP_STATUSES, HttpStatusType} from "../../../../src/utils/utils";
 import {RouterPaths} from "../../../../src/routerPaths";
 import {app} from "../../../../src/app";
-import {UpdateBlogModel} from "../../../../src/features/blogs/models/input/UpdateBlogModule";
-import {BlogType} from "../../../../src/db/types/blogs.types";
 import {ErrorMessage} from "../../../../src/utils/errors";
 import {CreateFeedbackModel} from "../../../../src/features/feedback/models/CreateFeedbackModel";
-import {PostType} from "../../../../src/db/types/posts.types";
-
+import {dataTestPostsCreate01} from "../../posts/dataForTest/dataTestforPost";
 
 
 export const feedbacksTestManager = {
     async createComment(data: CreateFeedbackModel,
-                     post: any,
-                     token: any,
-                     expectedStatusCode: HttpStatusType = HTTP_STATUSES.CREATED_201,
-                     expectedErrorsMessages?: ErrorMessage) {
+                        post: any,
+                        token: any,
+                        expectedStatusCode: HttpStatusType = HTTP_STATUSES.CREATED_201,
+                        expectedErrorsMessages?: ErrorMessage) {
 
         const response = await request(app)
             .post(`${RouterPaths.posts}/${post.id}/comments`)
@@ -42,6 +38,23 @@ export const feedbacksTestManager = {
             })
         }
         return {response: response, createdEntity: createdEntity};
+    },
+
+    async createComments(data: CreateFeedbackModel, post: any, token: any) {
+
+        const comments = []
+
+        for (let i = 0; i < 12; i++) {
+            const dataContent = {
+                content: `${data.content}${i}`
+            }
+            const result = await feedbacksTestManager
+                .createComment(dataContent, post, token)
+
+            comments.unshift(result.createdEntity)
+        }
+
+        return comments;
     },
 
     async updateComment(data: CreateFeedbackModel,
@@ -71,6 +84,23 @@ export const feedbacksTestManager = {
                     ...comment,
                     content: data.content
                 })
+        }
+        return {response: response};
+    },
+    async deleteComment(comment: any,
+                        token: any,
+                        expectedStatusCode: HttpStatusType = HTTP_STATUSES.NO_CONTENT_204
+    ) {
+
+        const response = await request(app)
+            .delete(`${RouterPaths.feedbacks}/${comment.id}`)
+            .set('authorization', `Bearer ${token}`)
+            .expect(expectedStatusCode)
+
+        if (expectedStatusCode === HTTP_STATUSES.NO_CONTENT_204) {
+            await request(app)
+                .get(`${RouterPaths.feedbacks}/${comment.id}`)
+                .expect(HTTP_STATUSES.NOT_FOUND_404)
         }
         return {response: response};
     }
