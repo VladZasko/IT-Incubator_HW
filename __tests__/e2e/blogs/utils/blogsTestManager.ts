@@ -6,7 +6,7 @@ import {app} from "../../../../src/app";
 import {UpdateBlogModel} from "../../../../src/features/blogs/models/input/UpdateBlogModule";
 import {BlogType} from "../../../../src/db/types/blogs.types";
 import {ErrorMessage} from "../../../../src/utils/errors";
-import {dataTestBlogCreate01, dataTestPostByBlogCreate} from "../dataForTest/dataTestforBlog";
+import {errors} from "../../../utils/error";
 
 
 export const blogsTestManager = {
@@ -20,12 +20,8 @@ export const blogsTestManager = {
             .send(data)
             .expect(expectedStatusCode)
 
-        let errorMessage;
         if (expectedStatusCode === HTTP_STATUSES.BAD_REQUEST_400) {
-            errorMessage = response.body;
-            expect(errorMessage).toEqual({
-                errorsMessages: expectedErrorsMessages
-            })
+            await errors.errors(response.body, expectedErrorsMessages)
         }
 
         let createdEntity;
@@ -72,12 +68,8 @@ export const blogsTestManager = {
             .send(data)
             .expect(expectedStatusCode)
 
-        let errorMessage;
         if (expectedStatusCode === HTTP_STATUSES.BAD_REQUEST_400) {
-            errorMessage = response.body;
-            expect(errorMessage).toEqual({
-                errorsMessages: expectedErrorsMessages
-            })
+            await errors.errors(response.body, expectedErrorsMessages)
         }
 
         let createdEntity;
@@ -93,7 +85,7 @@ export const blogsTestManager = {
         return {response: response, createdEntity: createdEntity};
     },
 
-    async createPostsByBlog(blog: BlogType, data: any
+    async createPostsByBlog(blog: BlogType, data: CreatePostBlogModel
     ) {
 
         const postsByBlogs = []
@@ -124,12 +116,8 @@ export const blogsTestManager = {
             .send(data)
             .expect(expectedStatusCode)
 
-        let errorMessage;
         if (expectedStatusCode === HTTP_STATUSES.BAD_REQUEST_400) {
-            errorMessage = response.body;
-            expect(errorMessage).toEqual({
-                errorsMessages: expectedErrorsMessages
-            })
+            await errors.errors(response.body, expectedErrorsMessages)
         }
 
         if (expectedStatusCode === HTTP_STATUSES.NO_CONTENT_204) {

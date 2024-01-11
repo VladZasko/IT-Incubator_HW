@@ -4,6 +4,7 @@ import {RouterPaths} from "../../../../src/routerPaths";
 import {app} from "../../../../src/app";
 import {ErrorMessage} from "../../../../src/utils/errors";
 import {CreateUserModel} from "../../../../src/features/users/models/input/CreateUserModel";
+import {errors} from "../../../utils/error";
 
 
 
@@ -18,12 +19,8 @@ export const usersTestManager = {
             .send(data)
             .expect(expectedStatusCode)
 
-        let errorMessage;
         if (expectedStatusCode === HTTP_STATUSES.BAD_REQUEST_400) {
-            errorMessage = response.body;
-            expect(errorMessage).toEqual({
-                errorsMessages: expectedErrorsMessages
-            })
+            await errors.errors(response.body, expectedErrorsMessages)
         }
 
         let createdEntity;
@@ -37,6 +34,24 @@ export const usersTestManager = {
             })
         }
         return {response: response, createdEntity: createdEntity};
+    },
+
+    async createUsers(data: CreateUserModel) {
+
+        const users = []
+
+        for (let i = 0; i < 12; i++) {
+            const dataUsers = {
+                login: `${data.login}${i}`,
+                email: `newemail${i}@gmail.com`,
+                password: data.password
+            }
+            const result = await usersTestManager.createUser(dataUsers)
+
+            users.unshift(result.createdEntity)
+        }
+
+        return users;
     }
 }
 

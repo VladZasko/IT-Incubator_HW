@@ -6,25 +6,21 @@ import {CreatePostServiceModel} from "../../../../src/features/posts/models/Crea
 import {URIParamsPostIdModel} from "../../../../src/features/posts/models/URIParamsPostIdModule";
 import {UpdatePostModel} from "../../../../src/features/posts/models/UpdatePostModule";
 import {ErrorMessage} from "../../../../src/utils/errors";
-import {PostsViewModel} from "../../../../src/features/posts/models/PostsViewModel";
+import {errors} from "../../../utils/error";
 
 export const postsTestManager = {
     async createPost(data: CreatePostServiceModel,
-                     expectedStatusCode:HttpStatusType = HTTP_STATUSES.CREATED_201,
+                     expectedStatusCode: HttpStatusType = HTTP_STATUSES.CREATED_201,
                      expectedErrorsMessages?: ErrorMessage) {
 
-        const response =  await request(app)
+        const response = await request(app)
             .post(RouterPaths.posts)
             .set('authorization', 'Basic YWRtaW46cXdlcnR5')
             .send(data)
             .expect(expectedStatusCode)
 
-        let errorMessage;
         if (expectedStatusCode === HTTP_STATUSES.BAD_REQUEST_400) {
-            errorMessage = response.body;
-            expect(errorMessage).toEqual({
-                errorsMessages: expectedErrorsMessages
-            })
+            await errors.errors(response.body, expectedErrorsMessages)
         }
 
         let createdEntity;
@@ -41,23 +37,39 @@ export const postsTestManager = {
         return {response: response, createdEntity: createdEntity};
     },
 
+    async createPosts(data: CreatePostServiceModel,) {
+
+        const posts = []
+
+        for (let i = 0; i < 12; i++) {
+            const dataPosts = {
+                title: `${data.title}${i}`,
+                shortDescription: `${data.shortDescription}${i}`,
+                content: `${data.content}${i}`,
+                blogId: data.blogId
+            }
+            const result = await postsTestManager.createPost(dataPosts)
+
+            posts.unshift(result.createdEntity)
+        }
+
+        return posts;
+    },
+
+
     async updatePost(paths: URIParamsPostIdModel,
                      data: UpdatePostModel,
-                     expectedStatusCode:HttpStatusType = HTTP_STATUSES.NO_CONTENT_204,
+                     expectedStatusCode: HttpStatusType = HTTP_STATUSES.NO_CONTENT_204,
                      expectedErrorsMessages?: ErrorMessage) {
 
-        const response =  await request(app)
+        const response = await request(app)
             .put(`${RouterPaths.posts}/${paths.id}`)
             .set('authorization', 'Basic YWRtaW46cXdlcnR5')
             .send(data)
             .expect(expectedStatusCode)
 
-        let errorMessage;
         if (expectedStatusCode === HTTP_STATUSES.BAD_REQUEST_400) {
-            errorMessage = response.body;
-            expect(errorMessage).toEqual({
-                errorsMessages: expectedErrorsMessages
-            })
+            await errors.errors(response.body, expectedErrorsMessages)
         }
 
         let updateEntity;

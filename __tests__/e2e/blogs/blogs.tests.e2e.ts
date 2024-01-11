@@ -747,7 +747,6 @@ describe('/feedback tests', () => {
                 })
     })
 
-    let createdNewPostByBlog: any = []
     it(`should create 10 posts by blogs with correct input data`, async () => {
 
         const blog = await blogsTestManager.createBlog(dataTestBlogCreate01)

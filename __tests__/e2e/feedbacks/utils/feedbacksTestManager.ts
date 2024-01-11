@@ -4,7 +4,7 @@ import {RouterPaths} from "../../../../src/routerPaths";
 import {app} from "../../../../src/app";
 import {ErrorMessage} from "../../../../src/utils/errors";
 import {CreateFeedbackModel} from "../../../../src/features/feedback/models/CreateFeedbackModel";
-import {dataTestPostsCreate01} from "../../posts/dataForTest/dataTestforPost";
+import {errors} from "../../../utils/error";
 
 
 export const feedbacksTestManager = {
@@ -20,12 +20,8 @@ export const feedbacksTestManager = {
             .send(data)
             .expect(expectedStatusCode)
 
-        let errorMessage;
         if (expectedStatusCode === HTTP_STATUSES.BAD_REQUEST_400) {
-            errorMessage = response.body;
-            expect(errorMessage).toEqual({
-                errorsMessages: expectedErrorsMessages
-            })
+            await errors.errors(response.body, expectedErrorsMessages)
         }
 
         let createdEntity = response.body;
@@ -69,12 +65,8 @@ export const feedbacksTestManager = {
             .send(data)
             .expect(expectedStatusCode)
 
-        let errorMessage;
         if (expectedStatusCode === HTTP_STATUSES.BAD_REQUEST_400) {
-            errorMessage = response.body;
-            expect(errorMessage).toEqual({
-                errorsMessages: expectedErrorsMessages
-            })
+            await errors.errors(response.body, expectedErrorsMessages)
         }
 
         if (expectedStatusCode === HTTP_STATUSES.NO_CONTENT_204) {

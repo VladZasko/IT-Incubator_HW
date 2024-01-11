@@ -5,13 +5,14 @@ import {CreatePostServiceModel} from "../../../src/features/posts/models/CreateP
 import {RouterPaths} from "../../../src/routerPaths";
 import {blogsTestManager} from "../blogs/utils/blogsTestManager";
 import {
-    dataTestPostsCreate01,
+    dataTestPostsCreate01, dataTestPostsCreate02,
     dataTestPostUpdate01,
     incorrectPostData
 } from "./dataForTest/dataTestforPost";
 import {postsTestManager} from "./utils/postsTestManager";
 import {ErrorMessage, ERRORS_MESSAGES} from "../../../src/utils/errors";
 import {dataTestBlogCreate01} from "../blogs/dataForTest/dataTestforBlog";
+import {dbControl} from "../../../src/db/db";
 
 
 const getRequest = () => {
@@ -19,40 +20,15 @@ const getRequest = () => {
 }
 describe('/posts', () => {
     beforeAll(async () => {
+        await dbControl.run()
+    })
+
+    beforeEach(async () => {
         await getRequest().delete('/testing/all-data')
     })
 
-    let createdNewBlog01: any= null
-    let createdNewBlog02: any= null
-    it(`should create blog for test post with correct input data`, async () => {
-
-        const result = await blogsTestManager.createBlog(dataTestBlogCreate01)
-
-        createdNewBlog01 = result.createdEntity;
-
-        await request(app)
-            .get(RouterPaths.blogs)
-            .expect(HTTP_STATUSES.OK_200, {
-                pagesCount: 1,
-                page: 1,
-                pageSize: 10,
-                totalCount: 1,
-                items: [createdNewBlog01]
-            })
-
-        const result2 = await blogsTestManager.createBlog(dataTestBlogCreate01)
-
-        createdNewBlog02 = result2.createdEntity;
-
-        await request(app)
-            .get(RouterPaths.blogs)
-            .expect(HTTP_STATUSES.OK_200, {
-                pagesCount: 1,
-                page: 1,
-                pageSize: 10,
-                totalCount: 2,
-                items: [createdNewBlog02, createdNewBlog01]
-            })
+    afterAll(async () => {
+        await dbControl.stop()
     })
 
     it('should return 200 and empty array', async () => {
@@ -74,9 +50,12 @@ describe('/posts', () => {
     })
 
     it(`shouldn't create post with UNAUTHORIZED`, async () => {
+
+        const blog = await blogsTestManager.createBlog(dataTestBlogCreate01)
+
         const data: CreatePostServiceModel = {
             ...dataTestPostsCreate01,
-            blogId: createdNewBlog01.id
+            blogId: blog.createdEntity.id
         }
 
         await request(app)
@@ -87,10 +66,13 @@ describe('/posts', () => {
     })
 
     it(`shouldn't create post with empty title`, async () => {
+
+        const blog = await blogsTestManager.createBlog(dataTestBlogCreate01)
+
         const data: CreatePostServiceModel = {
             ...dataTestPostsCreate01,
             title: incorrectPostData.emptyTitle,
-            blogId: createdNewBlog01.id
+            blogId: blog.createdEntity.id
         }
         const error:ErrorMessage = [ERRORS_MESSAGES.POST_TITLE]
 
@@ -108,10 +90,13 @@ describe('/posts', () => {
     })
 
     it(`shouldn't create post with title more than 15 characters`, async () => {
+
+        const blog = await blogsTestManager.createBlog(dataTestBlogCreate01)
+
         const data: CreatePostServiceModel = {
             ...dataTestPostsCreate01,
             title: incorrectPostData.tooLongTitle,
-            blogId: createdNewBlog01.id
+            blogId: blog.createdEntity.id
         }
 
         const error:ErrorMessage = [ERRORS_MESSAGES.POST_TITLE]
@@ -130,10 +115,13 @@ describe('/posts', () => {
     })
 
     it(`shouldn't create post with empty shortDescription`, async () => {
+
+        const blog = await blogsTestManager.createBlog(dataTestBlogCreate01)
+
         const data: CreatePostServiceModel = {
             ...dataTestPostsCreate01,
             shortDescription: incorrectPostData.emptyShortDescription,
-            blogId: createdNewBlog01.id
+            blogId: blog.createdEntity.id
         }
 
         const error:ErrorMessage = [ERRORS_MESSAGES.POST_SHORT_DESCRIPTION]
@@ -152,10 +140,13 @@ describe('/posts', () => {
     })
 
     it(`shouldn't create post with shortDescription more than 100 characters`, async () => {
+
+        const blog = await blogsTestManager.createBlog(dataTestBlogCreate01)
+
         const data: CreatePostServiceModel = {
             ...dataTestPostsCreate01,
             shortDescription: incorrectPostData.tooLongShortDescription,
-            blogId: createdNewBlog01.id
+            blogId: blog.createdEntity.id
         }
 
         const error:ErrorMessage = [ERRORS_MESSAGES.POST_SHORT_DESCRIPTION]
@@ -174,10 +165,13 @@ describe('/posts', () => {
     })
 
     it(`shouldn't create post with empty content`, async () => {
+
+        const blog = await blogsTestManager.createBlog(dataTestBlogCreate01)
+
         const data: CreatePostServiceModel = {
             ...dataTestPostsCreate01,
             content: incorrectPostData.emptyContent,
-            blogId: createdNewBlog01.id
+            blogId: blog.createdEntity.id
         }
 
         const error:ErrorMessage = [ERRORS_MESSAGES.POST_CONTENT]
@@ -196,10 +190,13 @@ describe('/posts', () => {
     })
 
     it(`shouldn't create post with content more than 1000 characters`, async () => {
+
+        const blog = await blogsTestManager.createBlog(dataTestBlogCreate01)
+
         const data: CreatePostServiceModel = {
             ...dataTestPostsCreate01,
             content: incorrectPostData.tooLongContent,
-            blogId: createdNewBlog01.id
+            blogId: blog.createdEntity.id
         }
 
         const error:ErrorMessage = [ERRORS_MESSAGES.POST_CONTENT]
@@ -218,6 +215,7 @@ describe('/posts', () => {
     })
 
     it(`shouldn't create post with empty blogId`, async () => {
+
         const error:ErrorMessage = [ERRORS_MESSAGES.POST_BLOGID]
 
         await postsTestManager.createPost(dataTestPostsCreate01, HTTP_STATUSES.BAD_REQUEST_400, error)
@@ -234,6 +232,7 @@ describe('/posts', () => {
     })
 
     it(`shouldn't create post with incorrect blogId`, async () => {
+
         const data: CreatePostServiceModel = {
             ...dataTestPostsCreate01,
             blogId: incorrectPostData.incorrectBlogId
@@ -255,6 +254,7 @@ describe('/posts', () => {
     })
 
     it(`shouldn't create post with incorrect data`, async () => {
+
         const data: CreatePostServiceModel = {
             ...dataTestPostsCreate01,
             blogId: incorrectPostData.incorrectBlogId,
@@ -283,16 +283,16 @@ describe('/posts', () => {
             })
     })
 
-    let createdNewPost01: any = null
     it(`should create post with correct input data`, async () => {
+
+        const blog = await blogsTestManager.createBlog(dataTestBlogCreate01)
+
         const data = {
             ...dataTestPostsCreate01,
-            blogId: createdNewBlog01.id
+            blogId: blog.createdEntity.id
         }
 
         const result = await postsTestManager.createPost(data)
-
-        createdNewPost01 = result.createdEntity;
 
         await request(app)
             .get(RouterPaths.posts)
@@ -301,41 +301,64 @@ describe('/posts', () => {
                 page: 1,
                 pageSize: 10,
                 totalCount: 1,
-                items: [createdNewPost01]
+                items: [result.createdEntity]
             })
     })
 
-    let createdNewPost02:any = null
-    it(`created one more posts`, async () => {
+    it('should return page 3 and page size 3', async () => {
+
+        const blog = await blogsTestManager.createBlog(dataTestBlogCreate01)
+
         const data = {
             ...dataTestPostsCreate01,
-            blogId: createdNewBlog02.id
+            blogId: blog.createdEntity.id
         }
 
-        const result = await postsTestManager.createPost(data)
+        const posts = await postsTestManager.createPosts(data)
 
-        createdNewPost02 = result.createdEntity;
-
-        await request(app)
-            .get(RouterPaths.posts)
-            .expect(HTTP_STATUSES.OK_200, {
-                pagesCount: 1,
-                page: 1,
-                pageSize: 10,
-                totalCount: 2,
-                items: [createdNewPost02, createdNewPost01]
-            })
-
-        expect.setState({post2: result.createdEntity})
+        await getRequest()
+            .get(`${RouterPaths.posts}/?pageSize=3&pageNumber=3`)
+            .expect(HTTP_STATUSES.OK_200,
+                {
+                    pagesCount: 4,
+                    page: 3,
+                    pageSize: 3,
+                    totalCount: 12,
+                    items: posts.slice(6,9) })
     })
+
+    it('should return posts "asc" ', async () => {
+
+        const blog = await blogsTestManager.createBlog(dataTestBlogCreate01)
+
+        const data = {
+            ...dataTestPostsCreate01,
+            blogId: blog.createdEntity.id
+        }
+
+        const posts = await postsTestManager.createPosts(data)
+
+        await getRequest()
+            .get(`${RouterPaths.posts}/?pageSize=15&sortDirection=asc`)
+            .expect(HTTP_STATUSES.OK_200,
+                {
+                    pagesCount: 1,
+                    page: 1,
+                    pageSize: 15,
+                    totalCount: 12,
+                    items:posts.reverse()
+                })
+    })
+
 
     it ('should return 404 fot not existing posts for update', async () => {
 
+        const blog = await blogsTestManager.createBlog(dataTestBlogCreate01)
+
         const data = {
             ...dataTestPostsCreate01,
-            blogId: createdNewBlog01.id
+            blogId: blog.createdEntity.id
         }
-
 
         await getRequest()
             .put(`${RouterPaths.posts}/11515`)
@@ -345,126 +368,199 @@ describe('/posts', () => {
     })
 
     it(`shouldn't update posts with UNAUTHORIZED`, async () => {
+
+        const blog = await blogsTestManager.createBlog(dataTestBlogCreate01)
+
         const data = {
             ...dataTestPostsCreate01,
-            blogId: createdNewBlog01.id
+            blogId: blog.createdEntity.id
         }
+        const post = await postsTestManager.createPost(data)
 
         await request(app)
-            .put(`${RouterPaths.posts}/${createdNewPost01.id}`)
+            .put(`${RouterPaths.posts}/${post.createdEntity.id}`)
             .set('authorization', 'Basic YWRtaW')
             .send(data)
             .expect(HTTP_STATUSES.UNAUTHORIZED_401)
     })
 
     it(`shouldn't update posts with empty title`, async () => {
-        const data = {
+
+        const blog = await blogsTestManager.createBlog(dataTestBlogCreate01)
+
+        const dataPost = {
+            ...dataTestPostsCreate01,
+            blogId: blog.createdEntity.id
+        }
+        const post = await postsTestManager.createPost(dataPost)
+
+        const dataUpdate = {
             ...dataTestPostsCreate01,
             title: incorrectPostData.emptyTitle,
-            blogId: createdNewBlog01.id
+            blogId: blog.createdEntity.id
         }
 
         const error:ErrorMessage = [ERRORS_MESSAGES.POST_TITLE]
 
-        await postsTestManager.updatePost(createdNewPost01, data, HTTP_STATUSES.BAD_REQUEST_400, error)
+        await postsTestManager.updatePost(post.createdEntity, dataUpdate, HTTP_STATUSES.BAD_REQUEST_400, error)
 
         await request(app)
-            .get(`${RouterPaths.posts}/${createdNewPost01.id}`)
-            .expect(HTTP_STATUSES.OK_200, createdNewPost01)
+            .get(`${RouterPaths.posts}/${post.createdEntity.id}`)
+            .expect(HTTP_STATUSES.OK_200, post.createdEntity)
     })
 
     it(`shouldn't update post with title more than 30 characters`, async () => {
+
+        const blog = await blogsTestManager.createBlog(dataTestBlogCreate01)
+
+        const dataPost = {
+            ...dataTestPostsCreate01,
+            blogId: blog.createdEntity.id
+        }
+        const post = await postsTestManager.createPost(dataPost)
+
         const data = {
             ...dataTestPostsCreate01,
             title: incorrectPostData.tooLongTitle,
-            blogId: createdNewBlog01.id
+            blogId: blog.createdEntity.id
         }
 
         const error:ErrorMessage = [ERRORS_MESSAGES.POST_TITLE]
 
-        await postsTestManager.updatePost(createdNewPost01, data, HTTP_STATUSES.BAD_REQUEST_400, error)
+        await postsTestManager.updatePost(post.createdEntity, data, HTTP_STATUSES.BAD_REQUEST_400, error)
 
         await request(app)
-            .get(`${RouterPaths.posts}/${createdNewPost01.id}`)
-            .expect(HTTP_STATUSES.OK_200, createdNewPost01)
+            .get(`${RouterPaths.posts}/${post.createdEntity.id}`)
+            .expect(HTTP_STATUSES.OK_200, post.createdEntity)
     })
 
     it(`shouldn't update post with empty shortDescription`, async () => {
+
+        const blog = await blogsTestManager.createBlog(dataTestBlogCreate01)
+
+        const dataPost = {
+            ...dataTestPostsCreate01,
+            blogId: blog.createdEntity.id
+        }
+        const post = await postsTestManager.createPost(dataPost)
+
         const data = {
             ...dataTestPostsCreate01,
             shortDescription: incorrectPostData.emptyShortDescription,
-            blogId: createdNewBlog01.id
+            blogId: blog.createdEntity.id
         }
 
         const error:ErrorMessage = [ERRORS_MESSAGES.POST_SHORT_DESCRIPTION]
 
-        await postsTestManager.updatePost(createdNewPost01, data, HTTP_STATUSES.BAD_REQUEST_400, error)
+        await postsTestManager.updatePost(post.createdEntity, data, HTTP_STATUSES.BAD_REQUEST_400, error)
 
         await request(app)
-            .get(`${RouterPaths.posts}/${createdNewPost01.id}`)
-            .expect(HTTP_STATUSES.OK_200, createdNewPost01)
+            .get(`${RouterPaths.posts}/${post.createdEntity.id}`)
+            .expect(HTTP_STATUSES.OK_200, post.createdEntity)
     })
 
-    it(`shouldn't update blogs with shortDescription more than 100 characters`, async () => {
+    it(`shouldn't update post with shortDescription more than 100 characters`, async () => {
+
+        const blog = await blogsTestManager.createBlog(dataTestBlogCreate01)
+
+        const dataPost = {
+            ...dataTestPostsCreate01,
+            blogId: blog.createdEntity.id
+        }
+        const post = await postsTestManager.createPost(dataPost)
+
         const data = {
             ...dataTestPostsCreate01,
             shortDescription: incorrectPostData.tooLongShortDescription,
-            blogId: createdNewBlog01.id
+            blogId: blog.createdEntity.id
         }
 
         const error:ErrorMessage = [ERRORS_MESSAGES.POST_SHORT_DESCRIPTION]
 
-        await postsTestManager.updatePost(createdNewPost01, data, HTTP_STATUSES.BAD_REQUEST_400, error)
+        await postsTestManager.updatePost(post.createdEntity, data, HTTP_STATUSES.BAD_REQUEST_400, error)
 
         await request(app)
-            .get(`${RouterPaths.posts}/${createdNewPost01.id}`)
-            .expect(HTTP_STATUSES.OK_200, createdNewPost01)
+            .get(`${RouterPaths.posts}/${post.createdEntity.id}`)
+            .expect(HTTP_STATUSES.OK_200, post.createdEntity)
     })
 
     it(`shouldn't update post with empty content`, async () => {
+
+        const blog = await blogsTestManager.createBlog(dataTestBlogCreate01)
+
+        const dataPost = {
+            ...dataTestPostsCreate01,
+            blogId: blog.createdEntity.id
+        }
+        const post = await postsTestManager.createPost(dataPost)
+
         const data = {
             ...dataTestPostsCreate01,
             content: incorrectPostData.emptyContent,
-            blogId: createdNewBlog01.id
+            blogId: blog.createdEntity.id
         }
 
         const error:ErrorMessage = [ERRORS_MESSAGES.POST_CONTENT]
 
-        await postsTestManager.updatePost(createdNewPost01, data, HTTP_STATUSES.BAD_REQUEST_400, error)
+        await postsTestManager.updatePost(post.createdEntity, data, HTTP_STATUSES.BAD_REQUEST_400, error)
 
         await request(app)
-            .get(`${RouterPaths.posts}/${createdNewPost01.id}`)
-            .expect(HTTP_STATUSES.OK_200, createdNewPost01)
+            .get(`${RouterPaths.posts}/${post.createdEntity.id}`)
+            .expect(HTTP_STATUSES.OK_200, post.createdEntity)
     })
 
     it(`shouldn't update post with content more than 1000 characters`, async () => {
+
+        const blog = await blogsTestManager.createBlog(dataTestBlogCreate01)
+
+        const dataPost = {
+            ...dataTestPostsCreate01,
+            blogId: blog.createdEntity.id
+        }
+        const post = await postsTestManager.createPost(dataPost)
+
         const data = {
             ...dataTestPostsCreate01,
             content: incorrectPostData.tooLongContent,
-            blogId: createdNewBlog01.id
+            blogId: blog.createdEntity.id
         }
 
         const error:ErrorMessage = [ERRORS_MESSAGES.POST_CONTENT]
 
-        await postsTestManager.updatePost(createdNewPost01, data, HTTP_STATUSES.BAD_REQUEST_400, error)
+        await postsTestManager.updatePost(post.createdEntity, data, HTTP_STATUSES.BAD_REQUEST_400, error)
 
         await request(app)
-            .get(`${RouterPaths.posts}/${createdNewPost01.id}`)
-            .expect(HTTP_STATUSES.OK_200, createdNewPost01)
+            .get(`${RouterPaths.posts}/${post.createdEntity.id}`)
+            .expect(HTTP_STATUSES.OK_200, post.createdEntity)
     })
 
     it(`shouldn't update post with empty blogId`, async () => {
+        const blog = await blogsTestManager.createBlog(dataTestBlogCreate01)
+
+        const dataPost = {
+            ...dataTestPostsCreate01,
+            blogId: blog.createdEntity.id
+        }
+        const post = await postsTestManager.createPost(dataPost)
 
         const error:ErrorMessage = [ERRORS_MESSAGES.POST_BLOGID]
 
-        await postsTestManager.updatePost(createdNewPost01, dataTestPostsCreate01, HTTP_STATUSES.BAD_REQUEST_400, error)
+        await postsTestManager.updatePost(post.createdEntity, dataTestPostsCreate01, HTTP_STATUSES.BAD_REQUEST_400, error)
 
         await request(app)
-            .get(`${RouterPaths.posts}/${createdNewPost01.id}`)
-            .expect(HTTP_STATUSES.OK_200, createdNewPost01)
+            .get(`${RouterPaths.posts}/${post.createdEntity.id}`)
+            .expect(HTTP_STATUSES.OK_200, post.createdEntity)
     })
 
     it(`shouldn't update post with incorrect blogId`, async () => {
+
+        const blog = await blogsTestManager.createBlog(dataTestBlogCreate01)
+
+        const dataPost = {
+            ...dataTestPostsCreate01,
+            blogId: blog.createdEntity.id
+        }
+        const post = await postsTestManager.createPost(dataPost)
 
         const data = {
             ...dataTestPostsCreate01,
@@ -473,14 +569,22 @@ describe('/posts', () => {
 
         const error:ErrorMessage = [ERRORS_MESSAGES.POST_BLOGID]
 
-        await postsTestManager.updatePost(createdNewPost01, data, HTTP_STATUSES.BAD_REQUEST_400, error)
+        await postsTestManager.updatePost(post.createdEntity, data, HTTP_STATUSES.BAD_REQUEST_400, error)
 
         await request(app)
-            .get(`${RouterPaths.posts}/${createdNewPost01.id}`)
-            .expect(HTTP_STATUSES.OK_200, createdNewPost01)
+            .get(`${RouterPaths.posts}/${post.createdEntity.id}`)
+            .expect(HTTP_STATUSES.OK_200, post.createdEntity)
     })
 
     it(`shouldn't update post with incorrect data`, async () => {
+
+        const blog = await blogsTestManager.createBlog(dataTestBlogCreate01)
+
+        const dataPost = {
+            ...dataTestPostsCreate01,
+            blogId: blog.createdEntity.id
+        }
+        const post = await postsTestManager.createPost(dataPost)
 
         const data = {
             ...dataTestPostsCreate01,
@@ -497,24 +601,39 @@ describe('/posts', () => {
             ERRORS_MESSAGES.POST_BLOGID
         ]
 
-        await postsTestManager.updatePost(createdNewPost01, data, HTTP_STATUSES.BAD_REQUEST_400, error)
+        await postsTestManager.updatePost(post.createdEntity, data, HTTP_STATUSES.BAD_REQUEST_400, error)
 
         await request(app)
-            .get(`${RouterPaths.posts}/${createdNewPost01.id}`)
-            .expect(HTTP_STATUSES.OK_200, createdNewPost01)
+            .get(`${RouterPaths.posts}/${post.createdEntity.id}`)
+            .expect(HTTP_STATUSES.OK_200, post.createdEntity)
     })
 
     it(`should update post with correct input module`, async () => {
+
+        const blog = await blogsTestManager.createBlog(dataTestBlogCreate01)
+
+        const dataPost1 = {
+            ...dataTestPostsCreate01,
+            blogId: blog.createdEntity.id
+        }
+        const post1 = await postsTestManager.createPost(dataPost1)
+
+        const dataPost2 = {
+            ...dataTestPostsCreate02,
+            blogId: blog.createdEntity.id
+        }
+        const post2 = await postsTestManager.createPost(dataPost2)
+
         const data = {
             ...dataTestPostUpdate01,
-            blogId: createdNewBlog01.id
+            blogId: blog.createdEntity.id
         }
 
-        await postsTestManager.updatePost(createdNewPost01, data)
+        await postsTestManager.updatePost(post1.createdEntity, data)
 
         await request(app)
-            .get(`${RouterPaths.posts}/${createdNewPost02.id}`)
-            .expect(HTTP_STATUSES.OK_200, createdNewPost02)
+            .get(`${RouterPaths.posts}/${post2.createdEntity.id}`)
+            .expect(HTTP_STATUSES.OK_200, post2.createdEntity)
     })
 
     it(`shouldn't delete post`, async () => {
@@ -527,23 +646,21 @@ describe('/posts', () => {
 
     it(`should delete both posts`, async () => {
 
+        const blog = await blogsTestManager.createBlog(dataTestBlogCreate01)
+
+        const dataPost = {
+            ...dataTestPostsCreate01,
+            blogId: blog.createdEntity.id
+        }
+        const post = await postsTestManager.createPost(dataPost)
+
         await request(app)
-            .delete(`${RouterPaths.posts}/${createdNewPost01.id}`)
+            .delete(`${RouterPaths.posts}/${post.createdEntity.id}`)
             .set('authorization', 'Basic YWRtaW46cXdlcnR5')
             .expect(HTTP_STATUSES.NO_CONTENT_204)
 
         await request(app)
-            .get(`${RouterPaths.posts}/${createdNewPost01.id}`)
-            .expect(HTTP_STATUSES.NOT_FOUND_404)
-
-        await request(app)
-            .delete(`${RouterPaths.posts}/${createdNewPost02.id}`)
-            .set('authorization', 'Basic YWRtaW46cXdlcnR5')
-            .expect(HTTP_STATUSES.NO_CONTENT_204)
-
-
-        await request(app)
-            .get(`${RouterPaths.posts}/${createdNewPost02.id}`)
+            .get(`${RouterPaths.posts}/${post.createdEntity.id}`)
             .expect(HTTP_STATUSES.NOT_FOUND_404)
 
         await request(app)
