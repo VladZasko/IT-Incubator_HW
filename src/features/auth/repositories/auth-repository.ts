@@ -21,7 +21,12 @@ export class authRepository {
             .updateOne({_id}, {$set: {'emailConfirmation.isConfirmed':true}})
         return result.modifiedCount === 1
     }
-    static async updateConfirmationCode( _id: ObjectId,code : string){
+    // static async newConfirmationCode( _id: ObjectId,code : string){
+    //     let result = await usersCollection
+    //         .updateOne({_id}, {$set: {'emailConfirmation.confirmationCode':code}})
+    //     return result.modifiedCount === 1
+    // }
+    static async newConfirmationCode( _id: ObjectId,code : string){
         let result = await usersCollection
             .updateOne({_id}, {$set: {'emailConfirmation.confirmationCode':code}})
         return result.modifiedCount === 1
