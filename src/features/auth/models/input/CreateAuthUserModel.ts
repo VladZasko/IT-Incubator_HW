@@ -1,4 +1,5 @@
-export type CreateUserModel = {
+
+export type CreateAuthUserModel = {
     /**
      * blog name, description, websiteUrl
      */
@@ -7,10 +8,7 @@ export type CreateUserModel = {
     password: string
 }
 
-export type CreateUserPassModel = {
-    /**
-     * blog name, description, websiteUrl
-     */
+export type CreateAuthUserPassModel = {
     accountData: {
         login: string,
         email: string,
@@ -18,7 +16,11 @@ export type CreateUserPassModel = {
         passwordHash: string,
         passwordSalt: string
     }
-
+    emailConfirmation: {
+        confirmationCode: string,
+        expirationDate: Date,
+        isConfirmed: boolean
+    }
 }
 
 

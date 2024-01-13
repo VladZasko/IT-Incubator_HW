@@ -2,7 +2,7 @@ import {MongoClient} from "mongodb";
 import {BlogDBType} from "./types/blogs.types";
 import {PostDBType} from "./types/posts.types";
 import {VideoDBType} from "./types/videos.types";
-import {UserDBType} from "./types/users.types";
+import {UserAuthDBType, UserDBType} from "./types/users.types";
 import {settings} from "../../settings";
 import {FeedbacksDBType} from "./types/feedbacks.types";
 
@@ -12,7 +12,9 @@ export const db = client.db('blogs-hws');
 export const blogsCollection = db.collection<BlogDBType>("blogs");
 export const postsCollection = db.collection<PostDBType>("posts");
 export const feedbacksCollection = db.collection<FeedbacksDBType>("feedbacks");
-export const usersCollection = db.collection<UserDBType>("users");
+export const usersCollection = db.collection<UserAuthDBType>("users");
+export const usersAuthCollection = db.collection<UserAuthDBType>("usersAuth");
+
 
 export const videosCollection = db.collection<VideoDBType>("videos");
 

@@ -9,40 +9,45 @@ import {userDBMapper} from "../mappers/mappers";
 import {UserType} from "../../../db/types/users.types";
 
 export class usersService {
-    static async createUser(createData : CreateUserModel):Promise<UsersViewModel> {
+    static async createUser(createData: CreateUserModel): Promise<UsersViewModel> {
 
         const passwordSalt = await bcrypt.genSalt(10)
         const passwordHash = await this._generateHash(createData.password, passwordSalt)
 
         const newUser = {
-            login: createData.login,
-            email: createData.email,
-            createdAt: new Date().toISOString(),
-            passwordHash,
-            passwordSalt
+            accountData: {
+                login: createData.login,
+                email: createData.email,
+                createdAt: new Date().toISOString(),
+                passwordHash,
+                passwordSalt
+            }
         }
         return await userRepository.createUser(newUser)
     }
-    static async checkCredentials(loginOrEmail: string, password: string): Promise<UserType | null>{
+
+    static async checkCredentials(loginOrEmail: string, password: string): Promise<UserType | null> {
         const user = await userQueryRepository.findByLoginOrEmail(loginOrEmail)
         if (!user) {
             return null
         }
 
-        const passwordHash = await this._generateHash(password, user.passwordHash)
+        const passwordHash = await this._generateHash(password, user.accountData.passwordHash)
 
-        if(user.passwordHash !== passwordHash){
+        if (user.accountData.passwordHash !== passwordHash) {
             return null
         }
 
         return userDBMapper(user)
 
     }
-    static async _generateHash(password: string, salt: string){
+
+    static async _generateHash(password: string, salt: string) {
         return await bcrypt.hash(password, salt)
     }
+
     static async deleteUserById(id: string): Promise<boolean> {
-        const foundUser = await usersCollection.deleteOne({_id:new ObjectId(id)})
+        const foundUser = await usersCollection.deleteOne({_id: new ObjectId(id)})
 
         return !!foundUser.deletedCount
     }
