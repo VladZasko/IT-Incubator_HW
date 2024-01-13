@@ -9,6 +9,7 @@ import {authService} from "./domain/auth-service";
 import {authRegistrationValidator} from "./validator/auth-registration-validator";
 import {authResendingValidator} from "./validator/auth-resending-validator";
 import {ERRORS_MESSAGES} from "../../utils/errors";
+import {authConfirmationValidator} from "./validator/auth-confirmation-validator";
 
 export const authUsersRoutes = () => {
     const router = express.Router()
@@ -51,7 +52,7 @@ export const authUsersRoutes = () => {
             res.status(400).send({})
         }
     })
-    router.post('/registration-confirmation', async (req: Request, res: Response) => {
+    router.post('/registration-confirmation',authConfirmationValidator(), async (req: Request, res: Response) => {
 
         const result = await authService.confirmEmail(req.body.code)
         if (result) {
