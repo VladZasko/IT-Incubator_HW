@@ -12,7 +12,7 @@ export const codeValidation = body('code').isString().trim().withMessage('Incorr
         throw Error('Incorrect code!')
     }
     return true
-}).withMessage('email is already confirmed')
+}).withMessage('Incorrect code!')
 
 export const authConfirmationValidator = () => [codeValidation , inputValidation]
 
