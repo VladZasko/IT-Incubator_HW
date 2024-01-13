@@ -8,6 +8,9 @@ export const codeValidation = body('code').isString().trim().withMessage('Incorr
     if (user?.emailConfirmation?.isConfirmed) {
         throw Error('email is already confirmed')
     }
+    if (user?.emailConfirmation?.confirmationCode !== value){
+        throw Error('Incorrect code!')
+    }
     return true
 }).withMessage('email is already confirmed')
 
