@@ -4,12 +4,11 @@ import {authValidation} from "./validator/auth-validator";
 import {jwtService} from "./application/jwt-service";
 import {HTTP_STATUSES} from "../../utils/utils";
 import {authTokenMiddleware} from "../../middlewares/auth/auth-token-middleware";
-import {emailAdapter} from "./adapters/email-adapter";
 import {authService} from "./domain/auth-service";
 import {authRegistrationValidator} from "./validator/auth-registration-validator";
-import {authResendingValidator} from "./validator/auth-resending-validator";
 import {ERRORS_MESSAGES} from "../../utils/errors";
 import {authConfirmationValidator} from "./validator/auth-confirmation-validator";
+import {authResendingValidator} from "./validator/auth-resending-validator";
 
 export const authUsersRoutes = () => {
     const router = express.Router()
@@ -61,7 +60,7 @@ export const authUsersRoutes = () => {
             res.sendStatus(400)
         }
     })
-    router.post('/registration-email-resending',
+    router.post('/registration-email-resending', authResendingValidator(),
         async (req: Request, res: Response) => {
 
             const result = await authService.resendingConfirmEmail(req.body.email)

@@ -28,7 +28,7 @@ export class authService {
             emailConfirmation: {
                 confirmationCode: uuidv4(),
                 expirationDate: add(new Date(), {
-                    minutes: 3
+                    minutes: 15
                 }),
                 isConfirmed: false
             }
