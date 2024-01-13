@@ -6,6 +6,9 @@ import {HTTP_STATUSES} from "../../utils/utils";
 import {authTokenMiddleware} from "../../middlewares/auth/auth-token-middleware";
 import {emailAdapter} from "./adapters/email-adapter";
 import {authService} from "./domain/auth-service";
+import {authRegistrationValidator} from "./validator/auth-registration-validator";
+import {authResendingValidator} from "./validator/auth-resending-validator";
+import {ERRORS_MESSAGES} from "../../utils/errors";
 
 export const authUsersRoutes = () => {
     const router = express.Router()
@@ -34,7 +37,7 @@ export const authUsersRoutes = () => {
 
             res.status(HTTP_STATUSES.OK_200).send(success)
         })
-    router.post('/registration', async (req: Request, res: Response) => {
+    router.post('/registration', authRegistrationValidator(), async (req: Request, res: Response) => {
 
         const createData = {
             login: req.body.login,
@@ -42,8 +45,8 @@ export const authUsersRoutes = () => {
             password: req.body.password
         }
         const newUser = await authService.createUser(createData)
-        if(newUser){
-            res.status(201).send()
+        if (newUser) {
+            res.status(204).send()
         } else {
             res.status(400).send({})
         }
@@ -51,15 +54,21 @@ export const authUsersRoutes = () => {
     router.post('/registration-confirmation', async (req: Request, res: Response) => {
 
         const result = await authService.confirmEmail(req.body.code)
-        if(result){
-            res.status(201).send()
+        if (result) {
+            res.status(204).send()
         } else {
             res.sendStatus(400)
         }
     })
-    router.post('/registration-email-resending', async (req: Request, res: Response) => {
+    router.post('/registration-email-resending',
+        async (req: Request, res: Response) => {
 
-        const result = await authService.confirmEmail(req.body.code)
-    })
+            const result = await authService.resendingConfirmEmail(req.body.email)
+            if (result) {
+                res.status(204).send()
+            } else {
+                res.sendStatus(400).send(ERRORS_MESSAGES.AUTH_LOGIN_OR_EMAIL)
+            }
+        })
     return router;
 }

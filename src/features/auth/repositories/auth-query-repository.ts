@@ -18,6 +18,7 @@ export class authQueryRepository {
         return await usersCollection
             .findOne({$or: [{'accountData.email': loginOrEmail}, {'accountData.login': loginOrEmail}]})
     }
+
     static async findUserByConfirmationCode(emailConfirmationCode: string) {
         return await usersCollection
             .findOne({'emailConfirmation.confirmationCode': emailConfirmationCode})

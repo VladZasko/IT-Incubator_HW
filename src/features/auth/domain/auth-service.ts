@@ -54,6 +54,20 @@ export class authService {
         return result
     }
 
+    static async resendingConfirmEmail(email: string): Promise<boolean> {
+        let user = await authQueryRepository.findByLoginOrEmail(email)
+        if (!user) return false
+        if (user.emailConfirmation!.isConfirmed) return false;
+
+        const newConfirmationCode =  uuidv4()
+
+        let result = await authRepository.updateConfirmationCode(user._id, newConfirmationCode)
+
+        await emailAdapter.sendNewCode(user, newConfirmationCode)
+
+        return result
+    }
+
     static async checkCredentials(loginOrEmail: string, password: string): Promise<UserAuthType | null> {
         const user = await authQueryRepository.findByLoginOrEmail(loginOrEmail)
         if (!user) {

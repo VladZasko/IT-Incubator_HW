@@ -21,6 +21,11 @@ export class authRepository {
             .updateOne({_id}, {$set: {'emailConfirmation.isConfirmed':true}})
         return result.modifiedCount === 1
     }
+    static async updateConfirmationCode( _id: ObjectId,code : string){
+        let result = await usersCollection
+            .updateOne({_id}, {$set: {'emailConfirmation.confirmationCode':code}})
+        return result.modifiedCount === 1
+    }
     static async deleteUserById(id: string): Promise<boolean> {
         const foundUser = await usersCollection.deleteOne({_id:new ObjectId(id)})
 
