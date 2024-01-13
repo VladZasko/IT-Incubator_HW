@@ -45,3 +45,4 @@ export type UserAuthDBType = {
         isConfirmed: boolean
     }
 }
+

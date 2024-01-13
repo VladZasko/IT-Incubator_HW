@@ -59,13 +59,13 @@ export class authService {
         if (!user) return false
         if (user.emailConfirmation!.isConfirmed) return false;
 
-        //const newConfirmationCode =  uuidv4()
+        const newConfirmationCode =  uuidv4()
 
-        //let result = await authRepository.newConfirmationCode(user._id, newConfirmationCode)
+        let result = await authRepository.newConfirmationCode(user._id, newConfirmationCode)
 
-        await emailAdapter.sendCode(user)
+        await emailAdapter.sendNewCode(user, newConfirmationCode)
 
-        return true
+        return result
     }
 
     static async checkCredentials(loginOrEmail: string, password: string): Promise<UserAuthType | null> {
