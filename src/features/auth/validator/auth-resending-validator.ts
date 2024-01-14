@@ -10,6 +10,9 @@ export const emailValidation = body('email').isString().trim()
         if (user?.emailConfirmation?.isConfirmed) {
             throw Error('email is already confirmed')
         }
+        if (!user) {
+            throw Error('no user')
+        }
         return true
     }).withMessage('email is already confirmed')
 

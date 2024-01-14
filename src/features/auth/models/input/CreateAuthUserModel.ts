@@ -19,6 +19,7 @@ export type CreateAuthUserPassModel = {
     emailConfirmation: {
         confirmationCode: string,
         expirationDate: Date,
+        resendingCode: Date,
         isConfirmed: boolean
     }
 }

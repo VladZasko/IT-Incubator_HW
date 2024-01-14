@@ -30,6 +30,7 @@ export class authService {
                 expirationDate: add(new Date(), {
                     minutes: 15
                 }),
+                resendingCode: new Date(),
                 isConfirmed: false
             }
         }
@@ -58,12 +59,21 @@ export class authService {
         let user = await authQueryRepository.findByLoginOrEmail(email)
         if (!user) return false
         if (user.emailConfirmation!.isConfirmed) return false;
+        //if (user.emailConfirmation!.resendingCode > new Date) return false
 
-        const newConfirmationCode =  uuidv4()
+        const newConfirmationCode = uuidv4()
+        const newExpirationDate = add(new Date(), {
+            minutes: 15
+        })
 
-        let result = await authRepository.newConfirmationCode(user._id, newConfirmationCode)
+        let result = await authRepository.newConfirmationCode(user._id, newExpirationDate, newConfirmationCode)
 
-        await emailAdapter.sendNewCode(user, newConfirmationCode)
+        try {
+            await emailAdapter.sendNewCode(user, newConfirmationCode)
+        } catch (error) {
+            console.error(error)
+            return false
+        }
 
         return result
     }

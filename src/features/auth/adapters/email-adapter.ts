@@ -38,7 +38,8 @@ export const emailAdapter = {
             subject: "Confirmation Code", // Subject line
             html: ' <h1>Thanks for your registration</h1>\n' +
                 ' <p>To finish registration please follow the link below:\n' +
-                `     <a href=\`https://somesite.com/confirm-email?code=${newUser.emailConfirmation?.confirmationCode}\`>complete registration</a>\n` +
+                `${newUser.emailConfirmation?.confirmationCode}`+
+                `     <a href=\'https://somesite.com/confirm-email?code=${newUser.emailConfirmation?.confirmationCode}\'>complete registration</a>` +
                 ' </p>', // html body
         });
         return info
@@ -58,9 +59,10 @@ export const emailAdapter = {
             from: "Vlad Zasko <uladzislauzasko@gmail.com>",
             to: user.accountData.email,
             subject: "Confirmation Code", // Subject line
-            html: ' <h1>Thanks for your registration</h1>\n' +
-                ' <p>To finish registration please follow the link below:\n' +
-                `     <a href=\`https://somesite.com/confirm-email?code=${newCode}\`>complete registration</a>\n` +
+            html: ' <h1>new code</h1>\n' +
+                ' <p>new code:\n' +
+                `${newCode}`+
+                `     <a href=\'https://somesite.com/confirm-email?code=${newCode}\'>complete registration</a>\n` +
                 ' </p>', // html body
         });
         return info

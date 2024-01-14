@@ -25,6 +25,7 @@ export const authUsersRoutes = () => {
         const token = await jwtService.createJWT(user)
 
         res.status(HTTP_STATUSES.OK_200).send(token)
+        return
     })
     router.get('/me', authTokenMiddleware,
         async (req: Request,
@@ -36,7 +37,9 @@ export const authUsersRoutes = () => {
             }
 
             res.status(HTTP_STATUSES.OK_200).send(success)
+            return
         })
+
     router.post('/registration', authRegistrationValidator(), async (req: Request, res: Response) => {
 
         const createData = {
@@ -46,16 +49,16 @@ export const authUsersRoutes = () => {
         }
         const newUser = await authService.createUser(createData)
         if (newUser) {
-            res.status(204).send()
+            res.sendStatus(204)
         } else {
-            res.status(400).send({})
+            res.sendStatus(400)
         }
     })
     router.post('/registration-confirmation',authConfirmationValidator(), async (req: Request, res: Response) => {
 
         const result = await authService.confirmEmail(req.body.code)
         if (result) {
-            res.status(204).send()
+            res.sendStatus(204)
         } else {
             res.sendStatus(400)
         }
@@ -65,9 +68,9 @@ export const authUsersRoutes = () => {
 
             const result = await authService.resendingConfirmEmail(req.body.email)
             if (result) {
-                res.status(204).send()
+                res.sendStatus(204)
             } else {
-                res.sendStatus(400).send(ERRORS_MESSAGES.AUTH_LOGIN_OR_EMAIL)
+                res.sendStatus(400)
             }
         })
     return router;
