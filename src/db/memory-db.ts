@@ -2,6 +2,9 @@ import {VideoType} from "./types/videos.types";
 import {BlogType} from "./types/blogs.types";
 import {PostType} from "./types/posts.types";
 import {UserType} from "./types/users.types";
+import {InvalidTokenType} from "./types/token.types";
+
+//export const blackList: InvalidTokenType = []
 
 export type DBType = {
     videos: VideoType[]

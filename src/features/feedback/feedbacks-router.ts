@@ -8,7 +8,7 @@ import {URIParamsPostIdModel} from "../posts/models/URIParamsPostIdModule";
 import {ObjectId} from "mongodb";
 import {feedbacksQueryRepository} from "./repositories/feedback-query-repository";
 import {FeedbackViewModel} from "./models/FeedbackViewModel";
-import {authTokenMiddleware} from "../../middlewares/auth/auth-token-middleware";
+import {authAccessTokenMiddleware} from "../../middlewares/auth/auth-accessToken-middleware";
 import {commentValidation} from "./validator/feedback-validator";
 import {URIParamsFeedbackIdModule} from "./models/URIParamsFeedbackIdModule";
 import {UpdateFeedbackModuleModel} from "./models/UpdateFeedbackModule";
@@ -37,7 +37,7 @@ export const getFeedbacksRoutes = () => {
     })
 
     router.put('/:id',
-        authTokenMiddleware, commentValidation(),
+        authAccessTokenMiddleware, commentValidation(),
         async (req: RequestWithParamsAndBody<URIParamsFeedbackIdModule, UpdateFeedbackModuleModel>,
                res: Response) => {
             const id = req.params.id
@@ -73,7 +73,7 @@ export const getFeedbacksRoutes = () => {
             res.sendStatus(HTTP_STATUSES.NO_CONTENT_204)
 
         })
-    router.delete('/:id', authTokenMiddleware,
+    router.delete('/:id', authAccessTokenMiddleware,
         async (req: RequestWithParams<URIParamsFeedbackIdModule>,
                res) => {
             const id = req.params.id

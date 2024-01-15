@@ -1,4 +1,4 @@
-import {usersAuthCollection, usersCollection} from "../../../db/db";
+import {usersCollection} from "../../../db/db";
 import {ObjectId} from "mongodb";
 import {CreateAuthUserPassModel} from "../models/input/CreateAuthUserModel";
 import {UsersAuthViewModel} from "../models/output/UsersViewModel";
@@ -21,11 +21,7 @@ export class authRepository {
             .updateOne({_id}, {$set: {'emailConfirmation.isConfirmed':true}})
         return result.modifiedCount === 1
     }
-    // static async newConfirmationCode( _id: ObjectId,code : string){
-    //     let result = await usersCollection
-    //         .updateOne({_id}, {$set: {'emailConfirmation.confirmationCode':code}})
-    //     return result.modifiedCount === 1
-    // }
+
     static async newConfirmationCode( _id: ObjectId,data : Date, newConfirmationCode: string){
         let result = await usersCollection
             .updateOne({_id}, {$set:

@@ -5,6 +5,7 @@ import {VideoDBType} from "./types/videos.types";
 import {UserAuthDBType, UserDBType} from "./types/users.types";
 import {settings} from "../../settings";
 import {FeedbacksDBType} from "./types/feedbacks.types";
+import {InvalidTokenType} from "./types/token.types";
 
 const mongoURI = settings.MONGO_URI
 export const client = new MongoClient(mongoURI)
@@ -14,6 +15,7 @@ export const postsCollection = db.collection<PostDBType>("posts");
 export const feedbacksCollection = db.collection<FeedbacksDBType>("feedbacks");
 export const usersCollection = db.collection<UserAuthDBType>("users");
 export const usersAuthCollection = db.collection<UserAuthDBType>("usersAuth");
+export const invalidTokenCollection = db.collection<InvalidTokenType>("invalidToken");
 
 
 export const videosCollection = db.collection<VideoDBType>("videos");

@@ -6,11 +6,13 @@ import {getPostsRoutes} from "./features/posts/posts.router";
 import {getUsersRoutes} from "./features/users/users.router";
 import {authUsersRoutes} from "./features/auth/auth-router";
 import {getFeedbacksRoutes} from "./features/feedback/feedbacks-router";
+import cookieParser from "cookie-parser";
 
 export const app = express()
 export const jsonBodyMiddleWare = express.json()
 
 app.use(jsonBodyMiddleWare)
+app.use(cookieParser())
 
 //app.use(RouterPaths.videos, getVideosRoutes(memoryDb))
 app.use(RouterPaths.blogs, getBlogsRoutes())

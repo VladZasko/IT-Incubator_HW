@@ -2,10 +2,12 @@ import {Response, Request, NextFunction} from "express";
 import {HTTP_STATUSES} from "../../utils/utils";
 import {userQueryRepository} from "../../features/users/repositories/user-query-repository";
 import {jwtService} from "../../features/auth/application/jwt-service";
+import jwt from "jsonwebtoken";
+import {settings} from "../../../settings";
 
 
 
-export const authTokenMiddleware = async (req: Request, res: Response, next: NextFunction)=> {
+export const authAccessTokenMiddleware = async (req: Request, res: Response, next: NextFunction)=> {
     const auth = req.headers['authorization']
 
     if(!auth) {
@@ -27,8 +29,15 @@ export const authTokenMiddleware = async (req: Request, res: Response, next: Nex
         return;
     }
 
-    const userId = await jwtService.getUserIdByToken(token)
-    if (userId) {
+    try {
+        jwt.verify(token, settings.JWT_SECRET)
+    } catch (error) {
+        res.sendStatus(HTTP_STATUSES.UNAUTHORIZED_401)
+        return
+    }
+
+    const userId = await jwtService.getUserIdByAccessToken(token)
+    if (userId !== null) {
         req.user = await userQueryRepository.getUserById(userId)
         next()
     }

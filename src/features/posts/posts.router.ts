@@ -18,7 +18,7 @@ import {ObjectId} from "mongodb";
 import {blogQueryRepository} from "../blogs/repositories/blog-query-repository";
 import {postQueryRepository} from "./repositories/post-query-repository";
 import {postService} from "./domain/post-service";
-import {authTokenMiddleware} from "../../middlewares/auth/auth-token-middleware";
+import {authAccessTokenMiddleware} from "../../middlewares/auth/auth-accessToken-middleware";
 import {commentValidation} from "../feedback/validator/feedback-validator";
 import {CreateFeedbackModel} from "../feedback/models/CreateFeedbackModel";
 import {userQueryRepository} from "../users/repositories/user-query-repository";
@@ -103,7 +103,7 @@ export const getPostsRoutes = () => {
     })
 
     router.post('/:id/comments',
-        authTokenMiddleware, commentValidation(),
+        authAccessTokenMiddleware, commentValidation(),
         async (
             req:RequestWithParamsAndBody<URIParamsPostIdModel,CreateFeedbackModel>,
             res: Response) => {
