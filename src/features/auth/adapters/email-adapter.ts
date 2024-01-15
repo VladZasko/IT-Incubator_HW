@@ -42,7 +42,7 @@ export const emailAdapter = {
                 `     <a href=\'https://somesite.com/confirm-email?code=${newUser.emailConfirmation?.confirmationCode}\'>complete registration</a>` +
                 ' </p>', // html body
         });
-        return info
+        return true
     },
     async sendNewCode(user: UserAuthDBType, newCode: string) {
         const transport = nodemailer.createTransport({

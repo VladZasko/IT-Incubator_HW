@@ -9,9 +9,9 @@ import {errors} from "../../../utils/error";
 
 
 export const usersTestManager = {
-    async createUser(data: CreateUserModel,
-                     expectedStatusCode: HttpStatusType = HTTP_STATUSES.CREATED_201,
-                     expectedErrorsMessages?: ErrorMessage) {
+    async createUserAdmin(data: CreateUserModel,
+                          expectedStatusCode: HttpStatusType = HTTP_STATUSES.CREATED_201,
+                          expectedErrorsMessages?: ErrorMessage) {
 
         const response = await request(app)
             .post(RouterPaths.users)
@@ -36,7 +36,7 @@ export const usersTestManager = {
         return {response: response, createdEntity: createdEntity};
     },
 
-    async createUsers(data: CreateUserModel) {
+    async createUsersAdmin(data: CreateUserModel) {
 
         const users = []
 
@@ -46,12 +46,13 @@ export const usersTestManager = {
                 email: `newemail${i}@gmail.com`,
                 password: data.password
             }
-            const result = await usersTestManager.createUser(dataUsers)
+            const result = await usersTestManager.createUserAdmin(dataUsers)
 
             users.unshift(result.createdEntity)
         }
 
         return users;
-    }
+    },
+
 }
 

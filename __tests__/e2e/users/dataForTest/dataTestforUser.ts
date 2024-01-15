@@ -1,7 +1,7 @@
 
 export const dataTestUserCreate01 = {
     login: "NewLog",
-    email: "newemail@gmail.com",
+    email: "vlad.zasko.10b@gmail.com",
     password: 'Qwerty123'
 }
 export const dataTestUserCreate02 = {

@@ -49,7 +49,7 @@ describe('/auth', () => {
     })
     it('should return 401 incorrect password', async () => {
 
-        await usersTestManager.createUser(dataTestUserCreate01)
+        await usersTestManager.createUserAdmin(dataTestUserCreate01)
 
         await getRequest()
             .post(`${RouterPaths.auth}/login`)
@@ -73,7 +73,7 @@ describe('/auth', () => {
 
     it('should return 200 and token', async () => {
 
-        const user = await usersTestManager.createUser(dataTestUserCreate01)
+        const user = await usersTestManager.createUserAdmin(dataTestUserCreate01)
 
         const token = await authTestManager.createToken(dataTestUserAuth)
 
@@ -91,7 +91,7 @@ describe('/auth', () => {
 
     it('should return 401 with Basic authorization ', async () => {
 
-        await usersTestManager.createUser(dataTestUserCreate01)
+        await usersTestManager.createUserAdmin(dataTestUserCreate01)
 
         const token = await authTestManager.createToken(dataTestUserAuth)
 
@@ -107,6 +107,54 @@ describe('/auth', () => {
             .set('authorization', `Bearer YWRtaW46cXdlcnR5`)
             .expect(HTTP_STATUSES.UNAUTHORIZED_401)
     })
+
+    it('should return 204 email registration', async () => {
+
+        await authTestManager.userEmailRegistration(dataTestUserCreate01)
+
+    })
+
+    it('should return 400 user with the given email already exists', async () => {
+
+        await authTestManager.userEmailRegistration(dataTestUserCreate01)
+
+        await authTestManager
+            .userEmailRegistration(
+                dataTestUserCreate01,
+                HTTP_STATUSES.BAD_REQUEST_400,
+                [
+                    ERRORS_MESSAGES.USER_LOGIN,
+                    ERRORS_MESSAGES.USER_EMAIL
+                ]
+            )
+
+    })
+
+    it('should return 400  confirmation code is incorrect', async () => {
+
+        const user = await authTestManager.userEmailRegistration(dataTestUserCreate01)
+
+        const data = {
+            ...user.createEntity!,
+            emailConfirmation: {
+                ...user.createEntity!.emailConfirmation!,
+                confirmationCode: " 123"
+            }
+        }
+        await authTestManager.userEmailConfirmation(
+            data,
+            HTTP_STATUSES.BAD_REQUEST_400,
+            [ERRORS_MESSAGES.AUTH_CODE]
+        )
+    })
+
+    it('should return 204 email was verified. Account was activated', async () => {
+
+        const user = await authTestManager.userEmailRegistration(dataTestUserCreate01)
+
+        await authTestManager.userEmailConfirmation(user.createEntity!)
+    })
+
 })
 
 

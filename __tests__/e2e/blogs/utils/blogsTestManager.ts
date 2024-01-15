@@ -38,8 +38,7 @@ export const blogsTestManager = {
         return {response: response, createdEntity: createdEntity};
     },
 
-    async createBlogs(data: CreateBlogServiceModel,
-    ) {
+    async createBlogs(data: CreateBlogServiceModel) {
 
         const blogs = []
 

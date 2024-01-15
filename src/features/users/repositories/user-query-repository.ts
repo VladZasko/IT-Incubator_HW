@@ -18,23 +18,23 @@ export class userQueryRepository {
 
         if(searchLoginTerm){
             filter = {
-                login: {$regex: searchLoginTerm, $options: 'i'}
+                'accountData.login': {$regex: searchLoginTerm, $options: 'i'}
             }
         }
         if (searchEmailTerm){
             filter = {
-                email: {$regex: searchEmailTerm, $options: 'i'}
+                'accountData.email': {$regex: searchEmailTerm, $options: 'i'}
             }
         }
         if (searchLoginTerm && searchEmailTerm){
             filter = {$or:
-                    [{email:{$regex: searchEmailTerm, $options: 'i'}},
-                        {login: {$regex: searchLoginTerm, $options: 'i'}}]}
+                    [{'accountData.email':{$regex: searchEmailTerm, $options: 'i'}},
+                        {'accountData.login': {$regex: searchLoginTerm, $options: 'i'}}]}
         }
 
         const users = await usersCollection
             .find(filter)
-            .sort(sortBy, sortDirection)
+            .sort(`accountData.${sortBy}`, sortDirection)
             .skip((pageNumber-1)* +pageSize)
             .limit(+pageSize)
             .toArray()

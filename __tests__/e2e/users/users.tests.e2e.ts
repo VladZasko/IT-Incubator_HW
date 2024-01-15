@@ -52,10 +52,10 @@ describe('/user', () => {
             ...dataTestUserCreate01,
             login: incorrectUserData.emptyLogin
         }
-        const error: ErrorMessage = [ERRORS_MESSAGES.POST_LOGIN]
+        const error: ErrorMessage = [ERRORS_MESSAGES.USER_LOGIN]
 
         await usersTestManager
-            .createUser(data, HTTP_STATUSES.BAD_REQUEST_400, error)
+            .createUserAdmin(data, HTTP_STATUSES.BAD_REQUEST_400, error)
 
         await request(app)
             .get(RouterPaths.users)
@@ -68,10 +68,10 @@ describe('/user', () => {
             ...dataTestUserCreate01,
             login: incorrectUserData.tooLongLogin
         }
-        const error: ErrorMessage = [ERRORS_MESSAGES.POST_LOGIN]
+        const error: ErrorMessage = [ERRORS_MESSAGES.USER_LOGIN]
 
         await usersTestManager
-            .createUser(data, HTTP_STATUSES.BAD_REQUEST_400, error)
+            .createUserAdmin(data, HTTP_STATUSES.BAD_REQUEST_400, error)
 
         await request(app)
             .get(RouterPaths.users)
@@ -84,10 +84,10 @@ describe('/user', () => {
             ...dataTestUserCreate01,
             email: incorrectUserData.emptyEmail
         }
-        const error: ErrorMessage = [ERRORS_MESSAGES.POST_EMAIL]
+        const error: ErrorMessage = [ERRORS_MESSAGES.USER_EMAIL]
 
         await usersTestManager
-            .createUser(data, HTTP_STATUSES.BAD_REQUEST_400, error)
+            .createUserAdmin(data, HTTP_STATUSES.BAD_REQUEST_400, error)
 
         await request(app)
             .get(RouterPaths.users)
@@ -100,10 +100,10 @@ describe('/user', () => {
             ...dataTestUserCreate01,
             email: incorrectUserData.incorrectEmail
         }
-        const error: ErrorMessage = [ERRORS_MESSAGES.POST_EMAIL]
+        const error: ErrorMessage = [ERRORS_MESSAGES.USER_EMAIL]
 
         await usersTestManager
-            .createUser(data, HTTP_STATUSES.BAD_REQUEST_400, error)
+            .createUserAdmin(data, HTTP_STATUSES.BAD_REQUEST_400, error)
 
         await request(app)
             .get(RouterPaths.users)
@@ -116,10 +116,10 @@ describe('/user', () => {
             ...dataTestUserCreate01,
             password: incorrectUserData.emptyPassword
         }
-        const error: ErrorMessage = [ERRORS_MESSAGES.POST_PASSWORD]
+        const error: ErrorMessage = [ERRORS_MESSAGES.USER_PASSWORD]
 
         await usersTestManager
-            .createUser(data, HTTP_STATUSES.BAD_REQUEST_400, error)
+            .createUserAdmin(data, HTTP_STATUSES.BAD_REQUEST_400, error)
 
         await request(app)
             .get(RouterPaths.users)
@@ -132,10 +132,10 @@ describe('/user', () => {
             ...dataTestUserCreate01,
             password: incorrectUserData.tooLongPassword
         }
-        const error: ErrorMessage = [ERRORS_MESSAGES.POST_PASSWORD]
+        const error: ErrorMessage = [ERRORS_MESSAGES.USER_PASSWORD]
 
         await usersTestManager
-            .createUser(data, HTTP_STATUSES.BAD_REQUEST_400, error)
+            .createUserAdmin(data, HTTP_STATUSES.BAD_REQUEST_400, error)
 
         await request(app)
             .get(RouterPaths.users)
@@ -148,10 +148,10 @@ describe('/user', () => {
             ...dataTestUserCreate01,
             password: incorrectUserData.incorrectPassword
         }
-        const error: ErrorMessage = [ERRORS_MESSAGES.POST_PASSWORD]
+        const error: ErrorMessage = [ERRORS_MESSAGES.USER_PASSWORD]
 
         await usersTestManager
-            .createUser(data, HTTP_STATUSES.BAD_REQUEST_400, error)
+            .createUserAdmin(data, HTTP_STATUSES.BAD_REQUEST_400, error)
 
         await request(app)
             .get(RouterPaths.users)
@@ -167,13 +167,13 @@ describe('/user', () => {
             password: incorrectUserData.incorrectPassword
         }
         const error: ErrorMessage = [
-            ERRORS_MESSAGES.POST_LOGIN,
-            ERRORS_MESSAGES.POST_PASSWORD,
-            ERRORS_MESSAGES.POST_EMAIL
+            ERRORS_MESSAGES.USER_LOGIN,
+            ERRORS_MESSAGES.USER_PASSWORD,
+            ERRORS_MESSAGES.USER_EMAIL
         ]
 
         await usersTestManager
-            .createUser(data, HTTP_STATUSES.BAD_REQUEST_400, error)
+            .createUserAdmin(data, HTTP_STATUSES.BAD_REQUEST_400, error)
 
         await request(app)
             .get(RouterPaths.users)
@@ -183,7 +183,7 @@ describe('/user', () => {
 
     it(`should create user with correct input data`, async () => {
 
-        const user = await usersTestManager.createUser(dataTestUserCreate01)
+        const user = await usersTestManager.createUserAdmin(dataTestUserCreate01)
 
         await request(app)
             .get(RouterPaths.users)
@@ -193,7 +193,7 @@ describe('/user', () => {
     })
 
     it('should return page 3 and page size 3', async () => {
-        const users = await usersTestManager.createUsers(dataTestUserCreate01)
+        const users = await usersTestManager.createUsersAdmin(dataTestUserCreate01)
 
         await getRequest()
             .get(`${RouterPaths.users}/?pageSize=3&pageNumber=3`)
@@ -208,9 +208,9 @@ describe('/user', () => {
                 })
     })
 
-    it('should return posts "asc" ', async () => {
+    it('should return users "asc" ', async () => {
 
-        const users = await usersTestManager.createUsers(dataTestUserCreate01)
+        const users = await usersTestManager.createUsersAdmin(dataTestUserCreate01)
 
         await getRequest()
             .get(`${RouterPaths.users}/?pageSize=15&sortDirection=asc`)
@@ -227,7 +227,7 @@ describe('/user', () => {
 
     it('should return user with "og9" in login ', async () => {
 
-        const users = await usersTestManager.createUsers(dataTestUserCreate01)
+        const users = await usersTestManager.createUsersAdmin(dataTestUserCreate01)
 
         await getRequest()
             .get(`${RouterPaths.users}/?searchLoginTerm=og9`)
@@ -244,7 +244,7 @@ describe('/user', () => {
 
     it('should return user with "il8" in email ', async () => {
 
-        const users = await usersTestManager.createUsers(dataTestUserCreate01)
+        const users = await usersTestManager.createUsersAdmin(dataTestUserCreate01)
 
         await getRequest()
             .get(`${RouterPaths.users}/?searchEmailTerm=il8`)
@@ -262,7 +262,7 @@ describe('/user', () => {
 
     it(`shouldn't delete  user UNAUTHORIZED`, async () => {
 
-        const user = await usersTestManager.createUser(dataTestUserCreate01)
+        const user = await usersTestManager.createUserAdmin(dataTestUserCreate01)
 
         await request(app)
             .delete(`${RouterPaths.users}/${user.createdEntity.id}`)
@@ -279,7 +279,7 @@ describe('/user', () => {
 
     it(`should delete both user`, async () => {
 
-        const user = await usersTestManager.createUser(dataTestUserCreate01)
+        const user = await usersTestManager.createUserAdmin(dataTestUserCreate01)
 
         await request(app)
             .delete(`${RouterPaths.users}/${user.createdEntity.id}`)

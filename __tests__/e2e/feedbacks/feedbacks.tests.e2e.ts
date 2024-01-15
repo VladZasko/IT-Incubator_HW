@@ -62,7 +62,7 @@ describe('/feedback tests', () => {
     })
 
     it('should return comment with id', async () => {
-        await usersTestManager.createUser(dataTestUserCreate01)
+        await usersTestManager.createUserAdmin(dataTestUserCreate01)
 
         const blog = await blogsTestManager.createBlog(dataTestBlogCreate01)
         const post = await postsTestManager.createPost({
@@ -111,7 +111,7 @@ describe('/feedback tests', () => {
     })
 
     it(`shouldn't create comment with incorrect type authorization`, async () => {
-        await usersTestManager.createUser(dataTestUserCreate01)
+        await usersTestManager.createUserAdmin(dataTestUserCreate01)
 
         const blog = await blogsTestManager.createBlog(dataTestBlogCreate01)
         const post = await postsTestManager.createPost({
@@ -141,7 +141,7 @@ describe('/feedback tests', () => {
 
     it(`shouldn't create comment with short content`, async () => {
 
-        await usersTestManager.createUser(dataTestUserCreate01)
+        await usersTestManager.createUserAdmin(dataTestUserCreate01)
 
         const blog = await blogsTestManager.createBlog(dataTestBlogCreate01)
         const post = await postsTestManager.createPost({
@@ -173,7 +173,7 @@ describe('/feedback tests', () => {
 
     it(`shouldn't create comment with long content`, async () => {
 
-        await usersTestManager.createUser(dataTestUserCreate01)
+        await usersTestManager.createUserAdmin(dataTestUserCreate01)
 
         const blog = await blogsTestManager.createBlog(dataTestBlogCreate01)
         const post = await postsTestManager.createPost({
@@ -205,7 +205,7 @@ describe('/feedback tests', () => {
 
     it(`should create comment`, async () => {
 
-        await usersTestManager.createUser(dataTestUserCreate01)
+        await usersTestManager.createUserAdmin(dataTestUserCreate01)
 
         const blog = await blogsTestManager.createBlog(dataTestBlogCreate01)
         const post = await postsTestManager.createPost({
@@ -233,7 +233,7 @@ describe('/feedback tests', () => {
     })
 
     it(`should create 12 users with correct input data`, async () => {
-        await usersTestManager.createUser(dataTestUserCreate01)
+        await usersTestManager.createUserAdmin(dataTestUserCreate01)
 
         const blog = await blogsTestManager.createBlog(dataTestBlogCreate01)
         const post = await postsTestManager.createPost({
@@ -261,7 +261,7 @@ describe('/feedback tests', () => {
     })
 
     it('should return page 3 and page size 3', async () => {
-        await usersTestManager.createUser(dataTestUserCreate01)
+        await usersTestManager.createUserAdmin(dataTestUserCreate01)
 
         const blog = await blogsTestManager.createBlog(dataTestBlogCreate01)
         const post = await postsTestManager.createPost({
@@ -289,7 +289,7 @@ describe('/feedback tests', () => {
     })
 
     it('should return posts "asc" ', async () => {
-        await usersTestManager.createUser(dataTestUserCreate01)
+        await usersTestManager.createUserAdmin(dataTestUserCreate01)
 
         const blog = await blogsTestManager.createBlog(dataTestBlogCreate01)
         const post = await postsTestManager.createPost({
@@ -319,7 +319,7 @@ describe('/feedback tests', () => {
 
     it(`shouldn't update comment with unauthorized`, async () => {
 
-        await usersTestManager.createUser(dataTestUserCreate01)
+        await usersTestManager.createUserAdmin(dataTestUserCreate01)
 
         const blog = await blogsTestManager.createBlog(dataTestBlogCreate01)
         const post = await postsTestManager.createPost({
@@ -354,7 +354,7 @@ describe('/feedback tests', () => {
 
     it(`shouldn't update comment with short content`, async () => {
 
-        await usersTestManager.createUser(dataTestUserCreate01)
+        await usersTestManager.createUserAdmin(dataTestUserCreate01)
 
         const blog = await blogsTestManager.createBlog(dataTestBlogCreate01)
         const post = await postsTestManager.createPost({
@@ -392,7 +392,7 @@ describe('/feedback tests', () => {
 
     it(`shouldn't update comment with loong content`, async () => {
 
-        await usersTestManager.createUser(dataTestUserCreate01)
+        await usersTestManager.createUserAdmin(dataTestUserCreate01)
 
         const blog = await blogsTestManager.createBlog(dataTestBlogCreate01)
         const post = await postsTestManager.createPost({
@@ -430,8 +430,8 @@ describe('/feedback tests', () => {
 
     it(`shouldn't update someone else's comment`, async () => {
 
-        await usersTestManager.createUser(dataTestUserCreate01)
-        await usersTestManager.createUser(dataTestUserCreate02)
+        await usersTestManager.createUserAdmin(dataTestUserCreate01)
+        await usersTestManager.createUserAdmin(dataTestUserCreate02)
 
         const blog = await blogsTestManager.createBlog(dataTestBlogCreate01)
         const post = await postsTestManager.createPost({
@@ -467,7 +467,7 @@ describe('/feedback tests', () => {
 
     it(`should update comment`, async () => {
 
-        await usersTestManager.createUser(dataTestUserCreate01)
+        await usersTestManager.createUserAdmin(dataTestUserCreate01)
 
         const blog = await blogsTestManager.createBlog(dataTestBlogCreate01)
         const post = await postsTestManager.createPost({
@@ -506,7 +506,7 @@ describe('/feedback tests', () => {
 
     it(`shouldn't delete comment with unauthorized`, async () => {
 
-        await usersTestManager.createUser(dataTestUserCreate01)
+        await usersTestManager.createUserAdmin(dataTestUserCreate01)
 
         const blog = await blogsTestManager.createBlog(dataTestBlogCreate01)
         const post = await postsTestManager.createPost({
@@ -540,7 +540,7 @@ describe('/feedback tests', () => {
 
     it(`shouldn't delete, should return 404 fot not existing comment`, async () => {
 
-        await usersTestManager.createUser(dataTestUserCreate01)
+        await usersTestManager.createUserAdmin(dataTestUserCreate01)
 
         const blog = await blogsTestManager.createBlog(dataTestBlogCreate01)
         const post = await postsTestManager.createPost({
@@ -574,8 +574,8 @@ describe('/feedback tests', () => {
 
     it(`shouldn't delete someone else's comment`, async () => {
 
-        await usersTestManager.createUser(dataTestUserCreate01)
-        await usersTestManager.createUser(dataTestUserCreate02)
+        await usersTestManager.createUserAdmin(dataTestUserCreate01)
+        await usersTestManager.createUserAdmin(dataTestUserCreate02)
 
         const blog = await blogsTestManager.createBlog(dataTestBlogCreate01)
         const post = await postsTestManager.createPost({
@@ -611,7 +611,7 @@ describe('/feedback tests', () => {
 
     it(`should delete comment`, async () => {
 
-        await usersTestManager.createUser(dataTestUserCreate01)
+        await usersTestManager.createUserAdmin(dataTestUserCreate01)
 
         const blog = await blogsTestManager.createBlog(dataTestBlogCreate01)
         const post = await postsTestManager.createPost({
