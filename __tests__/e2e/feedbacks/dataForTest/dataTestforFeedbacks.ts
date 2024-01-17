@@ -3,11 +3,6 @@ export const dataTestFeedbackCreate01 =
         content: "CreateComment01 CreateComment01 CreateComment01 CreateComment01"
     }
 
-export const dataTestFeedbackCreate02 =
-    {
-        content: "CreateComment02 CreateComment02 CreateComment02 CreateComment02"
-    }
-
 export const dataTestFeedbackUpdate =
     {
         content: "UpdateComment UpdateComment UpdateComment UpdateComment"

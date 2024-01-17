@@ -8,19 +8,3 @@ export const dataTestUserAuth2 = {
     loginOrEmail: dataTestUserCreate02.login,
     password: dataTestUserCreate02.password
 }
-
-
-
-
-
-
-export const incorrectUserData = {
-    emptyLogin: '',
-    tooLongLogin: 'LongLoginLongLogin',
-    emptyEmail: '',
-    incorrectEmail: 'incorrectemail',
-    emptyPassword: '',
-    tooLongPassword: 'LongPassword123456789',
-    incorrectPassword: '+$*пароль&?'
-
-}

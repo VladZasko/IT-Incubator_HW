@@ -8,15 +8,14 @@ import {authService} from "./domain/auth-service";
 import {authRegistrationValidator} from "./validator/auth-registration-validator";
 import {authConfirmationValidator} from "./validator/auth-confirmation-validator";
 import {authResendingValidator} from "./validator/auth-resending-validator";
-import jwt from "jsonwebtoken";
-import {settings} from "../../../settings";
-import {invalidTokenCollection, usersCollection} from "../../db/db";
+import {invalidTokenCollection} from "../../db/db";
 import {authRefreshTokenMiddleware} from "../../middlewares/auth/auth-refreshToken-middleware";
+import {LoginAuthUserModel} from "./models/input/LoginAuthUserModel";
 
 export const authUsersRoutes = () => {
     const router = express.Router()
 
-    router.post('/login', authValidation(), async (req: Request, res: Response) => {
+    router.post('/login', authValidation(), async (req: Request<LoginAuthUserModel>, res: Response) => {
 
         const user = await usersService.checkCredentials(req.body.loginOrEmail, req.body.password)
 
@@ -59,9 +58,9 @@ export const authUsersRoutes = () => {
 
         const result = await authService.confirmEmail(req.body.code)
         if (result) {
-            res.sendStatus(204)
+            res.sendStatus(HTTP_STATUSES.NO_CONTENT_204)
         } else {
-            res.sendStatus(400)
+            res.sendStatus(HTTP_STATUSES.BAD_REQUEST_400)
         }
     })
 
@@ -74,9 +73,9 @@ export const authUsersRoutes = () => {
         }
         const newUser = await authService.createUser(createData)
         if (newUser) {
-            res.sendStatus(204)
+            res.sendStatus(HTTP_STATUSES.NO_CONTENT_204)
         } else {
-            res.sendStatus(400)
+            res.sendStatus(HTTP_STATUSES.BAD_REQUEST_400)
         }
     })
 
@@ -85,9 +84,9 @@ export const authUsersRoutes = () => {
 
             const result = await authService.resendingConfirmEmail(req.body.email)
             if (result) {
-                res.sendStatus(204)
+                res.sendStatus(HTTP_STATUSES.NO_CONTENT_204)
             } else {
-                res.sendStatus(400)
+                res.sendStatus(HTTP_STATUSES.BAD_REQUEST_400)
             }
         })
 

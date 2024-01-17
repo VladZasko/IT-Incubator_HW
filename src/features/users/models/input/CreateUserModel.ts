@@ -1,24 +1,10 @@
 export type CreateUserModel = {
     /**
-     * blog name, description, websiteUrl
+     * user login, email, password
      */
     login: string,
     email: string,
     password: string
-}
-
-export type CreateUserPassModel = {
-    /**
-     * blog name, description, websiteUrl
-     */
-    accountData: {
-        login: string,
-        email: string,
-        createdAt: string,
-        passwordHash: string,
-        passwordSalt: string
-    }
-
 }
 
 

@@ -47,6 +47,7 @@ describe('/auth', () => {
             })
             .expect(HTTP_STATUSES.BAD_REQUEST_400, {errorsMessages: [ERRORS_MESSAGES.AUTH_PASSWORD]})
     })
+
     it('should return 401 incorrect password', async () => {
 
         await usersTestManager.createUserAdmin(dataTestUserCreate01)
@@ -71,24 +72,6 @@ describe('/auth', () => {
             .expect(HTTP_STATUSES.UNAUTHORIZED_401)
     })
 
-    it('should return 200 and token', async () => {
-
-        const user = await usersTestManager.createUserAdmin(dataTestUserCreate01)
-
-        const token = await authTestManager.createToken(dataTestUserAuth)
-
-        const responseData = {
-            email: user.createdEntity.email,
-            login: user.createdEntity.login,
-            userId: user.createdEntity.id
-        }
-
-        await getRequest()
-            .get(`${RouterPaths.auth}/me`)
-            .set('authorization', `Bearer ${token.createdEntity.accessToken}`)
-            .expect(HTTP_STATUSES.OK_200, responseData)
-    })
-
     it('should return 401 with Basic authorization ', async () => {
 
         await usersTestManager.createUserAdmin(dataTestUserCreate01)
@@ -108,10 +91,22 @@ describe('/auth', () => {
             .expect(HTTP_STATUSES.UNAUTHORIZED_401)
     })
 
-    it('should return 204 email registration', async () => {
+    it('should return 200 access token and refresh token', async () => {
 
-        await authTestManager.userEmailRegistration(dataTestUserCreate01)
+        const user = await usersTestManager.createUserAdmin(dataTestUserCreate01)
 
+        const token = await authTestManager.createToken(dataTestUserAuth)
+
+        const responseData = {
+            email: user.createdEntity.email,
+            login: user.createdEntity.login,
+            userId: user.createdEntity.id
+        }
+
+        await getRequest()
+            .get(`${RouterPaths.auth}/me`)
+            .set('authorization', `Bearer ${token.createdEntity.accessToken}`)
+            .expect(HTTP_STATUSES.OK_200, responseData)
     })
 
     it('should return 400 user with the given email already exists', async () => {
@@ -127,6 +122,12 @@ describe('/auth', () => {
                     ERRORS_MESSAGES.USER_EMAIL
                 ]
             )
+
+    })
+
+    it('should return 204 email registration', async () => {
+
+        await authTestManager.userEmailRegistration(dataTestUserCreate01)
 
     })
 
@@ -148,11 +149,54 @@ describe('/auth', () => {
         )
     })
 
+    it('should return 400 email has already been confirmed.', async () => {
+
+        const user = await authTestManager.userEmailRegistration(dataTestUserCreate01)
+
+        await authTestManager.userEmailConfirmation(user.createEntity!)
+
+        await authTestManager.userEmailConfirmation(
+            user.createEntity!,
+            HTTP_STATUSES.BAD_REQUEST_400,
+            [ERRORS_MESSAGES.AUTH_CODE])
+    })
+
     it('should return 204 email was verified. Account was activated', async () => {
 
         const user = await authTestManager.userEmailRegistration(dataTestUserCreate01)
 
         await authTestManager.userEmailConfirmation(user.createEntity!)
+    })
+
+    it('should return 204 email was verified. Account was activated', async () => {
+
+        const user = await authTestManager.userEmailRegistration(dataTestUserCreate01)
+
+        await authTestManager.userEmailConfirmation(user.createEntity!)
+    })
+
+    it('should return 400 with old code', async () => {
+
+        const user = await authTestManager.userEmailRegistration(dataTestUserCreate01)
+
+        await authTestManager.userEmailConfirmationResending(user.createEntity!)
+
+        await authTestManager.userEmailConfirmation(
+            user.createEntity!,
+            HTTP_STATUSES.BAD_REQUEST_400,
+            [
+                ERRORS_MESSAGES.AUTH_CODE
+            ]
+        )
+    })
+
+    it('should return 204 email resending.', async () => {
+
+        const user = await authTestManager.userEmailRegistration(dataTestUserCreate01)
+
+        const userNewCode = await authTestManager.userEmailConfirmationResending(user.createEntity!)
+
+        await authTestManager.userEmailConfirmation(userNewCode.createEntity!)
     })
 
 })

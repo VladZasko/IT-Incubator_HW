@@ -6,7 +6,7 @@ import bcrypt from 'bcrypt'
 import {userRepository} from "../repositories/user-repository";
 import {userQueryRepository} from "../repositories/user-query-repository";
 import {userDBMapper} from "../mappers/mappers";
-import {UserType} from "../../../db/types/users.types";
+import {UserAuthType} from "../../../db/types/users.types";
 
 export class usersService {
     static async createUser(createData: CreateUserModel): Promise<UsersViewModel> {
@@ -26,7 +26,7 @@ export class usersService {
         return await userRepository.createUser(newUser)
     }
 
-    static async checkCredentials(loginOrEmail: string, password: string): Promise<UserType | null> {
+    static async checkCredentials(loginOrEmail: string, password: string): Promise<UserAuthType | null> {
         const user = await userQueryRepository.findByLoginOrEmail(loginOrEmail)
         if (!user) {
             return null

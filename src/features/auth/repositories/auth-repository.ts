@@ -30,6 +30,7 @@ export class authRepository {
                         'emailConfirmation.expirationDate':data
                     }
             })
+
         return result.modifiedCount === 1
     }
     static async deleteUserById(id: string): Promise<boolean> {

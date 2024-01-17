@@ -1,4 +1,3 @@
-import {UserType} from "../../../db/types/users.types";
 import {settings} from "../../../../settings";
 import jwt from 'jsonwebtoken'
 

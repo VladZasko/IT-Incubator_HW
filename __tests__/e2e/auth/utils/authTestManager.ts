@@ -9,7 +9,7 @@ import {CreateUserModel} from "../../../../src/features/users/models/input/Creat
 import {emailAdapter} from "../../../../src/features/auth/adapters/email-adapter";
 import {userQueryRepository} from "../../../../src/features/users/repositories/user-query-repository";
 import {dataTestUserCreate01} from "../../users/dataForTest/dataTestforUser";
-import {UserAuthDBType, UserAuthType, UserType} from "../../../../src/db/types/users.types";
+import {UserAuthDBType} from "../../../../src/db/types/users.types";
 
 
 
@@ -80,5 +80,29 @@ export const authTestManager = {
         }
 
         return {response: response};
+    },
+    async userEmailConfirmationResending(data: UserAuthDBType,
+                                expectedStatusCode: HttpStatusType = HTTP_STATUSES.NO_CONTENT_204,
+                                expectedErrorsMessages?: ErrorMessage) {
+
+        jest.spyOn(emailAdapter, "sendNewCode").mockImplementation(() => Promise.resolve(true))
+
+        const response = await request(app)
+            .post(`${RouterPaths.auth}/registration-email-resending`)
+            .send({email:data.accountData.email})
+            .expect(expectedStatusCode)
+
+        if (expectedStatusCode === HTTP_STATUSES.BAD_REQUEST_400) {
+            await errors.errors(response.body, expectedErrorsMessages)
+        }
+
+        const userConfirmation = await userQueryRepository.findByLoginOrEmail(dataTestUserCreate01.email)
+
+        if(expectedStatusCode ===HTTP_STATUSES.NO_CONTENT_204) {
+            expect(userConfirmation!.accountData.login).toBe(data.accountData.login)
+            expect(userConfirmation!.emailConfirmation!.confirmationCode).not.toBe(data.emailConfirmation!.confirmationCode)
+        }
+
+        return {response: response, createEntity: userConfirmation};
     }
 }

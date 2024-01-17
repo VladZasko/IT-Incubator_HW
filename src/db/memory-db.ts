@@ -1,16 +1,14 @@
 import {VideoType} from "./types/videos.types";
 import {BlogType} from "./types/blogs.types";
 import {PostType} from "./types/posts.types";
-import {UserType} from "./types/users.types";
-import {InvalidTokenType} from "./types/token.types";
-
+import {UserAuthType} from "./types/users.types";
 //export const blackList: InvalidTokenType = []
 
 export type DBType = {
     videos: VideoType[]
     blogs: BlogType[]
     posts: PostType[]
-    users: UserType[]
+    users: UserAuthType[]
 }
 
 export const memoryDb: DBType = {
@@ -53,11 +51,13 @@ export const memoryDb: DBType = {
     users: [
         {
             id: "111111",
-            login: "SameLogin",
-            email: "SameMail",
-            createdAt: "2023-12-23T13:36:16.608Z",
-            passwordHash: "222",
-            passwordSalt: "222"
+            accountData: {
+                login: "SameLogin",
+                email: "SameMail",
+                createdAt: "2023-12-23T13:36:16.608Z",
+                passwordHash: "222",
+                passwordSalt: "222"
+            }
         }
     ]
 }

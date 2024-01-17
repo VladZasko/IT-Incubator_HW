@@ -10,16 +10,11 @@ export const dataTestUserCreate02 = {
     password: 'Qazwsx123'
 }
 
-
-
-
-
-
 export const incorrectUserData = {
     emptyLogin: '',
     tooLongLogin: 'LongLoginLongLogin',
     emptyEmail: '',
-    incorrectEmail: 'incorrectemail',
+    incorrectEmail: 'incorrectEmail',
     emptyPassword: '',
     tooLongPassword: 'LongPassword123456789',
     incorrectPassword: '+$*пароль&?'

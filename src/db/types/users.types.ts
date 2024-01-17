@@ -1,21 +1,3 @@
-
-export type UserType = {
-    id: string,
-    login: string,
-    email: string,
-    createdAt: string
-    passwordHash: string,
-    passwordSalt: string
-}
-
-export type UserDBType = {
-    login: string,
-    email: string,
-    createdAt: string,
-    passwordHash: string,
-    passwordSalt: string
-}
-
 export type UserAuthType = {
     id: string,
     accountData: {
@@ -25,7 +7,7 @@ export type UserAuthType = {
         passwordHash: string,
         passwordSalt: string
     }
-    emailConfirmation: {
+    emailConfirmation?: {
         confirmationCode: string,
         expirationDate: Date,
         isConfirmed: boolean

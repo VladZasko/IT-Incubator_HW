@@ -7,7 +7,7 @@ import { QueryUserModel} from "./models/input/QueryUserModule";
 import express, {Response} from "express";
 import {HTTP_STATUSES} from "../../utils/utils";
 import {URIParamsUserIdModel} from "./models/input/URIParamsUserIdModule";
-import {UsersViewModelGetAllBlogs} from "./models/output/UsersViewModel";
+import {UsersViewModel, UsersViewModelGetAllBlogs} from "./models/output/UsersViewModel";
 import {CreateUserModel} from "./models/input/CreateUserModel";
 import {userValidation} from "./validator/user-validator";
 import {userRepository} from "./repositories/user-repository";
@@ -22,9 +22,9 @@ import {userQueryRepository} from "./repositories/user-query-repository";
 export const getUsersRoutes = () => {
     const router = express.Router()
     router.get('/', authMiddleware, async (req: RequestWithQuery<QueryUserModel>,
-                        res: Response) => {
+                        res: Response<UsersViewModelGetAllBlogs>) => {
 
-        const sortData:QueryUserModel = {
+        const sortData : QueryUserModel = {
             searchLoginTerm: req.query.searchLoginTerm,
             searchEmailTerm: req.query.searchEmailTerm,
             sortBy: req.query.sortBy,
@@ -40,15 +40,15 @@ export const getUsersRoutes = () => {
 
     router.post('/', authMiddleware, userValidation(),
         async (req:RequestWithBody<CreateUserModel>,
-               res: Response) => {
+               res: Response<UsersViewModel>) => {
 
-        const createData = {
+        const createData : CreateUserModel = {
             login: req.body.login,
             email: req.body.email,
             password: req.body.password
         }
 
-        const newUser = await usersService.createUser(createData)
+        const newUser: UsersViewModel = await usersService.createUser(createData)
 
         res
             .status(HTTP_STATUSES.CREATED_201)

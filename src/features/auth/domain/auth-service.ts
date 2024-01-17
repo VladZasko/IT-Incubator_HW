@@ -51,15 +51,13 @@ export class authService {
         if (user.emailConfirmation!.confirmationCode !== code) return false;
         if (user.emailConfirmation!.expirationDate < new Date()) return false;
 
-        let result = await authRepository.updateConfirmation(user._id)
-        return result
+        return await authRepository.updateConfirmation(user._id)
     }
 
     static async resendingConfirmEmail(email: string): Promise<boolean> {
         let user = await authQueryRepository.findByLoginOrEmail(email)
         if (!user) return false
         if (user.emailConfirmation!.isConfirmed) return false;
-        //if (user.emailConfirmation!.resendingCode > new Date) return false
 
         const newConfirmationCode = uuidv4()
         const newExpirationDate = add(new Date(), {

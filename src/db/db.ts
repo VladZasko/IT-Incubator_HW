@@ -2,7 +2,7 @@ import {MongoClient} from "mongodb";
 import {BlogDBType} from "./types/blogs.types";
 import {PostDBType} from "./types/posts.types";
 import {VideoDBType} from "./types/videos.types";
-import {UserAuthDBType, UserDBType} from "./types/users.types";
+import {UserAuthDBType} from "./types/users.types";
 import {settings} from "../../settings";
 import {FeedbacksDBType} from "./types/feedbacks.types";
 import {InvalidTokenType} from "./types/token.types";
@@ -34,7 +34,7 @@ export const dbControl = {
 
         } catch {
             console.log("Can't connect to db")
-            //Ensurens that the client will close when you finish/error
+            //Ensures that the client will close when you finish/error
             await client.close();
         }
     },
@@ -43,18 +43,3 @@ export const dbControl = {
         console.log("Connection successful closed")
     }
 }
-// export async function runDb() {
-//     try {
-//         // Connect the client to the server
-//         await client.connect();
-//         // Establish and verify connection
-//         await client.db("blogs-hws").command({ping: 1});
-//         console.log(`Example app listening on port ${port}`)
-//         console.log("Connected successfully to mongo server");
-//
-//     } catch {
-//         console.log("Can't connect to db")
-//         //Ensurens that the client will close when you finish/error
-//         await client.close();
-//     }
-// }

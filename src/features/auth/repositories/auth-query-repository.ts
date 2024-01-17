@@ -1,8 +1,7 @@
-import {usersAuthCollection, usersCollection} from "../../../db/db";
+import {usersCollection} from "../../../db/db";
 import {ObjectId} from "mongodb";
-import {QueryUserModel} from "../../users/models/input/QueryUserModule";
 import {userAuthMapper} from "../mapper/mappers";
-import {UsersAuthViewModel, UsersAuthViewModelGetAllBlogs} from "../models/output/UsersViewModel";
+import {UsersAuthViewModel} from "../models/output/UsersViewModel";
 
 export class authQueryRepository {
     static async getUserById(id: string): Promise<UsersAuthViewModel | null> {
