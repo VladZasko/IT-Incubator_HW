@@ -8,12 +8,18 @@ import {authService} from "./domain/auth-service";
 import {authRegistrationValidator} from "./validator/auth-registration-validator";
 import {authConfirmationValidator} from "./validator/auth-confirmation-validator";
 import {authResendingValidator} from "./validator/auth-resending-validator";
-import {invalidTokenCollection} from "../../db/db";
+import {invalidTokenCollection, refreshTokensMetaCollection, usersAuthCollection} from "../../db/db";
 import {authRefreshTokenMiddleware} from "../../middlewares/auth/auth-refreshToken-middleware";
 import {LoginAuthUserModel} from "./models/input/LoginAuthUserModel";
+import {v4 as uuidv4} from "uuid";
+import {rateLimitMiddleware} from "../../middlewares/rate-limit/rate-limit-middleware";
+
+
 
 export const authUsersRoutes = () => {
     const router = express.Router()
+
+    router.use(rateLimitMiddleware)
 
     router.post('/login', authValidation(), async (req: Request<LoginAuthUserModel>, res: Response) => {
 
@@ -25,7 +31,18 @@ export const authUsersRoutes = () => {
         }
 
         const accessToken = await jwtService.createJWTAccessToken(user.id)
-        const refreshToken = await jwtService.createJWTRefreshToken(user.id)
+
+        const dataRefreshToken = {
+            issuedAt: new Date().toISOString(),
+            deviceId: uuidv4(),
+            userId: user.id,
+            ip: req.ip!,
+            deviseName: req.headers["user-agent"] ?? "Device"
+        }
+
+        const refreshToken = await jwtService.createJWTRefreshToken(dataRefreshToken)
+
+        await refreshTokensMetaCollection.insertOne({...dataRefreshToken})
 
         res
             .cookie('refreshToken', refreshToken, {httpOnly: true, secure: true})
@@ -37,12 +54,26 @@ export const authUsersRoutes = () => {
 
         const refreshToken = req.cookies.refreshToken
 
+        const dataRefreshToken = {
+            issuedAt: new Date().toISOString(),
+            deviceId: req.refreshTokenMeta!.deviceId,
+            userId: req.user!.id,
+            ip: req.ip!,
+            deviseName: req.headers["user-agent"] ?? "Device"
+        }
+
         try {
             const accessToken = await jwtService.createJWTAccessToken(req.user!.id);
-            const newRefreshToken = await jwtService.createJWTRefreshToken(req.user!.id)
-            const data = {blackList: refreshToken}
-
-            await invalidTokenCollection.insertOne({...data})
+            const newRefreshToken = await jwtService.createJWTRefreshToken(dataRefreshToken)
+            await refreshTokensMetaCollection.updateOne({deviceId:req.refreshTokenMeta!.deviceId}, {
+                $set:{
+                    issuedAt : dataRefreshToken.issuedAt,
+                    deviceId: dataRefreshToken.deviceId,
+                    userId: dataRefreshToken.userId,
+                    ip: dataRefreshToken.ip,
+                    deviseName: dataRefreshToken.deviseName
+                }
+            })
 
             res
                 .cookie('refreshToken', newRefreshToken, {httpOnly: true, secure: true})
@@ -92,14 +123,11 @@ export const authUsersRoutes = () => {
 
     router.post('/logout', authRefreshTokenMiddleware, async (req: Request, res: Response) => {
 
-        const refreshToken = req.cookies.refreshToken
-
-        const data = {
-            blackList: refreshToken
+        const foundBlog = await refreshTokensMetaCollection.deleteOne({deviceId: req.refreshTokenMeta!.deviceId})
+        if(!foundBlog) {
+            res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
+            return
         }
-
-        await invalidTokenCollection.insertOne({...data})
-
         res.sendStatus(HTTP_STATUSES.NO_CONTENT_204)
         return
     })

@@ -1,3 +1,5 @@
+import {RefreshTokensMetaDBType} from "./token.types";
+
 export type UserAuthType = {
     id: string,
     accountData: {
@@ -12,6 +14,7 @@ export type UserAuthType = {
         expirationDate: Date,
         isConfirmed: boolean
     }
+    deviceSessions?: Array<RefreshTokensMetaDBType>
 }
 export type UserAuthDBType = {
     accountData: {
@@ -26,5 +29,6 @@ export type UserAuthDBType = {
         expirationDate: Date,
         isConfirmed: boolean
     }
+    deviceSessions?: Array<RefreshTokensMetaDBType>
 }
 

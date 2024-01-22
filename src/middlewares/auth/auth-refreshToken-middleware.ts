@@ -4,11 +4,10 @@ import {userQueryRepository} from "../../features/users/repositories/user-query-
 import {jwtService} from "../../features/auth/application/jwt-service";
 import jwt from "jsonwebtoken";
 import {settings} from "../../../settings";
-import {invalidTokenCollection} from "../../db/db";
+import {refreshTokensMetaCollection} from "../../db/db";
 
 
-
-export const authRefreshTokenMiddleware = async (req: Request, res: Response, next: NextFunction)=> {
+export const authRefreshTokenMiddleware = async (req: Request, res: Response, next: NextFunction) => {
     const refreshToken = req.cookies.refreshToken
 
     if (!refreshToken) {
@@ -17,13 +16,13 @@ export const authRefreshTokenMiddleware = async (req: Request, res: Response, ne
             .send('Access Denied. No refresh token provided.');
     }
 
-    const checkBlackList = await invalidTokenCollection.findOne({ "blackList": { $regex: refreshToken} })
-
-    if (checkBlackList) {
-        return res
-            .status(HTTP_STATUSES.UNAUTHORIZED_401)
-            .send('refresh token is obsolete');
-    }
+    // const checkBlackList = await invalidTokenCollection.findOne({"blackList": {$regex: refreshToken}})
+    //
+    // if (checkBlackList) {
+    //     return res
+    //         .status(HTTP_STATUSES.UNAUTHORIZED_401)
+    //         .send('refresh token is obsolete');
+    // }
 
     try {
         jwt.verify(refreshToken, settings.JWT_SECRET)
@@ -32,10 +31,23 @@ export const authRefreshTokenMiddleware = async (req: Request, res: Response, ne
         return
     }
 
-    const userId = await jwtService.getUserIdByAccessToken(refreshToken)
-    if (userId !== null) {
-        req.user = await userQueryRepository.getUserById(userId)
+    const user = await jwtService.getUserIdByRefreshToken(refreshToken)
+    const refreshTokenMeta = await refreshTokensMetaCollection.findOne({deviceId: user.deviceId})
+
+    if (!refreshTokenMeta) {
+        res.sendStatus(HTTP_STATUSES.UNAUTHORIZED_401)
+        return
+    }
+    if (refreshTokenMeta?.issuedAt !== user.issuedAt) {
+        res.sendStatus(HTTP_STATUSES.UNAUTHORIZED_401)
+        return
+    }
+
+    if (refreshTokenMeta?.issuedAt === user.issuedAt) {
+        req.user = await userQueryRepository.getUserById(refreshTokenMeta!.userId)
+        req.refreshTokenMeta = refreshTokenMeta
         next()
+        return
     }
     res.status(HTTP_STATUSES.UNAUTHORIZED_401)
     return

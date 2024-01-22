@@ -1,4 +1,4 @@
-import {usersCollection} from "../../../db/db";
+import {usersAuthCollection} from "../../../db/db";
 import {ObjectId} from "mongodb";
 import {CreateAuthUserPassModel} from "../models/input/CreateAuthUserModel";
 import {UsersAuthViewModel} from "../models/output/UsersViewModel";
@@ -6,7 +6,7 @@ import {UsersAuthViewModel} from "../models/output/UsersViewModel";
 export class authRepository {
     static async createUser(createData : CreateAuthUserPassModel):Promise<UsersAuthViewModel> {
 
-        const user = await usersCollection.insertOne({...createData})
+        const user = await usersAuthCollection.insertOne({...createData})
 
         return {
             createdAt: createData.accountData.createdAt,
@@ -17,13 +17,13 @@ export class authRepository {
     }
 
     static async updateConfirmation(_id : ObjectId){
-        let result = await usersCollection
+        let result = await usersAuthCollection
             .updateOne({_id}, {$set: {'emailConfirmation.isConfirmed':true}})
         return result.modifiedCount === 1
     }
 
     static async newConfirmationCode( _id: ObjectId,data : Date, newConfirmationCode: string){
-        let result = await usersCollection
+        let result = await usersAuthCollection
             .updateOne({_id}, {$set:
                     {
                         'emailConfirmation.confirmationCode':newConfirmationCode,
@@ -34,7 +34,7 @@ export class authRepository {
         return result.modifiedCount === 1
     }
     static async deleteUserById(id: string): Promise<boolean> {
-        const foundUser = await usersCollection.deleteOne({_id:new ObjectId(id)})
+        const foundUser = await usersAuthCollection.deleteOne({_id:new ObjectId(id)})
 
         return !!foundUser.deletedCount
     }

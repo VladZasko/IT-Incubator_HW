@@ -1,8 +1,8 @@
 import {UsersViewModel, UsersViewModelGetAllBlogs} from "../models/output/UsersViewModel";
-import {usersCollection} from "../../../db/db";
 import {userMapper} from "../mappers/mappers";
 import {QueryUserModel} from "../models/input/QueryUserModule";
 import {ObjectId} from "mongodb";
+import {usersAuthCollection} from "../../../db/db";
 
 export class userQueryRepository {
     static async getAllUsers(sortData: QueryUserModel): Promise<UsersViewModelGetAllBlogs>{
@@ -32,14 +32,14 @@ export class userQueryRepository {
                         {'accountData.login': {$regex: searchLoginTerm, $options: 'i'}}]}
         }
 
-        const users = await usersCollection
+        const users = await usersAuthCollection
             .find(filter)
             .sort(`accountData.${sortBy}`, sortDirection)
             .skip((pageNumber-1)* +pageSize)
             .limit(+pageSize)
             .toArray()
 
-        const totalCount:number = await usersCollection.countDocuments(filter)
+        const totalCount:number = await usersAuthCollection.countDocuments(filter)
 
         const pagesCount:number = Math.ceil(totalCount/ +pageSize)
 
@@ -54,7 +54,7 @@ export class userQueryRepository {
 
     }
     static async getUserById(id: string): Promise<UsersViewModel | null> {
-        const user = await usersCollection.findOne({_id: new ObjectId(id)})
+        const user = await usersAuthCollection.findOne({_id: new ObjectId(id)})
 
         if (!user){
             return null
@@ -63,7 +63,7 @@ export class userQueryRepository {
         return userMapper(user)
     }
     static async findByLoginOrEmail(loginOrEmail: string) {
-        return await usersCollection
+        return await usersAuthCollection
             .findOne({$or: [{'accountData.email': loginOrEmail}, {'accountData.login': loginOrEmail}]})
     }
 }

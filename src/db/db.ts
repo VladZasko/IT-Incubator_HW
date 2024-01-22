@@ -5,7 +5,8 @@ import {VideoDBType} from "./types/videos.types";
 import {UserAuthDBType} from "./types/users.types";
 import {settings} from "../../settings";
 import {FeedbacksDBType} from "./types/feedbacks.types";
-import {InvalidTokenType} from "./types/token.types";
+import {InvalidTokenType, RefreshTokensMetaDBType} from "./types/token.types";
+import {RateLimiteBDtype, RateLimiteType} from "./types/reqLimite.types";
 
 const mongoURI = settings.MONGO_URI
 export const client = new MongoClient(mongoURI)
@@ -13,9 +14,12 @@ export const db = client.db('blogs-hws');
 export const blogsCollection = db.collection<BlogDBType>("blogs");
 export const postsCollection = db.collection<PostDBType>("posts");
 export const feedbacksCollection = db.collection<FeedbacksDBType>("feedbacks");
-export const usersCollection = db.collection<UserAuthDBType>("users");
+//export const usersCollection = db.collection<UserAuthDBType>("users");
 export const usersAuthCollection = db.collection<UserAuthDBType>("usersAuth");
 export const invalidTokenCollection = db.collection<InvalidTokenType>("invalidToken");
+export const refreshTokensMetaCollection = db.collection<RefreshTokensMetaDBType>("refreshToken");
+export const rateLimitType = db.collection<RateLimiteType>("rateLimit");
+
 
 
 export const videosCollection = db.collection<VideoDBType>("videos");

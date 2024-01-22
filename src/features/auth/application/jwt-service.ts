@@ -12,11 +12,16 @@ export const jwtService = {
         }
     },
 
-    async createJWTRefreshToken(userId: string) {
+    async createJWTRefreshToken(dataRefreshToken: any) {
         const refreshToken = jwt.sign(
-            {id: userId},
+            {
+                deviceId: dataRefreshToken.deviceId,
+                id: dataRefreshToken.userId,
+                issuedAt: dataRefreshToken.issuedAt
+            },
             settings.JWT_SECRET,
             {expiresIn: 20})
+
         return refreshToken.toString()
 
     },
@@ -25,6 +30,14 @@ export const jwtService = {
         try {
             const result: any = jwt.verify(token, settings.JWT_SECRET)
             return result.id
+        } catch (error) {
+            return null
+        }
+    },
+    async getUserIdByRefreshToken(token: string) {
+        try {
+            const result: any = jwt.verify(token, settings.JWT_SECRET)
+            return result
         } catch (error) {
             return null
         }
