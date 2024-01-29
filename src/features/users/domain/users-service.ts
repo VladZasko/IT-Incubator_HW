@@ -6,7 +6,7 @@ import {userRepository} from "../repositories/user-repository";
 import {userQueryRepository} from "../repositories/user-query-repository";
 import {userDBMapper} from "../mappers/mappers";
 import {UserAuthType} from "../../../db/types/users.types";
-import {usersAuthCollection} from "../../../db/db";
+import {UserAuthModel} from "../../../db/db";
 
 export class usersService {
     static async createUser(createData: CreateUserModel): Promise<UsersViewModel> {
@@ -47,7 +47,7 @@ export class usersService {
     }
 
     static async deleteUserById(id: string): Promise<boolean> {
-        const foundUser = await usersAuthCollection.deleteOne({_id: new ObjectId(id)})
+        const foundUser = await UserAuthModel.deleteOne({_id: new ObjectId(id)})
 
         return !!foundUser.deletedCount
     }

@@ -2,7 +2,7 @@ import {UsersViewModel, UsersViewModelGetAllBlogs} from "../models/output/UsersV
 import {userMapper} from "../mappers/mappers";
 import {QueryUserModel} from "../models/input/QueryUserModule";
 import {ObjectId} from "mongodb";
-import {usersAuthCollection} from "../../../db/db";
+import {UserAuthModel} from "../../../db/db";
 
 export class userQueryRepository {
     static async getAllUsers(sortData: QueryUserModel): Promise<UsersViewModelGetAllBlogs>{
@@ -14,7 +14,6 @@ export class userQueryRepository {
         const pageSize =  sortData.pageSize ?? 10
 
         let filter = {}
-
 
         if(searchLoginTerm){
             filter = {
@@ -32,17 +31,16 @@ export class userQueryRepository {
                         {'accountData.login': {$regex: searchLoginTerm, $options: 'i'}}]}
         }
 
-        const users = await usersAuthCollection
+        const users = await UserAuthModel
             .find(filter)
-            .sort(`accountData.${sortBy}`, sortDirection)
+            .sort([[sortBy,sortDirection]])
             .skip((pageNumber-1)* +pageSize)
             .limit(+pageSize)
-            .toArray()
+            .lean()
 
-        const totalCount:number = await usersAuthCollection.countDocuments(filter)
+        const totalCount:number = await UserAuthModel.countDocuments(filter)
 
         const pagesCount:number = Math.ceil(totalCount/ +pageSize)
-
 
         return {
             pagesCount,
@@ -54,7 +52,7 @@ export class userQueryRepository {
 
     }
     static async getUserById(id: string): Promise<UsersViewModel | null> {
-        const user = await usersAuthCollection.findOne({_id: new ObjectId(id)})
+        const user = await UserAuthModel.findOne({_id: new ObjectId(id)})
 
         if (!user){
             return null
@@ -63,7 +61,7 @@ export class userQueryRepository {
         return userMapper(user)
     }
     static async findByLoginOrEmail(loginOrEmail: string) {
-        return await usersAuthCollection
+        return UserAuthModel
             .findOne({$or: [{'accountData.email': loginOrEmail}, {'accountData.login': loginOrEmail}]})
     }
 }

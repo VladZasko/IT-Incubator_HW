@@ -4,7 +4,7 @@ import {userQueryRepository} from "../../features/users/repositories/user-query-
 import {jwtService} from "../../features/auth/application/jwt-service";
 import jwt from "jsonwebtoken";
 import {settings} from "../../../settings";
-import {refreshTokensMetaCollection} from "../../db/db";
+import {RefreshTokensMetaModel} from "../../db/db";
 
 
 export const authRefreshTokenMiddleware = async (req: Request, res: Response, next: NextFunction) => {
@@ -32,7 +32,7 @@ export const authRefreshTokenMiddleware = async (req: Request, res: Response, ne
     }
 
     const user = await jwtService.getUserIdByRefreshToken(refreshToken)
-    const refreshTokenMeta = await refreshTokensMetaCollection.findOne({deviceId: user.deviceId})
+    const refreshTokenMeta = await RefreshTokensMetaModel.findOne({deviceId: user.deviceId})
 
     if (!refreshTokenMeta) {
         res.sendStatus(HTTP_STATUSES.UNAUTHORIZED_401)

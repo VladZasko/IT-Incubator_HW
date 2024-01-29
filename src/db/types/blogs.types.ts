@@ -1,3 +1,4 @@
+import {WithId} from "mongodb";
 
 export type BlogType = {
     id: string
@@ -8,10 +9,10 @@ export type BlogType = {
     isMembership: boolean
 }
 
-export type BlogDBType = {
+export type BlogDBType = WithId<{
     name: string
     description: string
     websiteUrl: string
     createdAt: string
     isMembership: boolean
-}
+}>

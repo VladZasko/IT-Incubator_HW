@@ -14,7 +14,6 @@ export type UserAuthType = {
         expirationDate: Date,
         isConfirmed: boolean
     }
-    deviceSessions?: Array<RefreshTokensMetaDBType>
 }
 export type UserAuthDBType = {
     accountData: {
@@ -29,6 +28,8 @@ export type UserAuthDBType = {
         expirationDate: Date,
         isConfirmed: boolean
     }
-    deviceSessions?: Array<RefreshTokensMetaDBType>
+    passwordRecovery?: {
+        recoveryCode: string
+        expirationDate: Date
+    }
 }
-

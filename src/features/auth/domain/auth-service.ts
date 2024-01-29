@@ -1,4 +1,4 @@
-import {usersAuthCollection} from "../../../db/db";
+import {UserAuthModel} from "../../../db/db";
 import {ObjectId} from "mongodb";
 import bcrypt from 'bcrypt'
 import {UserAuthType} from "../../../db/types/users.types";
@@ -57,7 +57,6 @@ export class authService {
     static async resendingConfirmEmail(email: string): Promise<boolean> {
         let user = await authQueryRepository.findByLoginOrEmail(email)
         if (!user) return false
-        if (user.emailConfirmation!.isConfirmed) return false;
 
         const newConfirmationCode = uuidv4()
         const newExpirationDate = add(new Date(), {
@@ -74,6 +73,39 @@ export class authService {
         }
 
         return result
+    }
+
+    static async passwordRecovery(email: string): Promise<boolean> {
+        let user = await authQueryRepository.findByLoginOrEmail(email)
+        if (!user) return true
+
+        const passwordRecoveryCode = uuidv4()
+        const expirationDate = add(new Date(), {
+            minutes: 15
+        })
+
+        let result = await authRepository.passwordRecovery(user!._id, passwordRecoveryCode, expirationDate)
+
+        try {
+            await emailAdapter.sendRecoveryCode(user!, passwordRecoveryCode)
+        } catch (error) {
+            console.error(error)
+            return false
+        }
+
+        return result
+    }
+
+    static async newPassword(data: any): Promise<boolean> {
+        let user = await authQueryRepository.findUserByRecoveryCode(data.recoveryCode)
+        if (!user) return false
+        if (user.passwordRecovery!.recoveryCode !== data.recoveryCode) return false;
+        if (user.passwordRecovery!.expirationDate < new Date()) return false;
+
+        const passwordSalt = await bcrypt.genSalt(10)
+        const passwordHash = await this._generateHash(data.newPassword, passwordSalt)
+
+        return await authRepository.updatePassword(user, passwordSalt, passwordHash)
     }
 
     static async checkCredentials(loginOrEmail: string, password: string): Promise<UserAuthType | null> {
@@ -97,7 +129,7 @@ export class authService {
     }
 
     static async deleteUserById(id: string): Promise<boolean> {
-        const foundUser = await usersAuthCollection.deleteOne({_id: new ObjectId(id)})
+        const foundUser = await UserAuthModel.deleteOne({_id: new ObjectId(id)})
 
         return !!foundUser.deletedCount
     }

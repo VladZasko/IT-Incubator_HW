@@ -8,11 +8,13 @@ import {authService} from "./domain/auth-service";
 import {authRegistrationValidator} from "./validator/auth-registration-validator";
 import {authConfirmationValidator} from "./validator/auth-confirmation-validator";
 import {authResendingValidator} from "./validator/auth-resending-validator";
-import {invalidTokenCollection, refreshTokensMetaCollection, usersAuthCollection} from "../../db/db";
+import {RefreshTokensMetaModel} from "../../db/db";
 import {authRefreshTokenMiddleware} from "../../middlewares/auth/auth-refreshToken-middleware";
 import {LoginAuthUserModel} from "./models/input/LoginAuthUserModel";
 import {v4 as uuidv4} from "uuid";
 import {rateLimitMiddleware} from "../../middlewares/rate-limit/rate-limit-middleware";
+import {authPasswordRecoveryValidator} from "./validator/password-recovery-validator";
+import {newPasswordValidator} from "./validator/new-password-validator";
 
 
 
@@ -42,13 +44,36 @@ export const authUsersRoutes = () => {
 
         const refreshToken = await jwtService.createJWTRefreshToken(dataRefreshToken)
 
-        await refreshTokensMetaCollection.insertOne({...dataRefreshToken})
+        await RefreshTokensMetaModel.insertMany({...dataRefreshToken})
 
         res
             .cookie('refreshToken', refreshToken, {httpOnly: true, secure: true})
             .status(HTTP_STATUSES.OK_200).send(accessToken)
         return
     })
+
+    router.post('/password-recovery', authPasswordRecoveryValidator(),
+        async (req: Request, res: Response) => {
+
+            await authService.passwordRecovery(req.body.email)
+
+            res.sendStatus(HTTP_STATUSES.NO_CONTENT_204)
+
+        })
+
+    router.post('/new-password', newPasswordValidator(),
+        async (req: Request, res: Response) => {
+
+            const data = {
+                newPassword: req.body.newPassword,
+                recoveryCode: req.body.recoveryCode
+            }
+
+            await authService.newPassword(data)
+
+            res.sendStatus(HTTP_STATUSES.NO_CONTENT_204)
+
+        })
 
     router.post('/refresh-token', authRefreshTokenMiddleware, async (req: Request, res: Response) => {
 
@@ -65,7 +90,7 @@ export const authUsersRoutes = () => {
         try {
             const accessToken = await jwtService.createJWTAccessToken(req.user!.id);
             const newRefreshToken = await jwtService.createJWTRefreshToken(dataRefreshToken)
-            await refreshTokensMetaCollection.updateOne({deviceId:req.refreshTokenMeta!.deviceId}, {
+            await RefreshTokensMetaModel.updateOne({deviceId:req.refreshTokenMeta!.deviceId}, {
                 $set:{
                     issuedAt : dataRefreshToken.issuedAt,
                     deviceId: dataRefreshToken.deviceId,
@@ -123,7 +148,7 @@ export const authUsersRoutes = () => {
 
     router.post('/logout', authRefreshTokenMiddleware, async (req: Request, res: Response) => {
 
-        const foundBlog = await refreshTokensMetaCollection.deleteOne({deviceId: req.refreshTokenMeta!.deviceId})
+        const foundBlog = await RefreshTokensMetaModel.deleteOne({deviceId: req.refreshTokenMeta!.deviceId})
         if(!foundBlog) {
             res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
             return

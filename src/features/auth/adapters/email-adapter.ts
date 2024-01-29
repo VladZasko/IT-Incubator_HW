@@ -47,5 +47,28 @@ export const emailAdapter = {
                 ' </p>', // html body
         });
         return true
+    },
+    async sendRecoveryCode(user: UserAuthDBType, recoveryCode: string) {
+        const transport = nodemailer.createTransport({
+            service: "Gmail",
+            host: "smtp.gmail.com",
+            port: 465,
+            secure: true,
+            auth: {
+                user: "uladzislauzasko@gmail.com",
+                pass: "ryko hyxu ntid aqrf",
+            },
+        });
+        await transport.sendMail({
+            from: "Vlad Zasko <uladzislauzasko@gmail.com>",
+            to: user.accountData.email,
+            subject: "Confirmation Code", // Subject line
+            html: ' <h1>RecoveryCode</h1>\n' +
+                ' <p>RecoveryCode:\n' +
+                `${recoveryCode}` +
+                `     <a href=\'https://somesite.com/password-recovery?recoveryCode=${recoveryCode}\'>Change password</a>\n` +
+                ' </p>', // html body
+        });
+        return true
     }
 }

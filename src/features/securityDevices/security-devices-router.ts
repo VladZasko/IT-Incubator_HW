@@ -1,5 +1,5 @@
 import express, {Response, Request} from "express";
-import {refreshTokensMetaCollection} from "../../db/db";
+import {RefreshTokensMetaModel} from "../../db/db";
 import {authRefreshTokenMiddleware} from "../../middlewares/auth/auth-refreshToken-middleware";
 import {securityDevicesMapper} from "./mappers/mappers";
 import {HTTP_STATUSES} from "../../utils/utils";
@@ -10,9 +10,9 @@ export const securityDevicesRoutes = () => {
 
     router.get('/devices', authRefreshTokenMiddleware,  async (req: Request, res: Response) => {
 
-        const sessions = await refreshTokensMetaCollection.find({
+        const sessions = await RefreshTokensMetaModel.find({
             userId: {$regex: req.refreshTokenMeta?.userId}
-        }).toArray()
+        }).lean()
 
         if (!sessions){
             res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
@@ -26,7 +26,7 @@ export const securityDevicesRoutes = () => {
     })
 
     router.delete('/devices',authRefreshTokenMiddleware, async (req: Request, res: Response) => {
-        const foundBlog = await refreshTokensMetaCollection.deleteMany({
+        const foundBlog = await RefreshTokensMetaModel.deleteMany({
             userId:req.refreshTokenMeta?.userId,
             deviceId: {
                 $ne: req.refreshTokenMeta?.deviceId
@@ -43,7 +43,7 @@ export const securityDevicesRoutes = () => {
 
     router.delete('/devices/:deviceId',authRefreshTokenMiddleware, async (req: Request, res: Response) => {
 
-        const session = await refreshTokensMetaCollection.findOne({deviceId: req.params.deviceId})
+        const session = await RefreshTokensMetaModel.findOne({deviceId: req.params.deviceId})
 
         if (!session){
             res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
@@ -54,7 +54,7 @@ export const securityDevicesRoutes = () => {
             return;
         }
 
-        const foundBlog = await refreshTokensMetaCollection.deleteOne({deviceId: req.params.deviceId})
+        const foundBlog = await RefreshTokensMetaModel.deleteOne({deviceId: req.params.deviceId})
 
         if(!foundBlog) {
             res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)

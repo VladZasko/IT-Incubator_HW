@@ -1,4 +1,4 @@
-import express from "express";
+import express, { Request, Response } from "express";
 import {RouterPaths} from "./routerPaths";
 import {getTestsRouter} from "./routes/tests";
 import {getBlogsRoutes} from "./features/blogs/blogs.router";
@@ -27,5 +27,9 @@ app.use(RouterPaths.auth, authUsersRoutes())
 app.use(RouterPaths.testing, getTestsRouter())
 //app.use(RouterPaths.videos, getVideosRoutes(memoryDb))
 
+
+app.get('/', (req: Request, res: Response) => {
+    res.send('Hello back-end HomeWorks in it-incubator!!!')
+})
 
 

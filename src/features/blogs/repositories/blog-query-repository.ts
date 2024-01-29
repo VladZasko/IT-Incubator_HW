@@ -1,9 +1,9 @@
 import {BlogsViewModel, BlogsViewModelGetAllBlogs} from "../models/output/BlogsViewModel";
-import {blogsCollection, postsCollection} from "../../../db/db";
 import {blogMapper} from "../mappers/mappers";
 import {ObjectId} from "mongodb";
 import {QueryBlogsModel, QueryPostByBlogIdModel} from "../models/input/QueryBlogsModule";
 import {postMapper} from "../../posts/mappers/mappers";
+import {BlogModel, PostModel} from "../../../db/db";
 
 export class blogQueryRepository {
     static async getAllBlogs(sortData: QueryBlogsModel): Promise<BlogsViewModelGetAllBlogs>{
@@ -21,17 +21,16 @@ export class blogQueryRepository {
             }
         }
 
-        const blogs = await blogsCollection
+        const blogs = await BlogModel
             .find(filter)
-            .sort(sortBy, sortDirection)
+            .sort([[sortBy,sortDirection]])
             .skip((pageNumber-1)* +pageSize)
             .limit(+pageSize)
-            .toArray()
+            .lean()
 
-        const totalCount:number = await blogsCollection.countDocuments(filter)
+        const totalCount:number = await BlogModel.countDocuments(filter)
 
         const pagesCount:number = Math.ceil(totalCount/ +pageSize)
-
 
         return {
             pagesCount,
@@ -48,14 +47,14 @@ export class blogQueryRepository {
         const pageNumber = sortData.pageNumber ?? 1
         const pageSize = sortData.pageSize ?? 10
 
-        const posts = await postsCollection
+        const posts = await PostModel
             .find({blogId: blogId})
-            .sort(sortBy, sortDirection)
+            .sort([[sortBy,sortDirection]])
             .skip((pageNumber-1)* +pageSize)
             .limit(+pageSize)
-            .toArray()
+            .lean()
 
-        const totalCount = await postsCollection
+        const totalCount = await PostModel
             .countDocuments({blogId: blogId})
 
         const pagesCount = Math.ceil(totalCount/ +pageSize)
@@ -70,7 +69,7 @@ export class blogQueryRepository {
 
     }
     static async getBlogById(id: string): Promise<BlogsViewModel | null> {
-        const blog = await blogsCollection.findOne({_id: new ObjectId(id)})
+        const blog = await BlogModel.findOne({_id: new ObjectId(id)})
 
         if (!blog){
             return null

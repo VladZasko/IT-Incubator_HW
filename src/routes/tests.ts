@@ -3,24 +3,21 @@ import express from "express";
 import {HTTP_STATUSES} from "../utils/utils";
 import {app} from "../app";
 import {
-    blogsCollection,
-    feedbacksCollection,
-    postsCollection, rateLimitType,
-    refreshTokensMetaCollection, usersAuthCollection,
-    videosCollection
+    BlogModel, FeedbacksModel, PostModel, RateLimitModel,RefreshTokensMetaModel, UserAuthModel,
+
 } from "../db/db";
 
 export const getTestsRouter = () => {
     const router = express.Router()
 
     router.delete('/', async (req, res) => {
-        await blogsCollection.deleteMany({})
-        await postsCollection.deleteMany({})
-        await videosCollection.deleteMany({})
-        await usersAuthCollection.deleteMany({})
-        await feedbacksCollection.deleteMany({})
-        await refreshTokensMetaCollection.deleteMany({})
-        await rateLimitType.deleteMany({})
+        await BlogModel.deleteMany({})
+        await PostModel.deleteMany({})
+        //await videosCollection.deleteMany({})
+        await UserAuthModel.deleteMany({})
+        await FeedbacksModel.deleteMany({})
+        await RefreshTokensMetaModel.deleteMany({})
+        await RateLimitModel.deleteMany({})
 
         res.sendStatus(HTTP_STATUSES.NO_CONTENT_204)
     })

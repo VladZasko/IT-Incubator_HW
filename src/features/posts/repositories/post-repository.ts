@@ -1,5 +1,5 @@
 import {PostsViewModel} from "../models/PostsViewModel";
-import {feedbacksCollection, postsCollection} from "../../../db/db";
+import {FeedbacksModel, PostModel} from "../../../db/db";
 import {ObjectId} from "mongodb";
 import {CreatePostReposModel} from "../models/CreatePostServiceModel";
 import {UpdatePostModel} from "../models/UpdatePostModule";
@@ -9,19 +9,19 @@ import {FeedbackViewModel} from "../../feedback/models/FeedbackViewModel";
 export class postRepository {
     static async createPost(createData:CreatePostReposModel):Promise<PostsViewModel>  {
 
-        const post = await postsCollection.insertOne({...createData})
+        const post = await PostModel.create({...createData})
 
         return {
             ...createData,
-            id:post.insertedId.toString()
+            id:post.id
         }
     }
     static async createCommentByPost(createData:CreateFeedbackReposModel):Promise<FeedbackViewModel>  {
 
-        const comment = await feedbacksCollection.insertOne({...createData})
+        const comment = await FeedbacksModel.create({...createData})
 
         return {
-            id:comment.insertedId.toString(),
+            id: comment.id,
             content: createData.content,
             commentatorInfo: {
                 userId: createData.commentatorInfo.userId,
@@ -31,7 +31,7 @@ export class postRepository {
         }
     }
     static async updatePost(id: string, upData: UpdatePostModel): Promise<boolean> {
-        const foundPost = await postsCollection.updateOne({_id:new ObjectId(id)}, {
+        const foundPost = await PostModel.updateOne({_id:new ObjectId(id)}, {
             $set:{
                 title : upData.title,
                 shortDescription: upData.shortDescription,
@@ -42,7 +42,7 @@ export class postRepository {
         return !!foundPost.matchedCount;
     }
     static async deletePostById(id: string): Promise<boolean> {
-        const foundPost = await postsCollection.deleteOne({_id:new ObjectId(id)})
+        const foundPost = await PostModel.deleteOne({_id:new ObjectId(id)})
 
         return !!foundPost.deletedCount
 

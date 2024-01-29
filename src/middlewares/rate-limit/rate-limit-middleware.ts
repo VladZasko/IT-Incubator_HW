@@ -1,5 +1,5 @@
 import {NextFunction, Request, Response} from "express";
-import {rateLimitType} from "../../db/db";
+import {RateLimitModel} from "../../db/db";
 import {sub} from "date-fns";
 
 export const rateLimitMiddleware = async (req: Request, res: Response, next: NextFunction) => {
@@ -10,9 +10,9 @@ export const rateLimitMiddleware = async (req: Request, res: Response, next: Nex
         date: new Date()
     }
 
-    await rateLimitType.insertOne({...data})
+    await RateLimitModel.insertMany({...data})
 
-    const countq = await rateLimitType.countDocuments({
+    const countq = await RateLimitModel.countDocuments({
         IP: {$regex: req.ip, $options: 'i'},
         URL: {$regex: req.originalUrl, $options: 'i'},
         date: {

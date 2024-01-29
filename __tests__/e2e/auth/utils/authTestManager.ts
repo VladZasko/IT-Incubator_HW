@@ -23,13 +23,17 @@ export const authTestManager = {
             .send(data)
             .expect(expectedStatusCode)
 
+
+
         if (expectedStatusCode === HTTP_STATUSES.BAD_REQUEST_400) {
             await errors.errors(result.body, expectedErrorsMessages)
         }
 
         let createdEntity;
+        let refreshToken;
         if (expectedStatusCode === HTTP_STATUSES.OK_200) {
             createdEntity = result.body;
+            refreshToken= result.header['set-cookie']
             expect(createdEntity).toEqual(
                 result.body
             )

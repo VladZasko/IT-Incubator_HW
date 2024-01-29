@@ -1,3 +1,5 @@
+import {WithId} from "mongodb";
+
 export type PostType = {
         id: string
         title: string
@@ -8,11 +10,11 @@ export type PostType = {
         createdAt: string
     }
 
-export type PostDBType = {
+export type PostDBType = WithId<{
         title: string
         shortDescription: string
         content: string
         blogId: string
         blogName: string
         createdAt: string
-}
+}>

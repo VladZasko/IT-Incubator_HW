@@ -16,7 +16,7 @@ import {dbControl} from "../../../src/db/db";
 const getRequest = () => {
     return request(app)
 }
-describe('/feedback tests', () => {
+describe('/blog tests', () => {
     beforeAll(async () => {
         await dbControl.run()
     })

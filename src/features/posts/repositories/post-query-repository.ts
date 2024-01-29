@@ -1,5 +1,5 @@
 import {PostsViewModel} from "../models/PostsViewModel";
-import {feedbacksCollection, postsCollection} from "../../../db/db";
+import {FeedbacksModel, PostModel} from "../../../db/db";
 import {postMapper} from "../mappers/mappers";
 import {ObjectId} from "mongodb";
 import {QueryPostsModel} from "../models/QueryPostsModule";
@@ -16,14 +16,14 @@ export class postQueryRepository {
 
         let filter = {}
 
-        const posts = await postsCollection
+        const posts = await PostModel
             .find(filter)
-            .sort(sortBy, sortDirection)
+            .sort([[sortBy,sortDirection]])
             .skip((pageNumber-1)* +pageSize)
             .limit(+pageSize)
-            .toArray()
+            .lean()
 
-        const totalCount = await postsCollection.countDocuments(filter)
+        const totalCount = await PostModel.countDocuments(filter)
 
         const pagesCount = Math.ceil(totalCount/ +pageSize)
 
@@ -41,16 +41,14 @@ export class postQueryRepository {
         const sortBy= sortData.sortBy ?? 'createdAt'
         const sortDirection= sortData.sortDirection ?? 'desc'
 
-        let filter = {}
-
-        const comments = await feedbacksCollection
+        const comments = await FeedbacksModel
             .find({postId: id})
-            .sort(sortBy, sortDirection)
+            .sort([[sortBy,sortDirection]])
             .skip((pageNumber-1)* +pageSize)
             .limit(+pageSize)
-            .toArray()
+            .lean()
 
-        const totalCount = await feedbacksCollection.countDocuments({postId: id})
+        const totalCount = await FeedbacksModel.countDocuments({postId: id})
 
         const pagesCount = Math.ceil(totalCount/ +pageSize)
 
@@ -63,7 +61,7 @@ export class postQueryRepository {
         }
     }
     static async getPostById(id: string): Promise<PostsViewModel | null> {
-        const post = await postsCollection.findOne({_id: new ObjectId(id)})
+        const post = await PostModel.findOne({_id: new ObjectId(id)})
 
         if (!post){
             return null
