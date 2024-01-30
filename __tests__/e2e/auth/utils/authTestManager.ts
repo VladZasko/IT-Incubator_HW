@@ -38,7 +38,7 @@ export const authTestManager = {
                 result.body
             )
         }
-        return {response: result, createdEntity: createdEntity};
+        return {response: result, createdEntity: createdEntity, refreshToken:refreshToken};
     },
     async userEmailRegistration(data: CreateUserModel,
                                 expectedStatusCode: HttpStatusType = HTTP_STATUSES.NO_CONTENT_204,

@@ -1,9 +1,5 @@
-import {body, ValidationError, validationResult} from "express-validator";
+import {body} from "express-validator";
 import {inputValidation} from "../../../middlewares/input-modul-validation/input-validation";
-import {authQueryRepository} from "../repositories/auth-query-repository";
-import {NextFunction, Request, Response} from "express";
-import {HTTP_STATUSES} from "../../../utils/utils";
-import {inputRecoveryValidation} from "./input-recovery-validation";
 
 export const emailValidation = body('email').isString().trim()
     .withMessage('Incorrect email!')

@@ -16,11 +16,21 @@ export class blogRepository {
     }
     static async createBlog(createData : CreateBlogReposModel):Promise<BlogsViewModel> {
 
-        const blog = await BlogModel.create({...createData})
+        const blogInstance = new BlogModel()
+
+        blogInstance.name = createData.name
+        blogInstance.description = createData.description
+        blogInstance.websiteUrl = createData.websiteUrl
+        blogInstance.createdAt = createData.createdAt
+        blogInstance.isMembership = createData.isMembership
+
+        await blogInstance.save()
+
+        //const blog = await BlogModel.create({...createData})
 
         return {
             ...createData,
-            id: blog.id
+            id: blogInstance.id
         }
     }
     static async updateBlog(id: string , updateData:UpdateBlogModel): Promise<boolean> {

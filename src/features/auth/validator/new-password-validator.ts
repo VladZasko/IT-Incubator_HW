@@ -1,9 +1,6 @@
 import {body} from "express-validator";
 import {inputValidation} from "../../../middlewares/input-modul-validation/input-validation";
 import {authQueryRepository} from "../repositories/auth-query-repository";
-import {inputRecoveryValidation} from "./input-recovery-validation";
-import {emailValidation} from "./password-recovery-validator";
-
 
 export const passwordValidation = body('newPassword').isString().trim().isLength({min:6, max:20})
     .withMessage('Incorrect password!')

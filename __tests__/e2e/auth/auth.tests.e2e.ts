@@ -91,6 +91,40 @@ describe('/auth', () => {
             .expect(HTTP_STATUSES.UNAUTHORIZED_401)
     })
 
+    it('should return 200 new access token and refresh token', async () => {
+
+        const user = await usersTestManager.createUserAdmin(dataTestUserCreate01)
+
+        const token = await authTestManager.createToken(dataTestUserAuth)
+
+        const responseData = {
+            email: user.createdEntity.email,
+            login: user.createdEntity.login,
+            userId: user.createdEntity.id
+        }
+
+        await getRequest()
+            .get(`${RouterPaths.auth}/me`)
+            .set('authorization', `Bearer ${token.createdEntity.accessToken}`)
+            .expect(HTTP_STATUSES.OK_200, responseData)
+
+        await getRequest()
+            .post(`${RouterPaths.auth}/refresh-token`)
+            .set('Cookie', token.refreshToken!)
+            .expect(HTTP_STATUSES.OK_200)
+
+        await getRequest()
+            .post(`${RouterPaths.auth}/refresh-token`)
+            .set('Cookie', token.refreshToken!)
+            .expect(HTTP_STATUSES.UNAUTHORIZED_401)
+
+
+        await getRequest()
+            .get(`${RouterPaths.auth}/me`)
+            .set('authorization', `Bearer ${token.createdEntity.accessToken}`)
+            .expect(HTTP_STATUSES.UNAUTHORIZED_401)
+    })
+
     it('should return 200 access token and refresh token', async () => {
 
         const user = await usersTestManager.createUserAdmin(dataTestUserCreate01)
