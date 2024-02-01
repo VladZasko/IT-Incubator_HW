@@ -3,6 +3,7 @@ import {CreateBlogServiceModel} from "../models/input/CreateBlogModel";
 import {UpdateBlogModel} from "../models/input/UpdateBlogModule";
 import {blogQueryRepository} from "../repositories/blog-query-repository";
 import {blogRepository} from "../repositories/blog-repository";
+import {BlogDBType} from "../../../db/types/blogs.types";
 
 export class blogService {
     static async createPostBlog(blogId: string, createData: any) {
@@ -19,12 +20,18 @@ export class blogService {
     }
 
     static async createBlog(createData: CreateBlogServiceModel): Promise<BlogsViewModel> {
-        const newBlog = {
+        const newBlog: BlogDBType = new BlogDBType(
+            createData.name,
+            createData.description,
+            createData.websiteUrl,
+            new Date().toISOString(),
+            false)
+        /*const newBlog: BlogDBType = {
             ...createData,
             createdAt: new Date().toISOString(),
             isMembership: false
         }
-
+*/
         return await blogRepository.createBlog(newBlog)
     }
 
