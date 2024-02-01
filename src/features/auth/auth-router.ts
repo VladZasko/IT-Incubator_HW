@@ -8,7 +8,7 @@ import {authService} from "./domain/auth-service";
 import {authRegistrationValidator} from "./validator/auth-registration-validator";
 import {authConfirmationValidator} from "./validator/auth-confirmation-validator";
 import {authResendingValidator} from "./validator/auth-resending-validator";
-import {RefreshTokensMetaModel} from "../../db/db";
+import {AccessTokensBlackListModel, RefreshTokensMetaModel} from "../../db/db";
 import {authRefreshTokenMiddleware} from "../../middlewares/auth/auth-refreshToken-middleware";
 import {LoginAuthUserModel} from "./models/input/LoginAuthUserModel";
 import {v4 as uuidv4} from "uuid";
@@ -148,8 +148,8 @@ export const authUsersRoutes = () => {
 
     router.post('/logout', authRefreshTokenMiddleware, async (req: Request, res: Response) => {
 
-        const foundBlog = await RefreshTokensMetaModel.deleteOne({deviceId: req.refreshTokenMeta!.deviceId})
-        if(!foundBlog) {
+        const foundDevice = await RefreshTokensMetaModel.deleteOne({deviceId: req.refreshTokenMeta!.deviceId})
+        if(!foundDevice) {
             res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
             return
         }

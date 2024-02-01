@@ -1,7 +1,9 @@
 import mongoose from "mongoose";
-import {BlogDBType} from "../types/blogs.types";
-import {RefreshTokensMetaDBType} from "../types/token.types";
+import {InvalidTokenType, RefreshTokensMetaDBType} from "../types/token.types";
 
+export const accessTokenBlackListType = new mongoose.Schema<InvalidTokenType>({
+    accessToken: { type: String, require: true },
+})
 export const RefreshTokensMetaSchema = new mongoose.Schema<RefreshTokensMetaDBType>({
     issuedAt: { type: String, require: true },
     deviceId: { type: String, require: true },

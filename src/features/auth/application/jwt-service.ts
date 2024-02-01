@@ -6,7 +6,7 @@ export const jwtService = {
         const token = jwt.sign(
             {id: userId},
             settings.JWT_SECRET,
-            {expiresIn: 300})
+            {expiresIn: 10})
         return {
             accessToken: token.toString()
         }
@@ -20,7 +20,7 @@ export const jwtService = {
                 issuedAt: dataRefreshToken.issuedAt
             },
             settings.JWT_SECRET,
-            {expiresIn: 600})
+            {expiresIn: 20})
 
         return refreshToken.toString()
 

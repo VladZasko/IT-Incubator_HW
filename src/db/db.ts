@@ -5,7 +5,7 @@ import {BlogSchema} from "./schemes/blogs.schemes";
 import {FeedbacksSchema} from "./schemes/feedbacks.schemes";
 import {PostSchema} from "./schemes/posts.schemes";
 import {RateLimitSchema} from "./schemes/reqLimit.schemes";
-import {RefreshTokensMetaSchema} from "./schemes/token.schemes";
+import {accessTokenBlackListType, RefreshTokensMetaSchema} from "./schemes/token.schemes";
 import {UserAuthSchema} from "./schemes/users.schemes";
 
 
@@ -18,6 +18,7 @@ export const PostModel = mongoose.model('posts', PostSchema)
 export const UserAuthModel = mongoose.model('usersAuth', UserAuthSchema)
 export const FeedbacksModel = mongoose.model('feedbacks', FeedbacksSchema)
 export const RefreshTokensMetaModel = mongoose.model('refreshToken', RefreshTokensMetaSchema)
+export const AccessTokensBlackListModel = mongoose.model('accessTokenBlackList', accessTokenBlackListType)
 export const RateLimitModel = mongoose.model('rateLimit', RateLimitSchema)
 
 // export const client = new MongoClient(mongoURI)

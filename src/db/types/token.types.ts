@@ -1,8 +1,8 @@
 import {WithId} from "mongodb";
 
-export type InvalidTokenType = {
-    blackList: string
-}
+export type InvalidTokenType = WithId<{
+    accessToken: string
+}>
 
 export type RefreshTokensMetaDBType = WithId<{
     issuedAt: string
