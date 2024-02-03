@@ -4,7 +4,7 @@ import {CreateBlogReposModel} from "../models/input/CreateBlogModel";
 import {UpdateBlogModel} from "../models/input/UpdateBlogModule";
 import {BlogModel, PostModel} from "../../../db/db";
 
-export class BlogRepository {
+export class BlogsRepository {
     async createPostBlog(createData:any){
 
         const res = await PostModel.create(createData)

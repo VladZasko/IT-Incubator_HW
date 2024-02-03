@@ -3,13 +3,10 @@ import {CreateBlogServiceModel} from "../models/input/CreateBlogModel";
 import {UpdateBlogModel} from "../models/input/UpdateBlogModule";
 import {blogQueryRepository} from "../repositories/blog-query-repository";
 import {BlogDBType} from "../../../db/types/blogs.types";
-import {BlogRepository} from "../repositories/blog-repository";
+import {BlogsRepository} from "../repositories/blogs-repository";
 
-export class BlogService {
-    blogsRepository: BlogRepository
-    constructor() {
-        this.blogsRepository = new BlogRepository()
-    }
+export class BlogsService {
+    constructor(protected blogsRepository:BlogsRepository) {}
     async createPostBlog(blogId: string, createData: any) {
         const blog = await blogQueryRepository.getBlogById(blogId)
 

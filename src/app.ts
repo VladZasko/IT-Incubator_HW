@@ -7,7 +7,7 @@ import {authUsersRoutes} from "./features/auth/auth-router";
 import {getFeedbacksRoutes} from "./features/feedback/feedbacks-router";
 import cookieParser from "cookie-parser";
 import {securityDevicesRoutes} from "./features/securityDevices/security-devices-router";
-import {blogsRouter} from "./features/blogs/blogs.router";
+import {blogsRouter} from "./features/blogs/router/blogs.router";
 
 export const app = express()
 export const jsonBodyMiddleWare = express.json()
