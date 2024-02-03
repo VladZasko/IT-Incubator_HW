@@ -4,8 +4,8 @@ import {CreateBlogReposModel} from "../models/input/CreateBlogModel";
 import {UpdateBlogModel} from "../models/input/UpdateBlogModule";
 import {BlogModel, PostModel} from "../../../db/db";
 
-export class blogRepository {
-    static async createPostBlog(createData:any){
+export class BlogRepository {
+    async createPostBlog(createData:any){
 
         const res = await PostModel.create(createData)
 
@@ -14,7 +14,7 @@ export class blogRepository {
             id:res.id
         }
     }
-    static async createBlog(createData : CreateBlogReposModel):Promise<BlogsViewModel> {
+    async createBlog(createData : CreateBlogReposModel):Promise<BlogsViewModel> {
 
         const blogInstance = new BlogModel()
 
@@ -33,7 +33,7 @@ export class blogRepository {
             id: blogInstance.id
         }
     }
-    static async updateBlog(id: string , updateData:UpdateBlogModel): Promise<boolean> {
+    async updateBlog(id: string , updateData:UpdateBlogModel): Promise<boolean> {
         const foundBlog = await BlogModel.updateOne({_id:new ObjectId(id)}, {
             $set:{
                 name : updateData.name,
@@ -44,7 +44,7 @@ export class blogRepository {
 
         return !!foundBlog.matchedCount;
     }
-    static async deleteBlogById(id: string): Promise<boolean> {
+    async deleteBlogById(id: string): Promise<boolean> {
         const foundBlog = await BlogModel.deleteOne({_id:new ObjectId(id)})
 
         return !!foundBlog.deletedCount

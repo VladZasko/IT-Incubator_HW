@@ -1,6 +1,6 @@
 import {body} from "express-validator";
 import {inputValidation} from "../../../middlewares/input-modul-validation/input-validation";
-import {blogRepository} from "../../blogs/repositories/blog-repository";
+import {BlogRepository} from "../../blogs/repositories/blog-repository";
 import * as wasi from "wasi";
 import {blogQueryRepository} from "../../blogs/repositories/blog-query-repository";
 
