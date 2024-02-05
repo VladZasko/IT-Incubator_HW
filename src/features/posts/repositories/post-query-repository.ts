@@ -4,8 +4,8 @@ import {postMapper} from "../mappers/mappers";
 import {ObjectId} from "mongodb";
 import {QueryPostsModel} from "../models/QueryPostsModule";
 import {QueryFeedbackModule} from "../../feedback/models/QueryFeedbackModule";
-import {feedbackMapper} from "../../feedback/mappers/mappers";
-import {FeedbackViewModelGetAllComments} from "../../feedback/models/FeedbackViewModel";
+import {feedbackQueryMapper} from "../../feedback/mappers/mappers";
+import {FeedbackStatus, FeedbackViewModelGetAllComments} from "../../feedback/models/FeedbackViewModel";
 
 export class postQueryRepository {
     static async getAllPosts(sortData: QueryPostsModel){
@@ -35,7 +35,7 @@ export class postQueryRepository {
             items: posts.map(postMapper)
         }
     }
-    static async getCommentByPostId(id: string, sortData: QueryFeedbackModule):Promise<FeedbackViewModelGetAllComments>{
+    static async getCommentByPostId(id: string, sortData: QueryFeedbackModule, likeStatusData?:string):Promise<FeedbackViewModelGetAllComments>{
         const pageNumber= sortData.pageNumber ?? 1
         const pageSize= sortData.pageSize ?? 10
         const sortBy= sortData.sortBy ?? 'createdAt'
@@ -48,16 +48,19 @@ export class postQueryRepository {
             .limit(+pageSize)
             .lean()
 
+
+
         const totalCount = await FeedbacksModel.countDocuments({postId: id})
 
         const pagesCount = Math.ceil(totalCount/ +pageSize)
+
 
         return {
             pagesCount,
             page: +pageNumber ,
             pageSize: +pageSize,
             totalCount,
-            items: comments.map(feedbackMapper)
+            items: comments.map(comment => feedbackQueryMapper(comment, likeStatusData))
         }
     }
     static async getPostById(id: string): Promise<PostsViewModel | null> {

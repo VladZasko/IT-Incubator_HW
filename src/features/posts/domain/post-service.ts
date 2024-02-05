@@ -23,6 +23,10 @@ export class postService {
                 userLogin: createData.userLogin
             },
             createdAt: new Date().toISOString(),
+            likesInfo: {
+                likes: [],
+                dislikes: [],
+            },
             postId: postId
         }
 

@@ -1,8 +1,9 @@
-import {BlogsViewModel} from "../../blogs/models/output/BlogsViewModel";
+import {commentatorInfoModel} from "../../../db/types/feedbacks.types";
 
-export type commentatorInfoModel = {
-    userId: string
-    userLogin: string
+export enum FeedbackStatus {
+    Like = 'Like',
+    Dislike = 'Dislike',
+    None = 'None',
 }
 
 export type FeedbackViewModel = {
@@ -10,6 +11,11 @@ export type FeedbackViewModel = {
     content: string
     commentatorInfo: commentatorInfoModel
     createdAt: string
+    likesInfo: {
+        likesCount: number
+        dislikesCount: number
+        myStatus: FeedbackStatus
+    }
 }
 
 export type FeedbackViewModelGetAllComments = {

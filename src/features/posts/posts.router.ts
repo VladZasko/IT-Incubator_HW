@@ -23,6 +23,7 @@ import {commentValidation} from "../feedback/validator/feedback-validator";
 import {CreateFeedbackModel} from "../feedback/models/CreateFeedbackModel";
 import {userQueryRepository} from "../users/repositories/user-query-repository";
 import {FeedbackViewModel, FeedbackViewModelGetAllComments} from "../feedback/models/FeedbackViewModel";
+import {accessTokenMiddleware} from "../../middlewares/auth/accessToken-middleware";
 
 export const getPostsRoutes = () => {
     const router = express.Router()
@@ -56,8 +57,10 @@ export const getPostsRoutes = () => {
 
         res.send(post)
     })
-    router.get('/:id/comments', async (req: RequestWithParamsAndQuery<URIParamsPostIdModel,QueryPostsModel>,
+    router.get('/:id/comments', accessTokenMiddleware, async (req: RequestWithParamsAndQuery<URIParamsPostIdModel,QueryPostsModel>,
                               res: Response<FeedbackViewModelGetAllComments>) => {
+        const likeStatusData = req.user?.id
+
         const postId = req.params.id
 
         if(!ObjectId.isValid(postId)){
@@ -79,7 +82,7 @@ export const getPostsRoutes = () => {
             sortDirection: req.query.sortDirection
         }
 
-        const comment = await postQueryRepository.getCommentByPostId(postId,sortData)
+        const comment = await postQueryRepository.getCommentByPostId(postId,sortData,likeStatusData)
 
         res.send(comment)
     })

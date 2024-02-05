@@ -1,4 +1,3 @@
-import {commentatorInfoModel} from "./FeedbackViewModel";
 
 export type CreateFeedbackModel = {
     /**
@@ -15,12 +14,3 @@ export type CreateFeedbackServiceModel = {
     userLogin: string
 }
 
-export type CreateFeedbackReposModel = {
-    /**
-     * Post title, shortDescription, content, blogId
-     */
-    content: string
-    commentatorInfo: commentatorInfoModel
-    createdAt: string
-    postId: string
-}
