@@ -7,8 +7,8 @@ import {LikesStatus, FeedbackViewModel} from "../../feedback/models/FeedbackView
 import {FeedbacksDBType, FeedbacksType} from "../../../db/types/feedbacks.types";
 import {NewestLikesType, PostType} from "../../../db/types/posts.types";
 
-export class postRepository {
-    static async createPost(createData:PostType):Promise<PostsViewModel>  {
+export class PostsRepository {
+    async createPost(createData:PostType):Promise<PostsViewModel>  {
 
         const post = await PostModel.create({...createData})
 
@@ -28,7 +28,7 @@ export class postRepository {
             }
         }
     }
-    static async createCommentByPost(createData:FeedbacksType):Promise<FeedbackViewModel>  {
+    async createCommentByPost(createData:FeedbacksType):Promise<FeedbackViewModel>  {
 
         const comment = await FeedbacksModel.create({...createData})
 
@@ -47,7 +47,7 @@ export class postRepository {
             }
         }
     }
-    static async updatePost(id: string, upData: UpdatePostModel): Promise<boolean> {
+    async updatePost(id: string, upData: UpdatePostModel): Promise<boolean> {
         const foundPost = await PostModel.updateOne({_id:new ObjectId(id)}, {
             $set:{
                 title : upData.title,
@@ -58,7 +58,7 @@ export class postRepository {
         })
         return !!foundPost.matchedCount;
     }
-    static async updateLike(id: string, likesData: NewestLikesType,likeStatusData:LikesStatus): Promise<boolean> {
+    async updateLike(id: string, likesData: NewestLikesType,likeStatusData:LikesStatus): Promise<boolean> {
         const post = await PostModel.findById({_id: new ObjectId(id)})
 
         const isLiked = post!.likesInfo.likes.some(obj => obj.userId === likesData.userId);
@@ -100,7 +100,7 @@ export class postRepository {
 
         return true;
     }
-    static async deletePostById(id: string): Promise<boolean> {
+    async deletePostById(id: string): Promise<boolean> {
         const foundPost = await PostModel.deleteOne({_id:new ObjectId(id)})
 
         return !!foundPost.deletedCount

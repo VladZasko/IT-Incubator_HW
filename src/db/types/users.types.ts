@@ -19,21 +19,25 @@ export type UserAuthType = {
         expirationDate: Date
     }
 }
-export type UserAuthDBType = WithId<{
-    accountData: {
-        login: string,
-        email: string,
-        createdAt: string,
-        passwordHash: string,
-        passwordSalt: string
+
+export class UserAuthDBType {
+    constructor(
+        public accountData: {
+            login: string,
+            email: string,
+            createdAt: string,
+            passwordHash: string,
+            passwordSalt: string
+        },
+        public emailConfirmation: {
+            confirmationCode: string,
+            expirationDate: Date,
+            isConfirmed: boolean
+        },
+        public passwordRecovery: {
+            recoveryCode: string
+            expirationDate: Date
+        }
+    ) {
     }
-    emailConfirmation?: {
-        confirmationCode: string,
-        expirationDate: Date,
-        isConfirmed: boolean
-    }
-    passwordRecovery?: {
-        recoveryCode: string
-        expirationDate: Date
-    }
-}>
+}

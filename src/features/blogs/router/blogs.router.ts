@@ -2,8 +2,8 @@ import {Router} from "express";
 import {blogValidation} from "../validator/blog-validator";
 import {authMiddleware} from "../../../middlewares/auth/auth-middleware";
 import {postByIdValidation} from "../../posts/validator/post-validator";
-import {blogsController} from "../composition-root";
 import {accessTokenMiddleware} from "../../../middlewares/auth/accessToken-middleware";
+import {blogsController} from "../../composition-root";
 
 export const blogsRouter = Router({})
 

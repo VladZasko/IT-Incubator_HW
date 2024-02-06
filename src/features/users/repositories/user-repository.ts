@@ -3,8 +3,8 @@ import {ObjectId} from "mongodb";
 import {UserAuthDBType, UserAuthType} from "../../../db/types/users.types";
 import {UserAuthModel} from "../../../db/db";
 
-export class userRepository {
-    static async createUser(createData : UserAuthType):Promise<UsersViewModel> {
+export class UsersRepository {
+    async createUser(createData : UserAuthType):Promise<UsersViewModel> {
 
 
         const user = await UserAuthModel.create({...createData})
@@ -16,7 +16,7 @@ export class userRepository {
             id: user.id
         }
     }
-    static async deleteUserById(id: string): Promise<boolean> {
+    async deleteUserById(id: string): Promise<boolean> {
         const foundUser = await UserAuthModel.deleteOne({_id:new ObjectId(id)})
 
         return !!foundUser.deletedCount

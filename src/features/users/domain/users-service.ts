@@ -2,14 +2,14 @@ import {UsersRepoViewModel, UsersViewModel} from "../models/output/UsersViewMode
 import {ObjectId} from "mongodb";
 import {CreateUserModel} from "../models/input/CreateUserModel";
 import bcrypt from 'bcrypt'
-import {userRepository} from "../repositories/user-repository";
+import {UsersRepository} from "../repositories/user-repository";
 import {userQueryRepository} from "../repositories/user-query-repository";
 import {userDBMapper} from "../mappers/mappers";
-import {UserAuthType} from "../../../db/types/users.types";
 import {UserAuthModel} from "../../../db/db";
 
-export class usersService {
-    static async createUser(createData: CreateUserModel): Promise<UsersViewModel> {
+export class UsersService {
+    constructor(protected usersRepository:UsersRepository) {}
+    async createUser(createData: CreateUserModel): Promise<UsersViewModel> {
 
         const passwordSalt = await bcrypt.genSalt(10)
         const passwordHash = await this._generateHash(createData.password, passwordSalt)
@@ -23,10 +23,10 @@ export class usersService {
                 passwordSalt
             }
         }
-        return await userRepository.createUser(newUser)
+        return await this.usersRepository.createUser(newUser)
     }
 
-    static async checkCredentials(loginOrEmail: string, password: string): Promise<UsersRepoViewModel | null> {
+    async checkCredentials(loginOrEmail: string, password: string): Promise<UsersRepoViewModel | null> {
         const user = await userQueryRepository.findByLoginOrEmail(loginOrEmail)
         if (!user) {
             return null
@@ -42,11 +42,11 @@ export class usersService {
 
     }
 
-    static async _generateHash(password: string, salt: string) {
+    async _generateHash(password: string, salt: string) {
         return await bcrypt.hash(password, salt)
     }
 
-    static async deleteUserById(id: string): Promise<boolean> {
+    async deleteUserById(id: string): Promise<boolean> {
         const foundUser = await UserAuthModel.deleteOne({_id: new ObjectId(id)})
 
         return !!foundUser.deletedCount

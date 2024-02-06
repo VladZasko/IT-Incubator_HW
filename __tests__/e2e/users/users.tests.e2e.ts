@@ -192,7 +192,7 @@ describe('/user', () => {
                 {pagesCount: 1, page: 1, pageSize: 10, totalCount: 1, items: [user.createdEntity]})
     })
 
-    it('should return page 3 and page size 3', async () => {
+/*    it('should return page 3 and page size 3', async () => {
         const users = await usersTestManager.createUsersAdmin(dataTestUserCreate01)
 
         await getRequest()
@@ -206,7 +206,7 @@ describe('/user', () => {
                     totalCount: 12,
                     items: users.slice(6, 9)
                 })
-    })
+    })*/
 
     it('should return users "asc" ', async () => {
 

@@ -6,9 +6,9 @@ import {LikesStatus, FeedbackViewModel} from "../models/FeedbackViewModel";
 import {feedbackMapper, feedbackQueryMapper} from "../mappers/mappers";
 
 
-export class feedbackRepository {
+export class CommentsRepository {
 
-    static async getCommentById(id: string): Promise<any | null> {
+    async getCommentById(id: string): Promise<any | null> {
         const comment = await FeedbacksModel.findById({_id: new ObjectId(id)})
 
         if (!comment){
@@ -16,7 +16,7 @@ export class feedbackRepository {
         }
         return feedbackMapper(comment)
     }
-    static async updatePost(id: string, upData: UpdateFeedbackModuleModel): Promise<boolean> {
+    async updatePost(id: string, upData: UpdateFeedbackModuleModel): Promise<boolean> {
         const foundComment = await FeedbacksModel.updateOne({_id:new ObjectId(id)}, {
             $set:{
                 content: upData.content
@@ -24,7 +24,7 @@ export class feedbackRepository {
         })
         return !!foundComment.matchedCount;
     }
-    static async updateLike(id: string, upData: any): Promise<boolean> {
+    async updateLike(id: string, upData: any): Promise<boolean> {
         const comment = await FeedbacksModel.findById({_id: new ObjectId(id)})
 
         const isLiked = comment!.likesInfo.likes.includes(upData.userId);
@@ -66,7 +66,7 @@ export class feedbackRepository {
 
         return true;
     }
-    static async deleteCommentById(id: string): Promise<boolean> {
+    async deleteCommentById(id: string): Promise<boolean> {
         const foundComment = await FeedbacksModel.deleteOne({_id:new ObjectId(id)})
 
         return !!foundComment.deletedCount

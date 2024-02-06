@@ -76,7 +76,7 @@ export const authTestManager = {
         }
 
         if(expectedStatusCode ===HTTP_STATUSES.NO_CONTENT_204) {
-            const userConfirmation = await userQueryRepository.findByLoginOrEmail(dataTestUserCreate01.email)
+            const userConfirmation = await userQueryRepository.findByLoginOrEmail(data.accountData.email)
 
             expect(userConfirmation!.accountData.login).toBe(data.accountData.login)
             expect(userConfirmation!.emailConfirmation!.isConfirmed).toBe(true)

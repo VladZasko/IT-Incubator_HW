@@ -1,13 +1,14 @@
 import {PostsViewModel} from "../models/PostsViewModel";
 import {CreatePostServiceModel} from "../models/CreatePostServiceModel";
 import {UpdatePostModel} from "../models/UpdatePostModule";
-import {postRepository} from "../repositories/post-repository";
+import {PostsRepository} from "../repositories/post-repository";
 import {CreateFeedbackServiceModel} from "../../feedback/models/CreateFeedbackModel";
 import {FeedbackViewModel, LikesStatus} from "../../feedback/models/FeedbackViewModel";
-import {feedbackRepository} from "../../feedback/repositories/feedback-repository";
 
-export class postService {
-    static async createPost(createData:CreatePostServiceModel, blogName:string):Promise<PostsViewModel>  {
+export class PostsService {
+
+    constructor(protected postsRepository:PostsRepository) {}
+    async createPost(createData:CreatePostServiceModel, blogName:string):Promise<PostsViewModel>  {
         const newPost = {
             title: createData.title,
             shortDescription: createData.shortDescription,
@@ -21,9 +22,9 @@ export class postService {
             }
         }
 
-        return await postRepository.createPost(newPost)
+        return await this.postsRepository.createPost(newPost)
     }
-    static async createCommentByPost(createData:CreateFeedbackServiceModel, postId: string):Promise<FeedbackViewModel>  {
+    async createCommentByPost(createData:CreateFeedbackServiceModel, postId: string):Promise<FeedbackViewModel>  {
         const newComment = {
             content: createData.content,
             commentatorInfo: {
@@ -38,20 +39,20 @@ export class postService {
             postId: postId
         }
 
-        return await postRepository.createCommentByPost(newComment)
+        return await this.postsRepository.createCommentByPost(newComment)
     }
-    static async updatePost(id: string, upData: UpdatePostModel): Promise<boolean> {
-        return await postRepository.updatePost(id, upData)
+    async updatePost(id: string, upData: UpdatePostModel): Promise<boolean> {
+        return await this.postsRepository.updatePost(id, upData)
     }
-    static async updateLikeStatus(id: string, upData: any, likeStatus:LikesStatus): Promise<boolean> {
+    async updateLikeStatus(id: string, upData: any, likeStatus:LikesStatus): Promise<boolean> {
         const likesData = {
             addedAt: new Date().toISOString(),
             userId: upData.userId,
             login: upData.login
         }
-        return await postRepository.updateLike(id, likesData,likeStatus)
+        return await this.postsRepository.updateLike(id, likesData,likeStatus)
     }
-    static async deletePostById(id: string): Promise<boolean> {
-        return await postRepository.deletePostById(id)
+    async deletePostById(id: string): Promise<boolean> {
+        return await this.postsRepository.deletePostById(id)
     }
 }

@@ -1,23 +1,20 @@
 import {UpdateFeedbackModuleModel} from "../models/UpdateFeedbackModule";
-import {feedbackRepository} from "../repositories/feedback-repository";
 import {FeedbackViewModel} from "../models/FeedbackViewModel";
-import {FeedbacksModel} from "../../../db/db";
-import {ObjectId} from "mongodb";
-import {feedbackQueryMapper} from "../mappers/mappers";
+import {CommentsRepository} from "../repositories/feedback-repository";
+export class CommentsService {
+    constructor(protected commentsRepository:CommentsRepository) {}
 
-export class feedbackService {
-
-    static async getCommentById(id: string): Promise<FeedbackViewModel | null> {
-        return await feedbackRepository.getCommentById(id)
+    async getCommentById(id: string): Promise<FeedbackViewModel | null> {
+        return await this.commentsRepository.getCommentById(id)
     }
-    static async updateComment(id: string, upData: UpdateFeedbackModuleModel): Promise<boolean> {
-        return await feedbackRepository.updatePost(id, upData)
+    async updateComment(id: string, upData: UpdateFeedbackModuleModel): Promise<boolean> {
+        return await this.commentsRepository.updatePost(id, upData)
     }
-    static async updateLikeStatus(id: string, upData: any): Promise<boolean> {
-        return await feedbackRepository.updateLike(id, upData)
+    async updateLikeStatus(id: string, upData: any): Promise<boolean> {
+        return await this.commentsRepository.updateLike(id, upData)
     }
 
-    static async deleteCommentById(id: string): Promise<boolean> {
-        return await feedbackRepository.deleteCommentById(id)
+    async deleteCommentById(id: string): Promise<boolean> {
+        return await this.commentsRepository.deleteCommentById(id)
     }
 }

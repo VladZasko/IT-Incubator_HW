@@ -3,8 +3,8 @@ import {ObjectId} from "mongodb";
 import {CreateAuthUserPassModel} from "../models/input/CreateAuthUserModel";
 import {UsersAuthViewModel} from "../models/output/UsersViewModel";
 
-export class authRepository {
-    static async createUser(createData: CreateAuthUserPassModel): Promise<UsersAuthViewModel> {
+export class AuthRepository {
+    async createUser(createData: CreateAuthUserPassModel): Promise<UsersAuthViewModel> {
 
         const user = await UserAuthModel.create({...createData})
 
@@ -16,13 +16,13 @@ export class authRepository {
         }
     }
 
-    static async updateConfirmation(_id: ObjectId) {
+    async updateConfirmation(_id: ObjectId) {
         let result = await UserAuthModel
             .updateOne({_id}, {$set: {'emailConfirmation.isConfirmed': true}})
         return result.modifiedCount === 1
     }
 
-    static async newConfirmationCode(_id: ObjectId, data: Date, newConfirmationCode: string) {
+    async newConfirmationCode(_id: ObjectId, data: Date, newConfirmationCode: string) {
         let result = await UserAuthModel
             .updateOne({_id}, {
                 $set:
@@ -35,7 +35,7 @@ export class authRepository {
         return result.modifiedCount === 1
     }
 
-    static async updatePassword(user: any, salt: string, hash: string) {
+    async updatePassword(user: any, salt: string, hash: string) {
         let result = await UserAuthModel
             .updateOne({_id: new ObjectId(user.id)}, {
                 $set:
@@ -51,7 +51,7 @@ export class authRepository {
         return result.modifiedCount === 1
     }
 
-    static async passwordRecovery(_id: ObjectId, passwordRecoveryCode: string, expirationDate: Date) {
+    async passwordRecovery(_id: ObjectId, passwordRecoveryCode: string, expirationDate: Date) {
         let result = await UserAuthModel
             .updateOne({_id}, {
                 $set:
@@ -64,7 +64,7 @@ export class authRepository {
         return result.modifiedCount === 1
     }
 
-    static async deleteUserById(id: string): Promise<boolean> {
+    async deleteUserById(id: string): Promise<boolean> {
         const foundUser = await UserAuthModel.deleteOne({_id: new ObjectId(id)})
 
         return !!foundUser.deletedCount

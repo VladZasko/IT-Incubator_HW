@@ -4,13 +4,16 @@ export type InvalidTokenType = WithId<{
     accessToken: string
 }>
 
-export type RefreshTokensMetaDBType = WithId<{
-    issuedAt: string
-    deviceId: string
-    ip: string
-    deviseName: string
-    userId: string
-}>
+export class RefreshTokensMetaDBType {
+    constructor(
+        public issuedAt: string,
+        public deviceId: string,
+        public ip: string,
+        public deviseName: string,
+        public userId: string
+    ) {
+    }
+}
 
 export type RefreshTokensMetaType = {
     id: string

@@ -1,9 +1,9 @@
-import {WithId} from "mongodb";
 
-export type RateLimiteType = WithId<{
-    IP: string
-    URL:string
-    date: Date
-}>
-
-export type RateLimiteBDtype = Array<RateLimiteType>
+export class RateLimiteType {
+    constructor(
+        public IP: string,
+        public URL: string,
+        public date: Date
+    ) {
+    }
+}
