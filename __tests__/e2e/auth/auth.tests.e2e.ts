@@ -4,10 +4,13 @@ import {HTTP_STATUSES} from "../../../src/utils/utils";
 import {RouterPaths} from "../../../src/routerPaths";
 import {ERRORS_MESSAGES} from "../../../src/utils/errors";
 import {usersTestManager} from "../users/utils/usersTestManager";
-import {dataTestUserCreate01, dataTestUserCreate02} from "../users/dataForTest/dataTestforUser";
+import {dataTestUserCreate01, dataTestUserCreate02, incorrectUserData} from "../users/dataForTest/dataTestforUser";
 import {authTestManager} from "./utils/authTestManager";
 import {dataTestUserAuth} from "./dataForTest/dataTestforAuth";
 import {dbControl} from "../../../src/db/db";
+import {authRepository} from "../../../src/features/auth/repositories/auth-repository";
+import {sub} from "date-fns";
+import {ObjectId} from "mongodb";
 
 const getRequest = () => {
     return request(app)
@@ -286,6 +289,113 @@ describe('/auth', () => {
 
         await authTestManager.userEmailConfirmation(userNewCode.createEntity!)
     })
+
+    it('should return 400 if the inputModel has invalid email ', async () => {
+
+        await authTestManager.userEmailRecoveryPassword(
+            incorrectUserData.incorrectEmail,
+            HTTP_STATUSES.BAD_REQUEST_400,
+            [ERRORS_MESSAGES.USER_EMAIL])
+
+    })
+
+    it('should return 429 More than 5 attempts from one IP-address during 10 seconds', async () => {
+        const user = await usersTestManager.createUserAdmin(dataTestUserCreate02)
+
+        await authTestManager.userEmailRecoveryPassword(user.createdEntity.email)
+        await authTestManager.userEmailRecoveryPassword(user.createdEntity.email)
+        await authTestManager.userEmailRecoveryPassword(user.createdEntity.email)
+        await authTestManager.userEmailRecoveryPassword(user.createdEntity.email)
+        await authTestManager.userEmailRecoveryPassword(user.createdEntity.email)
+        await authTestManager.userEmailRecoveryPassword(user.createdEntity.email, HTTP_STATUSES.TOO_MANY_REQUESTS_429)
+
+    })
+
+    it('should return 204 send email for change password', async () => {
+        const user = await usersTestManager.createUserAdmin(dataTestUserCreate02)
+
+        await authTestManager.userEmailRecoveryPassword(user.createdEntity.email)
+
+    })
+
+    it("shouldn't change password 400 recoveryCode is incorrect", async () => {
+        const user = await usersTestManager.createUserAdmin(dataTestUserCreate01)
+
+        await authTestManager.userEmailRecoveryPassword(user.createdEntity.email)
+
+        const newPassword = {
+            newPassword: "string",
+            recoveryCode: "incorrect code"
+        }
+
+        await getRequest()
+            .post(`${RouterPaths.auth}/new-password`)
+            .send(newPassword)
+            .expect(HTTP_STATUSES.BAD_REQUEST_400, {
+                errorsMessages: [ERRORS_MESSAGES.AUTH_RECOVERY_CODE]
+            })
+
+        await authTestManager.createToken(dataTestUserAuth)
+    })
+
+    it("shouldn't change password 400 recoveryCode is expired", async () => {
+        const user = await usersTestManager.createUserAdmin(dataTestUserCreate01)
+
+        const recoveryCode = await authTestManager.userEmailRecoveryPassword(user.createdEntity.email)
+
+        const expiredCodeData = {
+            _id:new ObjectId(user.createdEntity.id),
+            recoveryCode: recoveryCode.createEntity!.passwordRecovery!.recoveryCode,
+            expirationDate: sub(new Date(), {
+                minutes: 15
+            })
+        }
+        await authRepository.passwordRecovery(expiredCodeData._id, expiredCodeData.recoveryCode, expiredCodeData.expirationDate)
+
+        const newPassword = {
+            newPassword: "string",
+            recoveryCode: expiredCodeData.recoveryCode
+        }
+
+        await getRequest()
+            .post(`${RouterPaths.auth}/new-password`)
+            .send(newPassword)
+            .expect(HTTP_STATUSES.BAD_REQUEST_400, {
+                errorsMessages: [ERRORS_MESSAGES.AUTH_RECOVERY_CODE]
+            })
+
+        await authTestManager.createToken(dataTestUserAuth)
+    })
+
+    it('should return 204 change password', async () => {
+        const user = await usersTestManager.createUserAdmin(dataTestUserCreate01)
+
+        const recoveryCode = await authTestManager.userEmailRecoveryPassword(user.createdEntity.email)
+
+        const newPassword = {
+            newPassword: "string",
+            recoveryCode: recoveryCode.createEntity!.passwordRecovery!.recoveryCode
+        }
+
+        await getRequest()
+            .post(`${RouterPaths.auth}/new-password`)
+            .send(newPassword)
+            .expect(HTTP_STATUSES.NO_CONTENT_204)
+
+        await authTestManager.createToken(
+            dataTestUserAuth,
+            HTTP_STATUSES.UNAUTHORIZED_401
+        )
+
+        const userWithNewPassword = {
+            ...dataTestUserAuth,
+            password: newPassword.newPassword
+        }
+
+        await authTestManager.createToken(userWithNewPassword)
+    })
+
+
 
 })
 

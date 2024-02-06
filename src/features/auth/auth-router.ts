@@ -8,7 +8,7 @@ import {authService} from "./domain/auth-service";
 import {authRegistrationValidator} from "./validator/auth-registration-validator";
 import {authConfirmationValidator} from "./validator/auth-confirmation-validator";
 import {authResendingValidator} from "./validator/auth-resending-validator";
-import {AccessTokensBlackListModel, RefreshTokensMetaModel} from "../../db/db";
+import {RefreshTokensMetaModel} from "../../db/db";
 import {authRefreshTokenMiddleware} from "../../middlewares/auth/auth-refreshToken-middleware";
 import {LoginAuthUserModel} from "./models/input/LoginAuthUserModel";
 import {v4 as uuidv4} from "uuid";

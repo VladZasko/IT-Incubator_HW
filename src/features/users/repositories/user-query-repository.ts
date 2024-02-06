@@ -1,8 +1,9 @@
 import {UsersViewModel, UsersViewModelGetAllBlogs} from "../models/output/UsersViewModel";
 import {userMapper} from "../mappers/mappers";
 import {QueryUserModel} from "../models/input/QueryUserModule";
-import {ObjectId} from "mongodb";
+import {ObjectId, WithId} from "mongodb";
 import {UserAuthModel} from "../../../db/db";
+import {UserAuthDBType} from "../../../db/types/users.types";
 
 export class userQueryRepository {
     static async getAllUsers(sortData: QueryUserModel): Promise<UsersViewModelGetAllBlogs>{
@@ -60,7 +61,7 @@ export class userQueryRepository {
 
         return userMapper(user)
     }
-    static async findByLoginOrEmail(loginOrEmail: string) {
+    static async findByLoginOrEmail(loginOrEmail: string)  {
         return UserAuthModel
             .findOne({$or: [{'accountData.email': loginOrEmail}, {'accountData.login': loginOrEmail}]})
     }

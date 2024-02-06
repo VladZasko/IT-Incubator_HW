@@ -1,7 +1,8 @@
 import {RefreshTokensMetaDBType} from "./token.types";
+import {WithId} from "mongodb";
 
 export type UserAuthType = {
-    id: string,
+    id:string
     accountData: {
         login: string,
         email: string,
@@ -13,6 +14,10 @@ export type UserAuthType = {
         confirmationCode: string,
         expirationDate: Date,
         isConfirmed: boolean
+    }
+    passwordRecovery?: {
+        recoveryCode: string
+        expirationDate: Date
     }
 }
 export type UserAuthDBType = {

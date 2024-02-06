@@ -2,12 +2,11 @@ import request from 'supertest'
 import {app} from "../../../src/app";
 import {HTTP_STATUSES} from "../../../src/utils/utils";
 import {RouterPaths} from "../../../src/routerPaths";
-import {ERRORS_MESSAGES} from "../../../src/utils/errors";
 import {usersTestManager} from "../users/utils/usersTestManager";
 import {dataTestUserCreate01, dataTestUserCreate02} from "../users/dataForTest/dataTestforUser";
 import {dbControl} from "../../../src/db/db";
 import {authTestManager} from "../auth/utils/authTestManager";
-import {dataTestUserAuth} from "../auth/dataForTest/dataTestforAuth";
+import {dataTestUserAuth, dataTestUserAuth2} from "../auth/dataForTest/dataTestforAuth";
 
 const getRequest = () => {
     return request(app)
@@ -25,164 +24,232 @@ describe('/securityDevices', () => {
         await dbControl.stop()
     })
 
-
-    it('should return 200 and new access token and refresh token', async () => {
-
-        const user = await usersTestManager.createUserAdmin(dataTestUserCreate01)
-
-        const token1 = await authTestManager.createToken(dataTestUserAuth)
-        const token2 = await authTestManager.createToken(dataTestUserAuth)
-        const token3 = await authTestManager.createToken(dataTestUserAuth)
-
-        const resalt = await getRequest()
-            .post(`${RouterPaths.security}/devices`)
-            .set('Cookie', token1.refreshToken!)
-            .expect(HTTP_STATUSES.OK_200)
-
-        expect(resalt.body.length).toBe(3)
-    })
-
-    it('should return 401 with old refresh token /logout', async () => {
+    it('should return 401 if refreshToken inside cookie is missing', async () => {
 
         await usersTestManager.createUserAdmin(dataTestUserCreate01)
 
         const token = await authTestManager.createToken(dataTestUserAuth)
 
         await getRequest()
-            .post(`${RouterPaths.auth}/logout`)
+            .post(`${RouterPaths.auth}/refresh-token`)
             .set('Cookie', token.refreshToken!)
-            .expect(HTTP_STATUSES.NO_CONTENT_204)
+            .expect(HTTP_STATUSES.OK_200)
 
         await getRequest()
-            .post(`${RouterPaths.auth}/refresh-token`)
+            .get(`${RouterPaths.security}/devices`)
             .set('Cookie', token.refreshToken!)
             .expect(HTTP_STATUSES.UNAUTHORIZED_401)
 
     })
 
-    it('should return 204 logout', async () => {
+    it('should return 200 and three devices', async () => {
 
-        const user = await usersTestManager.createUserAdmin(dataTestUserCreate01)
+        await usersTestManager.createUserAdmin(dataTestUserCreate01)
 
-        const token = await authTestManager.createToken(dataTestUserAuth)
+        const token1 = await authTestManager.createToken(dataTestUserAuth)
+        await authTestManager.createToken(dataTestUserAuth)
+        await authTestManager.createToken(dataTestUserAuth)
 
-        const responseData = {
-            email: user.createdEntity.email,
-            login: user.createdEntity.login,
-            userId: user.createdEntity.id
-        }
+        const resalt = await getRequest()
+            .get(`${RouterPaths.security}/devices`)
+            .set('Cookie', token1.refreshToken!)
+            .expect(HTTP_STATUSES.OK_200)
 
-        await getRequest()
-            .get(`${RouterPaths.auth}/me`)
-            .set('authorization', `Bearer ${token.createdEntity.accessToken}`)
-            .expect(HTTP_STATUSES.OK_200, responseData)
+        expect(resalt.body.length).toBe(3)
+    })
+
+    it("shouldn't delete device. 401 JWT refreshToken inside cookie is missing, expired or incorrect", async () => {
+
+        await usersTestManager.createUserAdmin(dataTestUserCreate01)
+
+        const token1 = await authTestManager.createToken(dataTestUserAuth)
+        const token2 = await authTestManager.createToken(dataTestUserAuth)
+        await authTestManager.createToken(dataTestUserAuth)
+
+        const resalt = await getRequest()
+            .get(`${RouterPaths.security}/devices`)
+            .set('Cookie', token1.refreshToken!)
+            .expect(HTTP_STATUSES.OK_200)
+
+        expect(resalt.body.length).toBe(3)
 
         await getRequest()
             .post(`${RouterPaths.auth}/refresh-token`)
-            .set('Cookie', token.refreshToken!)
+            .set('Cookie', token1.refreshToken!)
             .expect(HTTP_STATUSES.OK_200)
 
+        await getRequest()
+            .delete(`${RouterPaths.security}/devices/${resalt.body[1].deviceId}`)
+            .set('Cookie', token1.refreshToken!)
+            .expect(HTTP_STATUSES.UNAUTHORIZED_401)
+
+        const resalt2 = await getRequest()
+            .get(`${RouterPaths.security}/devices`)
+            .set('Cookie', token2.refreshToken!)
+            .expect(HTTP_STATUSES.OK_200)
+
+        expect(resalt2.body.length).toBe(3)
     })
 
-    it('should return 200 access token and refresh token', async () => {
+    it("shouldn't delete device. 403 if try to delete the deviceId of other user", async () => {
 
-        const user = await usersTestManager.createUserAdmin(dataTestUserCreate01)
+        await usersTestManager.createUserAdmin(dataTestUserCreate01)
+        await usersTestManager.createUserAdmin(dataTestUserCreate02)
 
-        const token = await authTestManager.createToken(dataTestUserAuth)
+        const tokenUser1 = await authTestManager.createToken(dataTestUserAuth)
+        const tokenUser2 = await authTestManager.createToken(dataTestUserAuth2)
+        await authTestManager.createToken(dataTestUserAuth)
+        await authTestManager.createToken(dataTestUserAuth2)
 
-        const responseData = {
-            email: user.createdEntity.email,
-            login: user.createdEntity.login,
-            userId: user.createdEntity.id
-        }
+        const resaltUser1 = await getRequest()
+            .get(`${RouterPaths.security}/devices`)
+            .set('Cookie', tokenUser1.refreshToken!)
+            .expect(HTTP_STATUSES.OK_200)
+
+        expect(resaltUser1.body.length).toBe(2)
+
+        const resaltUser2 = await getRequest()
+            .get(`${RouterPaths.security}/devices`)
+            .set('Cookie', tokenUser2.refreshToken!)
+            .expect(HTTP_STATUSES.OK_200)
+
+        expect(resaltUser2.body.length).toBe(2)
 
         await getRequest()
-            .get(`${RouterPaths.auth}/me`)
-            .set('authorization', `Bearer ${token.createdEntity.accessToken}`)
-            .expect(HTTP_STATUSES.OK_200, responseData)
+            .delete(`${RouterPaths.security}/devices/${resaltUser2.body[1].deviceId}`)
+            .set('Cookie', tokenUser1.refreshToken!)
+            .expect(HTTP_STATUSES.FORBIDDEN_403)
+
+        const deviceUser1 = await getRequest()
+            .get(`${RouterPaths.security}/devices`)
+            .set('Cookie', tokenUser1.refreshToken!)
+            .expect(HTTP_STATUSES.OK_200)
+
+        expect(deviceUser1.body.length).toBe(2)
+
+        const deviceUser2 = await getRequest()
+            .get(`${RouterPaths.security}/devices`)
+            .set('Cookie', tokenUser2.refreshToken!)
+            .expect(HTTP_STATUSES.OK_200)
+
+        expect(deviceUser2.body.length).toBe(2)
     })
 
-    it('should return 400 user with the given email already exists', async () => {
+    it("shouldn't delete device. 404 not found", async () => {
 
-        await authTestManager.userEmailRegistration(dataTestUserCreate01)
+        await usersTestManager.createUserAdmin(dataTestUserCreate01)
 
-        await authTestManager
-            .userEmailRegistration(
-                dataTestUserCreate01,
-                HTTP_STATUSES.BAD_REQUEST_400,
-                [
-                    ERRORS_MESSAGES.USER_LOGIN,
-                    ERRORS_MESSAGES.USER_EMAIL
-                ]
-            )
+        const tokenUser1 = await authTestManager.createToken(dataTestUserAuth)
+        await authTestManager.createToken(dataTestUserAuth)
+        await authTestManager.createToken(dataTestUserAuth)
 
+        const resaltUser1 = await getRequest()
+            .get(`${RouterPaths.security}/devices`)
+            .set('Cookie', tokenUser1.refreshToken!)
+            .expect(HTTP_STATUSES.OK_200)
+
+        expect(resaltUser1.body.length).toBe(3)
+
+        await getRequest()
+            .delete(`${RouterPaths.security}/devices/${123}`)
+            .set('Cookie', tokenUser1.refreshToken!)
+            .expect(HTTP_STATUSES.NOT_FOUND_404)
+
+        const deviceUser1 = await getRequest()
+            .get(`${RouterPaths.security}/devices`)
+            .set('Cookie', tokenUser1.refreshToken!)
+            .expect(HTTP_STATUSES.OK_200)
+
+        expect(deviceUser1.body.length).toBe(3)
     })
 
-    it('should return 204 email registration', async () => {
+    it('should return 204 delete one device', async () => {
 
-        await authTestManager.userEmailRegistration(dataTestUserCreate01)
+        await usersTestManager.createUserAdmin(dataTestUserCreate01)
 
+        const token1 = await authTestManager.createToken(dataTestUserAuth)
+        await authTestManager.createToken(dataTestUserAuth)
+        await authTestManager.createToken(dataTestUserAuth)
+
+        const resalt = await getRequest()
+            .get(`${RouterPaths.security}/devices`)
+            .set('Cookie', token1.refreshToken!)
+            .expect(HTTP_STATUSES.OK_200)
+
+        expect(resalt.body.length).toBe(3)
+
+        await getRequest()
+            .delete(`${RouterPaths.security}/devices/${resalt.body[1].deviceId}`)
+            .set('Cookie', token1.refreshToken!)
+            .expect(HTTP_STATUSES.NO_CONTENT_204)
+
+        const resalt2 = await getRequest()
+            .get(`${RouterPaths.security}/devices`)
+            .set('Cookie', token1.refreshToken!)
+            .expect(HTTP_STATUSES.OK_200)
+
+        expect(resalt2.body.length).toBe(2)
     })
 
-    it('should return 400  confirmation code is incorrect', async () => {
+    it("shouldn't delete all device. 401 JWT refreshToken inside cookie is missing, expired or incorrect", async () => {
 
-        const user = await authTestManager.userEmailRegistration(dataTestUserCreate01)
+        await usersTestManager.createUserAdmin(dataTestUserCreate01)
 
-        const data = {
-            ...user.createEntity!,
-            emailConfirmation: {
-                ...user.createEntity!.emailConfirmation!,
-                confirmationCode: " 123"
-            }
-        }
-        await authTestManager.userEmailConfirmation(
-            data,
-            HTTP_STATUSES.BAD_REQUEST_400,
-            [ERRORS_MESSAGES.AUTH_CODE]
-        )
+        const token1 = await authTestManager.createToken(dataTestUserAuth)
+        const token2 = await authTestManager.createToken(dataTestUserAuth)
+        await authTestManager.createToken(dataTestUserAuth)
+
+        const resalt = await getRequest()
+            .get(`${RouterPaths.security}/devices`)
+            .set('Cookie', token1.refreshToken!)
+            .expect(HTTP_STATUSES.OK_200)
+
+        expect(resalt.body.length).toBe(3)
+
+        await getRequest()
+            .post(`${RouterPaths.auth}/refresh-token`)
+            .set('Cookie', token1.refreshToken!)
+            .expect(HTTP_STATUSES.OK_200)
+
+        await getRequest()
+            .delete(`${RouterPaths.security}/devices`)
+            .set('Cookie', token1.refreshToken!)
+            .expect(HTTP_STATUSES.UNAUTHORIZED_401)
+
+        const resalt2 = await getRequest()
+            .get(`${RouterPaths.security}/devices`)
+            .set('Cookie', token2.refreshToken!)
+            .expect(HTTP_STATUSES.OK_200)
+
+        expect(resalt2.body.length).toBe(3)
     })
 
-    it('should return 400 email has already been confirmed.', async () => {
+    it('should return 204 delete all device', async () => {
 
-        const user = await authTestManager.userEmailRegistration(dataTestUserCreate01)
+        await usersTestManager.createUserAdmin(dataTestUserCreate01)
 
-        await authTestManager.userEmailConfirmation(user.createEntity!)
+        const token1 = await authTestManager.createToken(dataTestUserAuth)
+        await authTestManager.createToken(dataTestUserAuth)
+        await authTestManager.createToken(dataTestUserAuth)
 
-        await authTestManager.userEmailConfirmation(
-            user.createEntity!,
-            HTTP_STATUSES.BAD_REQUEST_400,
-            [ERRORS_MESSAGES.AUTH_CODE])
-    })
+        const resalt = await getRequest()
+            .get(`${RouterPaths.security}/devices`)
+            .set('Cookie', token1.refreshToken!)
+            .expect(HTTP_STATUSES.OK_200)
 
-    it('should return 204 email was verified. Account was activated', async () => {
+        expect(resalt.body.length).toBe(3)
 
-        const user = await authTestManager.userEmailRegistration(dataTestUserCreate01)
+        await getRequest()
+            .delete(`${RouterPaths.security}/devices`)
+            .set('Cookie', token1.refreshToken!)
+            .expect(HTTP_STATUSES.NO_CONTENT_204)
 
-        await authTestManager.userEmailConfirmation(user.createEntity!)
-    })
+        const resalt2 = await getRequest()
+            .get(`${RouterPaths.security}/devices`)
+            .set('Cookie', token1.refreshToken!)
+            .expect(HTTP_STATUSES.OK_200)
 
-    it('should return 400 with old code', async () => {
-
-        const user = await authTestManager.userEmailRegistration(dataTestUserCreate01)
-
-        await authTestManager.userEmailConfirmationResending(user.createEntity!)
-
-        await authTestManager.userEmailConfirmation(
-            user.createEntity!,
-            HTTP_STATUSES.BAD_REQUEST_400,
-            [
-                ERRORS_MESSAGES.AUTH_CODE
-            ]
-        )
-    })
-
-    it('should return 204 email resending.', async () => {
-
-        const user = await authTestManager.userEmailRegistration(dataTestUserCreate01)
-
-        const userNewCode = await authTestManager.userEmailConfirmationResending(user.createEntity!)
-
-        await authTestManager.userEmailConfirmation(userNewCode.createEntity!)
+        expect(resalt2.body.length).toBe(1)
     })
 
 })

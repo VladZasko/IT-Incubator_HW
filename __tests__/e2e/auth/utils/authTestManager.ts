@@ -8,9 +8,8 @@ import {errors} from "../../../utils/error";
 import {CreateUserModel} from "../../../../src/features/users/models/input/CreateUserModel";
 import {emailAdapter} from "../../../../src/features/auth/adapters/email-adapter";
 import {userQueryRepository} from "../../../../src/features/users/repositories/user-query-repository";
-import {dataTestUserCreate01} from "../../users/dataForTest/dataTestforUser";
+import {dataTestUserCreate01, dataTestUserCreate02} from "../../users/dataForTest/dataTestforUser";
 import {UserAuthDBType} from "../../../../src/db/types/users.types";
-
 
 
 export const authTestManager = {
@@ -108,5 +107,28 @@ export const authTestManager = {
         }
 
         return {response: response, createEntity: userConfirmation};
-    }
+    },
+    async userEmailRecoveryPassword(email: string,
+                                expectedStatusCode: HttpStatusType = HTTP_STATUSES.NO_CONTENT_204,
+                                expectedErrorsMessages?: ErrorMessage) {
+
+        jest.spyOn(emailAdapter, "sendRecoveryCode").mockImplementation(() => Promise.resolve(true))
+
+        const response = await request(app)
+            .post(`${RouterPaths.auth}/password-recovery`)
+            .send({email:email})
+            .expect(expectedStatusCode)
+
+        if (expectedStatusCode === HTTP_STATUSES.BAD_REQUEST_400) {
+            await errors.errors(response.body, expectedErrorsMessages)
+        }
+
+        const user = await userQueryRepository.findByLoginOrEmail(email)
+
+        if(expectedStatusCode ===HTTP_STATUSES.NO_CONTENT_204) {
+            expect(user!.passwordRecovery!.recoveryCode).toEqual(expect.any(String))
+            expect(user!.passwordRecovery!.expirationDate).toEqual(expect.any(Date))
+        }
+        return {response: response, createEntity: user};
+    },
 }

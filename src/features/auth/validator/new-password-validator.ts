@@ -14,6 +14,9 @@ export const recoveryCodeValidation = body('recoveryCode').isString().trim().wit
         if (user?.passwordRecovery?.recoveryCode !== value) {
             throw Error('RecoveryCode is incorrect')
         }
+        if (user.passwordRecovery!.expirationDate < new Date()) {
+            throw Error('RecoveryCode is expired')
+        }
         return true
     }).withMessage('Incorrect code!')
 
