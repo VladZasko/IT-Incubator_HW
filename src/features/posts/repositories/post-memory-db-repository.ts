@@ -1,3 +1,4 @@
+/*
 import {memoryDb} from "../../../db/memory-db";
 import {PostsViewModel} from "../models/PostsViewModel";
 import {UpdatePostModel} from "../models/UpdatePostModule";
@@ -49,4 +50,4 @@ export class PostMemoryDbRepository {
             return false;
         }
     }
-}
+}*/

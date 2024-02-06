@@ -3,17 +3,29 @@ import {FeedbacksModel, PostModel} from "../../../db/db";
 import {ObjectId} from "mongodb";
 import {CreatePostReposModel} from "../models/CreatePostServiceModel";
 import {UpdatePostModel} from "../models/UpdatePostModule";
-import {FeedbackStatus, FeedbackViewModel} from "../../feedback/models/FeedbackViewModel";
+import {LikesStatus, FeedbackViewModel} from "../../feedback/models/FeedbackViewModel";
 import {FeedbacksDBType, FeedbacksType} from "../../../db/types/feedbacks.types";
+import {NewestLikesType, PostType} from "../../../db/types/posts.types";
 
 export class postRepository {
-    static async createPost(createData:CreatePostReposModel):Promise<PostsViewModel>  {
+    static async createPost(createData:PostType):Promise<PostsViewModel>  {
 
         const post = await PostModel.create({...createData})
 
         return {
-            ...createData,
-            id:post.id
+            id: post.id,
+            title: createData.title,
+            shortDescription: createData.shortDescription,
+            content: createData.content,
+            blogId: createData.blogId,
+            blogName: createData.blogName,
+            createdAt: createData.createdAt,
+            extendedLikesInfo: {
+                likesCount: createData.likesInfo.likes.length,
+                dislikesCount: createData.likesInfo.likes.length,
+                myStatus: LikesStatus.None,
+                newestLikes:[],
+            }
         }
     }
     static async createCommentByPost(createData:FeedbacksType):Promise<FeedbackViewModel>  {
@@ -31,7 +43,7 @@ export class postRepository {
             likesInfo: {
                 likesCount: createData.likesInfo.likes.length,
                 dislikesCount: createData.likesInfo.dislikes.length,
-                myStatus: FeedbackStatus.None
+                myStatus: LikesStatus.None
             }
         }
     }
@@ -45,6 +57,48 @@ export class postRepository {
             }
         })
         return !!foundPost.matchedCount;
+    }
+    static async updateLike(id: string, likesData: NewestLikesType,likeStatusData:LikesStatus): Promise<boolean> {
+        const post = await PostModel.findById({_id: new ObjectId(id)})
+
+        const isLiked = post!.likesInfo.likes.some(obj => obj.userId === likesData.userId);
+        const isDisliked = post!.likesInfo.dislikes.some(obj => obj.userId === likesData.userId);
+
+        if (likeStatusData === LikesStatus.Like) {
+            if (isLiked) {
+                return true
+            } else {
+                post!.likesInfo.likes.push({...likesData});
+
+                if (isDisliked) {
+                    post!.likesInfo.dislikes = post!.likesInfo.dislikes.filter((dislike: any) => dislike.userId !== likesData.userId);
+                }
+            }
+        } else if (likeStatusData === LikesStatus.Dislike) {
+            if (isDisliked) {
+                return true
+            } else {
+                post!.likesInfo.dislikes.push(likesData);
+
+                if (isLiked) {
+                    post!.likesInfo.likes = post!.likesInfo.likes.filter((likes: any) => likes.userId !== likesData.userId);
+                }
+            }
+        } else if (likeStatusData === LikesStatus.None) {
+            if (isDisliked) {
+                post!.likesInfo.dislikes = post!.likesInfo.dislikes.filter((dislikes: any) => dislikes.userId !== likesData.userId);
+            } else if (isLiked) {
+                post!.likesInfo.likes = post!.likesInfo.likes.filter((likes: any) => likes.userId !== likesData.userId);
+            } else {
+                return true
+            }
+        } else{
+            return false
+        }
+
+        await post!.save();
+
+        return true;
     }
     static async deletePostById(id: string): Promise<boolean> {
         const foundPost = await PostModel.deleteOne({_id:new ObjectId(id)})

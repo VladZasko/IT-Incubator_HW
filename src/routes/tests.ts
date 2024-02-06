@@ -1,4 +1,3 @@
-import {memoryDb, DBType} from "../db/memory-db";
 import express from "express";
 import {HTTP_STATUSES} from "../utils/utils";
 import {app} from "../app";

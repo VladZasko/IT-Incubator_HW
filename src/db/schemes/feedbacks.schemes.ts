@@ -15,11 +15,4 @@ export const FeedbacksSchema = new mongoose.Schema<FeedbacksDBType>({
     postId: {type: String, require: true},
 })
 
-/*
-export const FeedbackLikeSchema = new mongoose.Schema<FeedbackLikeDBType>({
-    userId: {type: String, require: true},
-    commentId: {type: String, require: true},
-    likeStatus: {type: String, require: true}
-})
-*/
 

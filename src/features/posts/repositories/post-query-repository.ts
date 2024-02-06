@@ -1,14 +1,14 @@
 import {PostsViewModel} from "../models/PostsViewModel";
 import {FeedbacksModel, PostModel} from "../../../db/db";
-import {postMapper} from "../mappers/mappers";
+import {postMapper, postQueryMapper} from "../mappers/mappers";
 import {ObjectId} from "mongodb";
 import {QueryPostsModel} from "../models/QueryPostsModule";
 import {QueryFeedbackModule} from "../../feedback/models/QueryFeedbackModule";
 import {feedbackQueryMapper} from "../../feedback/mappers/mappers";
-import {FeedbackStatus, FeedbackViewModelGetAllComments} from "../../feedback/models/FeedbackViewModel";
+import {LikesStatus, FeedbackViewModelGetAllComments} from "../../feedback/models/FeedbackViewModel";
 
 export class postQueryRepository {
-    static async getAllPosts(sortData: QueryPostsModel){
+    static async getAllPosts(sortData: QueryPostsModel,likeStatusData?:string){
         const pageNumber= sortData.pageNumber ?? 1
         const pageSize= sortData.pageSize ?? 10
         const sortBy= sortData.sortBy ?? 'createdAt'
@@ -32,7 +32,7 @@ export class postQueryRepository {
             page: +pageNumber ,
             pageSize: +pageSize,
             totalCount,
-            items: posts.map(postMapper)
+            items: posts.map(posts => postQueryMapper(posts, likeStatusData))
         }
     }
     static async getCommentByPostId(id: string, sortData: QueryFeedbackModule, likeStatusData?:string):Promise<FeedbackViewModelGetAllComments>{
@@ -63,12 +63,11 @@ export class postQueryRepository {
             items: comments.map(comment => feedbackQueryMapper(comment, likeStatusData))
         }
     }
-    static async getPostById(id: string): Promise<PostsViewModel | null> {
+    static async getPostById(id: string,likeStatusData?:string): Promise<PostsViewModel | null> {
         const post = await PostModel.findOne({_id: new ObjectId(id)})
-
         if (!post){
             return null
         }
-        return postMapper(post)
+        return postQueryMapper(post,likeStatusData)
     }
 }

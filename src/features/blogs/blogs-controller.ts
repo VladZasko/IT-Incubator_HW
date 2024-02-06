@@ -37,6 +37,8 @@ export class BlogsController {
     }
 
     async getPostsByBlog(req: RequestWithParamsAndQuery<URIParamsBlogIdModel, QueryPostByBlogIdModel>, res: Response) {
+        const likeStatusData = req.user?.id
+
         const id = req.params.id
 
         if (!ObjectId.isValid(id)) {
@@ -58,7 +60,7 @@ export class BlogsController {
             pageSize: req.query.pageSize
         }
 
-        const posts = await blogQueryRepository.getPostsByBlogId(id, sortData)
+        const posts = await blogQueryRepository.getPostsByBlogId(id, sortData,likeStatusData)
 
         res.send(posts)
     }

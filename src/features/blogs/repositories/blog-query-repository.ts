@@ -2,7 +2,7 @@ import {BlogsViewModel, BlogsViewModelGetAllBlogs} from "../models/output/BlogsV
 import {blogMapper} from "../mappers/mappers";
 import {ObjectId} from "mongodb";
 import {QueryBlogsModel, QueryPostByBlogIdModel} from "../models/input/QueryBlogsModule";
-import {postMapper} from "../../posts/mappers/mappers";
+import {postMapper, postQueryMapper} from "../../posts/mappers/mappers";
 import {BlogModel, PostModel} from "../../../db/db";
 
 export class blogQueryRepository {
@@ -41,7 +41,7 @@ export class blogQueryRepository {
         }
 
     }
-    static async getPostsByBlogId(blogId:string, sortData: QueryPostByBlogIdModel) {
+    static async getPostsByBlogId(blogId:string, sortData: QueryPostByBlogIdModel,likeStatusData?:string) {
         const sortBy = sortData.sortBy ?? 'createdAt'
         const sortDirection = sortData.sortDirection ?? 'desc'
         const pageNumber = sortData.pageNumber ?? 1
@@ -64,7 +64,7 @@ export class blogQueryRepository {
             page: +pageNumber ,
             pageSize: +pageSize,
             totalCount,
-            items: posts.map(postMapper)
+            items: posts.map(posts => postQueryMapper(posts, likeStatusData))
         }
 
     }

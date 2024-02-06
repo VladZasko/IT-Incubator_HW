@@ -1,3 +1,4 @@
+/*
 import {memoryDb} from "../../../db/memory-db";
 import {BlogsViewModel} from "../models/output/BlogsViewModel";
 import {UpdateBlogModel} from "../models/input/UpdateBlogModule";
@@ -50,4 +51,4 @@ export class BlogMemoryDbRepository {
             return false;
         }
     }
-}
+}*/

@@ -1,6 +1,6 @@
 import {commentatorInfoModel} from "../../../db/types/feedbacks.types";
 
-export enum FeedbackStatus {
+export enum LikesStatus {
     Like = 'Like',
     Dislike = 'Dislike',
     None = 'None',
@@ -14,7 +14,7 @@ export type FeedbackViewModel = {
     likesInfo: {
         likesCount: number
         dislikesCount: number
-        myStatus: FeedbackStatus
+        myStatus: LikesStatus
     }
 }
 

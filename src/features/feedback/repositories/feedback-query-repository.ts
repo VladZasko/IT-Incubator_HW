@@ -1,6 +1,6 @@
 import { FeedbacksModel} from "../../../db/db";
 import {ObjectId} from "mongodb";
-import {FeedbackStatus, FeedbackViewModel} from "../models/FeedbackViewModel";
+import {LikesStatus, FeedbackViewModel} from "../models/FeedbackViewModel";
 import {feedbackMapper, feedbackQueryMapper} from "../mappers/mappers";
 
 export class feedbacksQueryRepository {

@@ -7,16 +7,14 @@ import {
 import {URIParamsPostIdModel} from "../posts/models/URIParamsPostIdModule";
 import {ObjectId} from "mongodb";
 import {feedbacksQueryRepository} from "./repositories/feedback-query-repository";
-import {FeedbackStatus, FeedbackViewModel} from "./models/FeedbackViewModel";
+import {FeedbackViewModel} from "./models/FeedbackViewModel";
 import {authAccessTokenMiddleware} from "../../middlewares/auth/auth-accessToken-middleware";
 import {commentValidation} from "./validator/feedback-validator";
 import {URIParamsFeedbackIdModule} from "./models/URIParamsFeedbackIdModule";
 import {UpdateFeedbackModuleModel} from "./models/UpdateFeedbackModule";
 import {feedbackService} from "./domain/feedback-service";
 import {UpdateLikesModule} from "./models/UpdateLikesModule";
-import {authRefreshTokenMiddleware} from "../../middlewares/auth/auth-refreshToken-middleware";
 import {feedbackRepository} from "./repositories/feedback-repository";
-import {FeedbacksModel} from "../../db/db";
 import {accessTokenMiddleware} from "../../middlewares/auth/accessToken-middleware";
 import {likeValidation} from "./validator/likes-validator";
 

@@ -5,10 +5,6 @@ export type commentatorInfoModel = {
         userLogin: string
 }
 
-export type UserId = {
-        userId: string
-}
-
 export type likesInfoModel = {
         likes: Array<string>
         dislikes: Array<string>
@@ -30,9 +26,3 @@ export type FeedbacksType = {
         postId: string
 }
 
-/*export type FeedbackLikeDBType = WithId<{
-        userId: string
-        commentId: string
-        likeStatus: FeedbackStatus
-        createdAt: string
-}>*/

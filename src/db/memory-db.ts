@@ -1,3 +1,4 @@
+/*
 import {VideoType} from "./types/videos.types";
 import {BlogType} from "./types/blogs.types";
 import {PostType} from "./types/posts.types";
@@ -68,4 +69,4 @@ export type ErrorMessageType = {
 }
 export type ErrorType = {
     errorsMessages: ErrorMessageType[]
-}
+}*/

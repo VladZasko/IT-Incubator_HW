@@ -2,7 +2,7 @@
 import {FeedbacksModel} from "../../../db/db";
 import {ObjectId} from "mongodb";
 import {UpdateFeedbackModuleModel} from "../models/UpdateFeedbackModule";
-import {FeedbackStatus, FeedbackViewModel} from "../models/FeedbackViewModel";
+import {LikesStatus, FeedbackViewModel} from "../models/FeedbackViewModel";
 import {feedbackMapper, feedbackQueryMapper} from "../mappers/mappers";
 
 
@@ -30,7 +30,7 @@ export class feedbackRepository {
         const isLiked = comment!.likesInfo.likes.includes(upData.userId);
         const isDisliked = comment!.likesInfo.dislikes.includes(upData.userId);
 
-        if (upData.likeStatus === FeedbackStatus.Like) {
+        if (upData.likeStatus === LikesStatus.Like) {
             if (isLiked) {
                 return true
             } else {
@@ -40,7 +40,7 @@ export class feedbackRepository {
                     comment!.likesInfo.dislikes = comment!.likesInfo.dislikes.filter((id: string) => id !== upData.userId);
                 }
             }
-        } else if (upData.likeStatus === FeedbackStatus.Dislike) {
+        } else if (upData.likeStatus === LikesStatus.Dislike) {
             if (isDisliked) {
                 return true
             } else {
@@ -50,7 +50,7 @@ export class feedbackRepository {
                     comment!.likesInfo.likes = comment!.likesInfo.likes.filter((id: string) => id !== upData.userId);
                 }
             }
-        } else if (upData.likeStatus === FeedbackStatus.None) {
+        } else if (upData.likeStatus === LikesStatus.None) {
             if (isDisliked) {
                 comment!.likesInfo.dislikes = comment!.likesInfo.dislikes.filter((id: string) => id !== upData.userId);
             } else if (isLiked) {

@@ -24,23 +24,67 @@ import {CreateFeedbackModel} from "../feedback/models/CreateFeedbackModel";
 import {userQueryRepository} from "../users/repositories/user-query-repository";
 import {FeedbackViewModel, FeedbackViewModelGetAllComments} from "../feedback/models/FeedbackViewModel";
 import {accessTokenMiddleware} from "../../middlewares/auth/accessToken-middleware";
+import {likeValidation} from "../feedback/validator/likes-validator";
+import {URIParamsFeedbackIdModule} from "../feedback/models/URIParamsFeedbackIdModule";
+import {UpdateLikesModule} from "../feedback/models/UpdateLikesModule";
+import {feedbackRepository} from "../feedback/repositories/feedback-repository";
+import {feedbackService} from "../feedback/domain/feedback-service";
 
 export const getPostsRoutes = () => {
     const router = express.Router()
-    router.get('/', async (req: RequestWithQuery<QueryPostsModel>,
+
+    router.put('/:id/like-status',authAccessTokenMiddleware,likeValidation(),
+        async (req: RequestWithParamsAndBody<URIParamsFeedbackIdModule, UpdateLikesModule>,
+               res: Response) => {
+
+            const id = req.params.id
+
+            const likeStatus= req.body.likeStatus
+
+            const upData = {
+                userId: req.user!.id,
+                login: req.user!.login
+            }
+
+            if (!ObjectId.isValid(id)) {
+                res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
+                return;
+            }
+
+            const post = await postQueryRepository.getPostById(id)
+
+            if (!post) {
+                res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
+                return;
+            }
+
+            const updateLikeStatus = await postService.updateLikeStatus(id, upData,likeStatus)
+
+            if (!updateLikeStatus) {
+                res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
+                return
+            }
+
+            res.sendStatus(HTTP_STATUSES.NO_CONTENT_204)
+
+        })
+
+    router.get('/', accessTokenMiddleware,async (req: RequestWithQuery<QueryPostsModel>,
                      res: Response) => {
+        const likeStatusData = req.user?.id
         const sortData = {
             pageNumber: req.query.pageNumber,
             pageSize: req.query.pageSize,
             sortBy: req.query.sortBy,
             sortDirection: req.query.sortDirection
         }
-        const posts = await postQueryRepository.getAllPosts(sortData)
+        const posts = await postQueryRepository.getAllPosts(sortData,likeStatusData)
 
         res.send(posts)
     })
-    router.get('/:id', async (req: RequestWithParams<URIParamsPostIdModel>,
+    router.get('/:id',accessTokenMiddleware, async (req: RequestWithParams<URIParamsPostIdModel>,
                         res: Response<PostsViewModel>) => {
+        const likeStatusData = req.user?.id
         const id = req.params.id
 
         if(!ObjectId.isValid(id)){
@@ -48,7 +92,7 @@ export const getPostsRoutes = () => {
             return;
         }
 
-        const post = await postQueryRepository.getPostById(id)
+        const post = await postQueryRepository.getPostById(id,likeStatusData)
 
         if (!post){
             res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)

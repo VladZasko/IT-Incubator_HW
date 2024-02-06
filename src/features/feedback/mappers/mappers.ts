@@ -1,18 +1,18 @@
 import {FeedbacksDBType} from "../../../db/types/feedbacks.types";
-import {FeedbackStatus, FeedbackViewModel} from "../models/FeedbackViewModel";
+import {LikesStatus, FeedbackViewModel} from "../models/FeedbackViewModel";
 import {WithId} from "mongodb";
 
-export const feedbackQueryMapper = (feedbackDb:WithId<FeedbacksDBType>, likeStat?:string) => {
-    const isLiked = feedbackDb!.likesInfo.likes.includes(likeStat!);
-    const isDisliked = feedbackDb!.likesInfo.dislikes.includes(likeStat!);
+export const feedbackQueryMapper = (feedbackDb:WithId<FeedbacksDBType>, userId?:string):FeedbackViewModel => {
+    const isLiked = feedbackDb!.likesInfo.likes.includes(userId!);
+    const isDisliked = feedbackDb!.likesInfo.dislikes.includes(userId!);
 
-    let likeStatus = FeedbackStatus.None
+    let likeStatus = LikesStatus.None
 
     if(isLiked){
-        likeStatus = FeedbackStatus.Like
+        likeStatus = LikesStatus.Like
     }
     if(isDisliked){
-        likeStatus = FeedbackStatus.Dislike
+        likeStatus = LikesStatus.Dislike
     }
 
     return{
