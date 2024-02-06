@@ -1,8 +1,8 @@
 import nodemailer from "nodemailer";
-import {UserAuthDBType} from "../../../db/types/users.types";
+import {UserAuthDBType, UserAuthType} from "../../../db/types/users.types";
 
 export const emailAdapter = {
-    async sendCode(newUser: UserAuthDBType) {
+    async sendCode(newUser: UserAuthType) {
         const transport = nodemailer.createTransport({
             service: "Gmail",
             host: "smtp.gmail.com",

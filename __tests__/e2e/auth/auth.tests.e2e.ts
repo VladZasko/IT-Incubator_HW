@@ -8,7 +8,7 @@ import {dataTestUserCreate01, dataTestUserCreate02, incorrectUserData} from "../
 import {authTestManager} from "./utils/authTestManager";
 import {dataTestUserAuth} from "./dataForTest/dataTestforAuth";
 import {dbControl} from "../../../src/db/db";
-import {authRepository} from "../../../src/features/auth/repositories/auth-repository";
+ import {authRepository} from "../../../src/features/auth/repositories/auth-repository";
 import {sub} from "date-fns";
 import {ObjectId} from "mongodb";
 

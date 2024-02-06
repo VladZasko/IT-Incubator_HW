@@ -1,8 +1,7 @@
-import {RefreshTokensMetaDBType} from "./token.types";
 import {WithId} from "mongodb";
 
 export type UserAuthType = {
-    id:string
+    //id:string
     accountData: {
         login: string,
         email: string,
@@ -20,7 +19,7 @@ export type UserAuthType = {
         expirationDate: Date
     }
 }
-export type UserAuthDBType = {
+export type UserAuthDBType = WithId<{
     accountData: {
         login: string,
         email: string,
@@ -37,4 +36,4 @@ export type UserAuthDBType = {
         recoveryCode: string
         expirationDate: Date
     }
-}
+}>

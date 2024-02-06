@@ -350,7 +350,6 @@ describe('/posts', () => {
                 })
     })
 
-
     it ('should return 404 fot not existing posts for update', async () => {
 
         const blog = await blogsTestManager.createBlog(dataTestBlogCreate01)

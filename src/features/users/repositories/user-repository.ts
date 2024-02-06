@@ -1,10 +1,10 @@
 import {UsersViewModel} from "../models/output/UsersViewModel";
 import {ObjectId} from "mongodb";
-import {UserAuthDBType} from "../../../db/types/users.types";
+import {UserAuthDBType, UserAuthType} from "../../../db/types/users.types";
 import {UserAuthModel} from "../../../db/db";
 
 export class userRepository {
-    static async createUser(createData : UserAuthDBType):Promise<UsersViewModel> {
+    static async createUser(createData : UserAuthType):Promise<UsersViewModel> {
 
 
         const user = await UserAuthModel.create({...createData})

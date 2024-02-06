@@ -1,5 +1,5 @@
 import {WithId} from "mongodb";
-import {UsersViewModel} from "../models/output/UsersViewModel";
+import {UsersRepoViewModel, UsersViewModel} from "../models/output/UsersViewModel";
 import {UserAuthDBType, UserAuthType} from "../../../db/types/users.types";
 
 export const userMapper = (userDb: WithId<UserAuthDBType>): UsersViewModel => {
@@ -11,7 +11,7 @@ export const userMapper = (userDb: WithId<UserAuthDBType>): UsersViewModel => {
     }
 }
 
-export const userDBMapper = (userDb: WithId<UserAuthDBType>): UserAuthType => {
+export const userDBMapper = (userDb: WithId<UserAuthDBType>): UsersRepoViewModel => {
     return {
         id: userDb._id.toString(),
         accountData: {

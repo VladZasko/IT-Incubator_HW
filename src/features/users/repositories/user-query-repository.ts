@@ -1,4 +1,4 @@
-import {UsersViewModel, UsersViewModelGetAllBlogs} from "../models/output/UsersViewModel";
+import {UsersViewModel, UsersViewModelGetAllUsers} from "../models/output/UsersViewModel";
 import {userMapper} from "../mappers/mappers";
 import {QueryUserModel} from "../models/input/QueryUserModule";
 import {ObjectId, WithId} from "mongodb";
@@ -6,7 +6,7 @@ import {UserAuthModel} from "../../../db/db";
 import {UserAuthDBType} from "../../../db/types/users.types";
 
 export class userQueryRepository {
-    static async getAllUsers(sortData: QueryUserModel): Promise<UsersViewModelGetAllBlogs>{
+    static async getAllUsers(sortData: QueryUserModel): Promise<UsersViewModelGetAllUsers>{
         const searchLoginTerm = sortData.searchLoginTerm ?? null
         const searchEmailTerm = sortData.searchEmailTerm ?? null
         const sortBy = sortData.sortBy ?? 'createdAt'

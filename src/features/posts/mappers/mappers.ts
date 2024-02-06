@@ -17,18 +17,8 @@ export const postQueryMapper = (postDb:WithId<PostDBType>,Id?:string):PostsViewM
         likeStatus = LikesStatus.Dislike
     }
 
-/*
-    postDb.likesInfo.likes.sort((a, b) => {
-        if (a.addedAt > b.addedAt) return -1;
-        if (a.addedAt < b.addedAt) return 1;
-        return 0;
-    });
-*/
-
-// Реверс массива
     postDb.likesInfo.likes.reverse();
 
-// Получение трех самых новых объектов
     const threeNewestUsers = postDb.likesInfo.likes.slice(0, 3);
 
     return{

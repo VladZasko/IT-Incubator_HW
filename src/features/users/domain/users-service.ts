@@ -1,4 +1,4 @@
-import {UsersViewModel} from "../models/output/UsersViewModel";
+import {UsersRepoViewModel, UsersViewModel} from "../models/output/UsersViewModel";
 import {ObjectId} from "mongodb";
 import {CreateUserModel} from "../models/input/CreateUserModel";
 import bcrypt from 'bcrypt'
@@ -26,7 +26,7 @@ export class usersService {
         return await userRepository.createUser(newUser)
     }
 
-    static async checkCredentials(loginOrEmail: string, password: string): Promise<UserAuthType | null> {
+    static async checkCredentials(loginOrEmail: string, password: string): Promise<UsersRepoViewModel | null> {
         const user = await userQueryRepository.findByLoginOrEmail(loginOrEmail)
         if (!user) {
             return null

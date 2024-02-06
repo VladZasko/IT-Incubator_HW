@@ -7,7 +7,7 @@ import { QueryUserModel} from "./models/input/QueryUserModule";
 import express, {Response} from "express";
 import {HTTP_STATUSES} from "../../utils/utils";
 import {URIParamsUserIdModel} from "./models/input/URIParamsUserIdModule";
-import {UsersViewModel, UsersViewModelGetAllBlogs} from "./models/output/UsersViewModel";
+import {UsersViewModel, UsersViewModelGetAllUsers} from "./models/output/UsersViewModel";
 import {CreateUserModel} from "./models/input/CreateUserModel";
 import {userValidation} from "./validator/user-validator";
 import {userRepository} from "./repositories/user-repository";
@@ -22,7 +22,7 @@ import {userQueryRepository} from "./repositories/user-query-repository";
 export const getUsersRoutes = () => {
     const router = express.Router()
     router.get('/', authMiddleware, async (req: RequestWithQuery<QueryUserModel>,
-                        res: Response<UsersViewModelGetAllBlogs>) => {
+                        res: Response<UsersViewModelGetAllUsers>) => {
 
         const sortData : QueryUserModel = {
             searchLoginTerm: req.query.searchLoginTerm,
@@ -33,7 +33,7 @@ export const getUsersRoutes = () => {
             pageSize: req.query.pageSize,
         }
 
-        const users:UsersViewModelGetAllBlogs = await userQueryRepository.getAllUsers(sortData)
+        const users:UsersViewModelGetAllUsers = await userQueryRepository.getAllUsers(sortData)
 
         res.send(users)
     })
