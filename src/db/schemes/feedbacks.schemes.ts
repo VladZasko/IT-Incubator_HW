@@ -1,7 +1,7 @@
-import mongoose, {Types} from "mongoose";
+import mongoose, {Schema} from "mongoose";
 import {FeedbacksDBType} from "../types/feedbacks.types";
 
-export const FeedbacksSchema = new mongoose.Schema<FeedbacksDBType>({
+export const FeedbacksSchema:Schema<FeedbacksDBType> = new mongoose.Schema<FeedbacksDBType>({
     content: {type: String, require: true},
     commentatorInfo: {
         userId: {type: String, require: true},

@@ -1,7 +1,7 @@
-import mongoose from "mongoose";
+import mongoose, {Schema} from "mongoose";
 import {PostDBType} from "../types/posts.types";
 
-export const PostSchema = new mongoose.Schema<PostDBType>({
+export const PostSchema:Schema<PostDBType> = new mongoose.Schema<PostDBType>({
     title: {type: String, require: true},
     shortDescription: {type: String, require: true},
     content: {type: String, require: true},

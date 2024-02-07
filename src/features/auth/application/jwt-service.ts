@@ -1,8 +1,8 @@
 import {settings} from "../../../../settings";
-import jwt from 'jsonwebtoken'
+import jwt, {JwtPayload} from 'jsonwebtoken'
 
 export const jwtService = {
-    async createJWTAccessToken(userId: string) {
+    async createJWTAccessToken(userId: string):Promise<{accessToken:string}> {
         const token = jwt.sign(
             {id: userId},
             settings.JWT_SECRET,
@@ -12,8 +12,8 @@ export const jwtService = {
         }
     },
 
-    async createJWTRefreshToken(dataRefreshToken: any) {
-        const refreshToken = jwt.sign(
+    async createJWTRefreshToken(dataRefreshToken: any):Promise<string> {
+        const refreshToken:string = jwt.sign(
             {
                 deviceId: dataRefreshToken.deviceId,
                 id: dataRefreshToken.userId,
@@ -26,15 +26,15 @@ export const jwtService = {
 
     },
 
-    async getUserIdByAccessToken(token: string) {
+    async getUserIdByAccessToken(token: string):Promise<string|null> {
         try {
-            const result: any = jwt.verify(token, settings.JWT_SECRET)
+            const result:any = jwt.verify(token, settings.JWT_SECRET)
             return result.id
         } catch (error) {
             return null
         }
     },
-    async getUserIdByRefreshToken(token: string) {
+    async getUserIdByRefreshToken(token: string):Promise<any|null> {
         try {
             const result: any = jwt.verify(token, settings.JWT_SECRET)
             return result

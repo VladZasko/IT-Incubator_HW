@@ -2,7 +2,7 @@ import nodemailer from "nodemailer";
 import {UserAuthDBType, UserAuthType} from "../../../db/types/users.types";
 
 export const emailAdapter = {
-    async sendCode(newUser: UserAuthType) {
+    async sendCode(newUser: UserAuthType):Promise<boolean> {
         const transport = nodemailer.createTransport({
             service: "Gmail",
             host: "smtp.gmail.com",
@@ -25,7 +25,7 @@ export const emailAdapter = {
         });
         return true
     },
-    async sendNewCode(user: UserAuthDBType, newCode: string) {
+    async sendNewCode(user: UserAuthDBType, newCode: string):Promise<boolean> {
         const transport = nodemailer.createTransport({
             service: "Gmail",
             host: "smtp.gmail.com",
@@ -48,7 +48,7 @@ export const emailAdapter = {
         });
         return true
     },
-    async sendRecoveryCode(user: UserAuthDBType, recoveryCode: string) {
+    async sendRecoveryCode(user: UserAuthDBType, recoveryCode: string):Promise<boolean> {
         const transport = nodemailer.createTransport({
             service: "Gmail",
             host: "smtp.gmail.com",

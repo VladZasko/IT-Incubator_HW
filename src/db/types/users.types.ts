@@ -1,7 +1,4 @@
-import {WithId} from "mongodb";
-
 export type UserAuthType = {
-    //id:string
     accountData: {
         login: string,
         email: string,

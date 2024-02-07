@@ -1,5 +1,5 @@
 
-export class RateLimiteType {
+export class RateLimitType {
     constructor(
         public IP: string,
         public URL: string,

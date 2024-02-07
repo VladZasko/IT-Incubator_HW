@@ -1,10 +1,9 @@
 import {PostsViewModel} from "../models/PostsViewModel";
 import {FeedbacksModel, PostModel} from "../../../db/db";
 import {ObjectId} from "mongodb";
-import {CreatePostReposModel} from "../models/CreatePostServiceModel";
 import {UpdatePostModel} from "../models/UpdatePostModule";
 import {LikesStatus, FeedbackViewModel} from "../../feedback/models/FeedbackViewModel";
-import {FeedbacksDBType, FeedbacksType} from "../../../db/types/feedbacks.types";
+import {FeedbacksType} from "../../../db/types/feedbacks.types";
 import {NewestLikesType, PostType} from "../../../db/types/posts.types";
 
 export class PostsRepository {
