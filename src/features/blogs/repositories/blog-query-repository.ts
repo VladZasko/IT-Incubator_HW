@@ -2,7 +2,7 @@ import {BlogsViewModel, BlogsViewModelGetAllBlogs} from "../models/output/BlogsV
 import {blogMapper} from "../mappers/mappers";
 import {ObjectId} from "mongodb";
 import {QueryBlogsModel, QueryPostByBlogIdModel} from "../models/input/QueryBlogsModule";
-import {postMapper, postQueryMapper} from "../../posts/mappers/mappers";
+import {postQueryMapper} from "../../posts/mappers/mappers";
 import {BlogModel, PostModel} from "../../../db/db";
 
 export class blogQueryRepository {

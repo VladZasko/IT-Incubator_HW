@@ -3,10 +3,13 @@ import {blogValidation} from "../validator/blog-validator";
 import {authMiddleware} from "../../../middlewares/auth/auth-middleware";
 import {postByIdValidation} from "../../posts/validator/post-validator";
 import {accessTokenMiddleware} from "../../../middlewares/auth/accessToken-middleware";
-import {blogsController} from "../../composition-root";
+import {BlogsController} from "../blogs-controller";
+import {container} from "../../composition-root";
+
+//const blogsController = ioc.getInstance<BlogsController>(BlogsController)
+const blogsController = container.resolve(BlogsController)
 
 export const blogsRouter = Router({})
-
 
 blogsRouter.get('/', blogsController.getBlogs.bind(blogsController))
 blogsRouter.get('/:id/posts',accessTokenMiddleware, blogsController.getPostsByBlog.bind(blogsController))

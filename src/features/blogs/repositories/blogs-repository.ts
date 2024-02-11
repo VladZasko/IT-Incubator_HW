@@ -3,7 +3,9 @@ import {ObjectId} from "mongodb";
 import {CreateBlogReposModel} from "../models/input/CreateBlogModel";
 import {UpdateBlogModel} from "../models/input/UpdateBlogModule";
 import {BlogModel, PostModel} from "../../../db/db";
+import {injectable} from "inversify";
 
+@injectable()
 export class BlogsRepository {
     async createPostBlog(createData:any){
 

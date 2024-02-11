@@ -16,9 +16,11 @@ import {HTTP_STATUSES} from "../../utils/utils";
 import {CreateBlogServiceModel, CreatePostBlogModel} from "./models/input/CreateBlogModel";
 import {postQueryRepository} from "../posts/repositories/post-query-repository";
 import {UpdateBlogModel} from "./models/input/UpdateBlogModule";
+import {inject, injectable} from "inversify";
 
+@injectable()
 export class BlogsController {
-    constructor(protected blogsService: BlogsService) {
+    constructor(/*@inject(BlogsService)*/ protected blogsService: BlogsService) {
     }
 
     async getBlogs(req: RequestWithQuery<QueryBlogsModel>, res: Response) {

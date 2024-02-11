@@ -4,7 +4,9 @@ import {UpdateBlogModel} from "../models/input/UpdateBlogModule";
 import {blogQueryRepository} from "../repositories/blog-query-repository";
 import {BlogDBType} from "../../../db/types/blogs.types";
 import {BlogsRepository} from "../repositories/blogs-repository";
+import {injectable} from "inversify";
 
+@injectable()
 export class BlogsService {
     constructor(protected blogsRepository:BlogsRepository) {}
     async createPostBlog(blogId: string, createData: any) {

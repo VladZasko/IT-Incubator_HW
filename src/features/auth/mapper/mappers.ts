@@ -1,6 +1,6 @@
 import {WithId} from "mongodb";
 import {UsersAuthViewModel} from "../models/output/UsersViewModel";
-import {UserAuthDBType, UserAuthType} from "../../../db/types/users.types";
+import {UserAuthDBType} from "../../../db/types/users.types";
 import {UsersRepoViewModel} from "../../users/models/output/UsersViewModel";
 
 export const userAuthMapper = (userDb:WithId<UserAuthDBType>):UsersAuthViewModel => {
