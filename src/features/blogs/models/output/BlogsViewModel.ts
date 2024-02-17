@@ -1,4 +1,4 @@
-import {blogMapper} from "../../mappers/mappers";
+import {blogMapper} from "../../mappers/mapper";
 
 export type BlogsViewModel = {
     id: string

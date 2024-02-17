@@ -21,13 +21,6 @@ import {SecurityDevicesService} from "./securityDevices/domain/securityDevices-s
 import {Container} from "inversify";
 
 
-/*
-const objects:any[] = []
-const blogRepository = new BlogsRepository()
-objects.push(blogRepository)
-const blogsService = new BlogsService(blogRepository)
-objects.push(blogsService)
-*/
 
 const authRepository = new AuthRepository()
 const authService = new AuthService(authRepository)
@@ -45,24 +38,12 @@ const securityDevicesRepository = new SecurityDevicesRepository()
 const securityDevicesQueryRepository = new SecurityDevicesQueryRepository()
 const securityDevicesService = new SecurityDevicesService(securityDevicesRepository)
 
-/*
-const blogsController = new BlogsController(blogsService)
-objects.push(blogsController)
-*/
-
 export const authController = new AuthController(authService, usersService)
 export const commentsController = new CommentsController(commentsService)
 export const postsController = new PostsController(postsService)
 export const usersController = new UsersController(usersService)
 export const securityDevicesController = new SecurityDevicesController(securityDevicesService, securityDevicesRepository, securityDevicesQueryRepository)
 
-
-/*export const ioc = {
-    getInstance<T>(ClassType: any) {
-        const targetInstance = objects.find(o => o instanceof ClassType)
-        return targetInstance as T
-    }
-}*/
 
 export const container = new Container();
 

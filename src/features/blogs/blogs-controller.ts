@@ -13,10 +13,11 @@ import {blogQueryRepository} from "./repositories/blog-query-repository";
 import {URIParamsBlogIdModel} from "./models/input/URIParamsBlogIdModule";
 import {ObjectId} from "mongodb";
 import {HTTP_STATUSES} from "../../utils/utils";
-import {CreateBlogServiceModel, CreatePostBlogModel} from "./models/input/CreateBlogModel";
+import {CreateBlogModel, CreatePostBlogModel} from "./models/input/CreateBlogModel";
 import {postQueryRepository} from "../posts/repositories/post-query-repository";
 import {UpdateBlogModel} from "./models/input/UpdateBlogModule";
 import {inject, injectable} from "inversify";
+import {mapServiceCodeToHttpStatus} from "./mappers/status-code-mapper";
 
 @injectable()
 export class BlogsController {
@@ -87,8 +88,31 @@ export class BlogsController {
 
     }
 
+    async createBlog(req: RequestWithBody<CreateBlogModel>, res: Response) {
+
+        const createDTO:CreateBlogModel = {
+            name: req.body.name,
+            description: req.body.description,
+            websiteUrl: req.body.websiteUrl
+        }
+
+        const newBlog = await this.blogsService.createBlog(createDTO)
+
+        let result
+        if (newBlog.data){
+            result = newBlog.data
+        } else {
+            result = newBlog.errorMessage
+        }
+
+        res
+            .status(mapServiceCodeToHttpStatus(newBlog.resultCode))
+            .send(result)
+
+    }
+
     async createPostByBlog(req: RequestWithParamsAndBody<{ id: string }, CreatePostBlogModel>, res: Response) {
-        const createData = {
+        const createDTO = {
             title: req.body.title,
             shortDescription: req.body.shortDescription,
             content: req.body.content,
@@ -103,7 +127,7 @@ export class BlogsController {
             return
         }
 
-        const newPostId = await this.blogsService.createPostBlog(blogId, createData)
+        const newPostId = await this.blogsService.createPostBlog(blogId, createDTO)
 
         const post = await postQueryRepository.getPostById(newPostId)
 
@@ -118,21 +142,6 @@ export class BlogsController {
 
     }
 
-    async createBlog(req: RequestWithBody<CreateBlogServiceModel>, res: Response) {
-
-        const createData = {
-            name: req.body.name,
-            description: req.body.description,
-            websiteUrl: req.body.websiteUrl
-        }
-
-        const newBlog = await this.blogsService.createBlog(createData)
-
-        res
-            .status(HTTP_STATUSES.CREATED_201)
-            .send(newBlog)
-
-    }
 
     async updateBlog(req: RequestWithParamsAndBody<URIParamsBlogIdModel, UpdateBlogModel>, res: Response) {
         const id = req.params.id

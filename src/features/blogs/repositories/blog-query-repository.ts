@@ -1,5 +1,5 @@
 import {BlogsViewModel, BlogsViewModelGetAllBlogs} from "../models/output/BlogsViewModel";
-import {blogMapper} from "../mappers/mappers";
+import {blogMapper} from "../mappers/mapper";
 import {ObjectId} from "mongodb";
 import {QueryBlogsModel, QueryPostByBlogIdModel} from "../models/input/QueryBlogsModule";
 import {postQueryMapper} from "../../posts/mappers/mappers";

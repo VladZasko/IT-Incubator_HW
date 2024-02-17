@@ -1,5 +1,5 @@
 import request from "supertest";
-import {CreateBlogServiceModel, CreatePostBlogModel} from "../../../../src/features/blogs/models/input/CreateBlogModel";
+import {CreateBlogModel, CreatePostBlogModel} from "../../../../src/features/blogs/models/input/CreateBlogModel";
 import {HTTP_STATUSES, HttpStatusType} from "../../../../src/utils/utils";
 import {RouterPaths} from "../../../../src/routerPaths";
 import {app} from "../../../../src/app";
@@ -10,7 +10,7 @@ import {errors} from "../../../utils/error";
 
 
 export const blogsTestManager = {
-    async createBlog(data: CreateBlogServiceModel,
+    async createBlog(data: CreateBlogModel,
                      expectedStatusCode: HttpStatusType = HTTP_STATUSES.CREATED_201,
                      expectedErrorsMessages?: ErrorMessage) {
 
@@ -38,7 +38,7 @@ export const blogsTestManager = {
         return {response: response, createdEntity: createdEntity};
     },
 
-    async createBlogs(data: CreateBlogServiceModel) {
+    async createBlogs(data: CreateBlogModel) {
 
         const blogs = []
 

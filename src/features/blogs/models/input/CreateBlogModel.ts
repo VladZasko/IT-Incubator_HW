@@ -1,4 +1,4 @@
-export type CreateBlogServiceModel = {
+export type CreateBlogModel = {
     /**
      * blog name, description, websiteUrl
      */
